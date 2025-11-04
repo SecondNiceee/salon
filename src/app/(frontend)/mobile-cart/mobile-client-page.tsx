@@ -6,7 +6,6 @@ import { ShoppingBag, ArrowLeft, ArrowRight } from "lucide-react"
 import { useCartStore } from "@/entities/cart/cartStore"
 import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
-import {  formatPrice } from "@/utils/discountUtils"
 import OrderItem from "@/components/order-item/OrderItem"
 
 export default function MobileCartClientPage() {
@@ -69,7 +68,7 @@ export default function MobileCartClientPage() {
             <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-gray-600 text-sm">Товары ({totalCount})</span>
-                <span className="font-semibold text-base">{formatPrice(totalPrice)}</span>
+                <span className="font-semibold text-base">{totalPrice}</span>
               </div>
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span>Доставка</span>
@@ -78,7 +77,7 @@ export default function MobileCartClientPage() {
               <div className="border-t border-gray-200 mt-2 pt-2">
                 <div className="flex items-center justify-between text-lg font-bold">
                   <span>Итого</span>
-                  <span className="text-green-600">{formatPrice(totalPrice + 199)}</span>
+                  <span className="text-green-600">{totalPrice}</span>
                 </div>
               </div>
             </div>

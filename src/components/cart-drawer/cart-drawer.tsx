@@ -8,7 +8,6 @@ import { useCartStore } from "@/entities/cart/cartStore"
 import { useSiteSettings } from "@/entities/siteSettings/SiteSettingsStore"
 import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
-import { formatPrice } from "@/utils/discountUtils"
 import OrderItemMobile from "../order-item/OrderItemMobile"
 
 export default function CartDrawer() {
@@ -69,7 +68,7 @@ export default function CartDrawer() {
               <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-600">Товары ({totalCount})</span>
-                  <span className="font-semibold">{formatPrice(totalPrice)}</span>
+                  <span className="font-semibold">{totalPrice}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>Доставка</span>
@@ -78,7 +77,7 @@ export default function CartDrawer() {
                 <div className="border-t border-gray-200 mt-2 pt-2">
                   <div className="flex items-center justify-between text-lg font-bold">
                     <span>Итого</span>
-                    <span className="text-green-600">{formatPrice(totalPrice + deliveryFee)}</span>
+                    <span className="text-green-600">{totalPrice + deliveryFee}</span>
                   </div>
                 </div>
               </div>

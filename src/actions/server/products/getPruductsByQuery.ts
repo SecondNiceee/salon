@@ -19,11 +19,9 @@ export const searchProducts = async (query: string): Promise<Product[] > => {
       },
       select : {
             averageRating : true,
-            discount : true,
             image : true,
             price : true,
             title : true,
-            weight : true,
             reviewsCount : true
           },
       limit: 10,

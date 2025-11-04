@@ -5,7 +5,6 @@ import type React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Minus, Plus, Heart, Star } from 'lucide-react'
-import Image from 'next/image'
 import type { Media, Product } from '@/payload-types'
 import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/entities/cart/cartStore'
@@ -13,7 +12,6 @@ import { useAuthStore } from '@/entities/auth/authStore'
 import { useFavoritesStore } from '@/entities/favorites/favoritesStore'
 import { toast } from 'sonner'
 import { useGuestBenefitsStore } from '../auth/guest-benefits-modal'
-import { formatPrice, getDiscountInfo } from '@/utils/discountUtils'
 import { routerConfig } from '@/config/router.config'
 import SmartImage from '../smart-image/SmartImage'
 
@@ -30,7 +28,6 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
   const { openDialog: openGuestDialog } = useGuestBenefitsStore()
   const qty = items.find((item) => item.product.id === product.id)?.quantity ?? 0
 
-  const discountInfo = getDiscountInfo(product)
 
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
 
@@ -79,11 +76,6 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
           alt={(product?.image as Media).alt || 'Изображение товара'}
           className="object-cover w-full h-full"
         />
-        {discountInfo.hasDiscount && (
-          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
-            -{discountInfo.discountPercentage}%
-          </div>
-        )}
         <button
           onClick={handleFavoriteClick}
           className="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
@@ -104,7 +96,6 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
             <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-tight">
               {product.title}
             </h3>
-            <p className="text-xs text-gray-500 mt-1">{`${product.weight.value} ${product.weight.unit}`}</p>
           </div>
         </div>
 
@@ -135,14 +126,6 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
         {/* Price and Actions */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-red-500">
-              {formatPrice(discountInfo.discountedPrice)}
-            </span>
-            {discountInfo.hasDiscount && (
-              <span className="text-sm text-gray-400 line-through">
-                {formatPrice(discountInfo.originalPrice)}
-              </span>
-            )}
           </div>
 
           {qty === 0 ? (

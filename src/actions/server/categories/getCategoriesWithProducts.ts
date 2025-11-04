@@ -45,7 +45,6 @@ export const getCategoriesWithProducts = async (): Promise<CategoryWithProducts[
           depth: 1,
           select: {
             averageRating: true,
-            discount: true,
             image: true,
             price: true,
             title: true,

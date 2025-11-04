@@ -76,7 +76,6 @@ export function Categories() {
     scrollContainerRef.current.scrollBy({ left: delta, behavior: "smooth" })
   }
 
-
   if (isLoading && !categories.length) {
     return (
       <div className="flex justify-center py-8">
@@ -132,30 +131,37 @@ export function Categories() {
           onScroll={checkScrollability}
           onWheelCapture={handleWheel}
         >
-          {categories.map((category, index) => (
-            <Link
-              href={category.value}
-              key={index}
-              className={`flex flex-col items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-green-600 transition-colors`}
-            >
-              <div
-                className={`sm:w-12 sm:h-12 w-7 h-7 ${slug === category.value ? "bg-green-400" : "bg-gray-100"}  rounded-full flex items-center justify-center hover:bg-green-50`}
+          {categories.map((category, index) => {
+            const imageUrl = (category.icon as Media).url ?? ""
+            console.log("[v0] Category icon URL:", imageUrl)
+            console.log("[v0] Full media object:", category.icon)
+
+            return (
+              <Link
+                href={category.value}
+                key={index}
+                className={`flex flex-col items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-green-600 transition-colors`}
               >
-                <Image
-                  width={30}
-                  height={30}
-                  alt={"shop"}
-                  src={(category.icon as Media).url ?? ""}
-                  className="sm:h-6 sm:w-6 h-4 w-4 text-black"
-                />
-              </div>
-              <span
-                className={`text-xs ${slug === category.value ? "text-green-400 font-semibold" : ""} text-center leading-tight`}
-              >
-                {category.title}
-              </span>
-            </Link>
-          ))}
+                <div
+                  className={`sm:w-12 sm:h-12 w-7 h-7 ${slug === category.value ? "bg-green-400" : "bg-gray-100"}  rounded-full flex items-center justify-center hover:bg-green-50`}
+                >
+                  <img
+                    alt={"shop"}
+                    src={imageUrl || "/placeholder.svg"}
+                    className="sm:h-6 sm:w-6 h-4 w-4 text-black"
+                    onError={(e) => {
+                      console.error("[v0] Image failed to load:", imageUrl, e)
+                    }}
+                  />
+                </div>
+                <span
+                  className={`text-xs ${slug === category.value ? "text-green-400 font-semibold" : ""} text-center leading-tight`}
+                >
+                  {category.title}
+                </span>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </div>

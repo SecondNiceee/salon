@@ -219,26 +219,6 @@ export interface Product {
   id: number;
   title: string;
   price: number;
-  discount?: {
-    isActive?: boolean | null;
-    type?: ('percentage' | 'fixed') | null;
-    /**
-     * Для процентной скидки - число от 0.01 до 99.99. Для фиксированной - сумма в рублях (не более 99% от цены товара).
-     */
-    value?: number | null;
-    /**
-     * Оставьте пустым для немедленного начала. Дата не может быть в прошлом.
-     */
-    startDate?: string | null;
-    /**
-     * Оставьте пустым для бессрочной скидки. Должна быть позже даты начала.
-     */
-    endDate?: string | null;
-    /**
-     * Краткое описание акции или причины скидки (до 200 символов)
-     */
-    description?: string | null;
-  };
   /**
    * Выберите только категорию, без подкатегорий
    */
@@ -540,16 +520,6 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   price?: T;
-  discount?:
-    | T
-    | {
-        isActive?: T;
-        type?: T;
-        value?: T;
-        startDate?: T;
-        endDate?: T;
-        description?: T;
-      };
   category?: T;
   subCategory?: T;
   image?: T;

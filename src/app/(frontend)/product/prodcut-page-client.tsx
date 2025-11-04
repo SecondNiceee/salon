@@ -6,7 +6,6 @@ import BreadCrumb from "@/components/product-page/ui/BreadCrumb"
 import NutrientInformation from "@/components/product-page/ui/NutrientInformation"
 import ProductImage from "@/components/product-page/ui/ProductImage"
 import ProductInfo from "@/components/product-page/ui/ProductInfo"
-import RelatedProducts from "@/components/product-page/ui/RelatedProducts"
 import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
 
@@ -44,7 +43,6 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
       </div>
 
       <ReviewSection id={productId} product={product} />
-      <RelatedProducts product={product} />
       <NutrientInformation product={product} />
 
       <style jsx>{`

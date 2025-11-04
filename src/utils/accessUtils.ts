@@ -19,7 +19,6 @@ export const isOwn: Access = ({ req }) => {
 export const isAccess = (type: AccessType): Access => {
   return ({ req }: { req: PayloadRequest }) => {
     const user = req.user
-    console.log(user);
     if (!user || user.role === "user") {
       return false
     }

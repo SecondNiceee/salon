@@ -1,6 +1,5 @@
 import { CartItem, useCartStore } from '@/entities/cart/cartStore';
 import { Media } from '@/payload-types';
-import { formatPrice, getDiscountInfo } from '@/utils/discountUtils';
 import Image from 'next/image';
 import React, { FC } from 'react';
 import { Button } from '../ui/button';
@@ -13,7 +12,6 @@ interface IOrderItemDesktop{
 }
 const OrderItemMobile:FC<IOrderItemDesktop> = ({item}) => {
     const media = item.product.image as Media
-    const discountInfo = getDiscountInfo(item.product)
     const { remove, increment, dicrement } = useCartStore()
     return (
         <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
@@ -25,11 +23,6 @@ const OrderItemMobile:FC<IOrderItemDesktop> = ({item}) => {
               src={media?.url || '/placeholder.svg?height=64&width=64&query=product-thumbnail'}
               alt={media?.alt || item.product.title}
               className="object-cover w-full h-full"  />
-            {discountInfo.hasDiscount && (
-              <div className="absolute top-1 right-0 rounded-sm bg-red-500 text-white text-xs font-bold px-1 py-0.5 text-[10px]">
-                -{discountInfo.discountPercentage}%
-              </div>
-            )}
           </div>
 
           {/* Content */}
@@ -38,21 +31,11 @@ const OrderItemMobile:FC<IOrderItemDesktop> = ({item}) => {
               <h3 className="font-medium text-base text-gray-900  line-clamp-2 leading-tight">
                 {item.product.title}
               </h3>
-              <p className="text-xs text-gray-500">
-                {item.product.weight?.value} {item.product.weight?.unit}
-              </p>
             </div>
 
             <div className="flex justify-between items-center w-full">
                 <div className="flex gap-2 items-center">
-                  <span className="font-semibold text-base text-green-600">
-                    {formatPrice(discountInfo.discountedPrice)}
-                  </span>
-                  {discountInfo.hasDiscount && (
-                    <span className="text-xs text-gray-400 line-through">
-                      {formatPrice(discountInfo.originalPrice)}
-                    </span>
-                  )}
+
                 </div>
 
                 <div className="flex items-center bg-gray-50 rounded-lg p-0.5">

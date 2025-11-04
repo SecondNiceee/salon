@@ -1,8 +1,6 @@
 import { CartItem, useCartStore } from '@/entities/cart/cartStore';
 import { Media } from '@/payload-types';
-import { getDiscountInfo } from '@/utils/discountUtils';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import Image from 'next/image';
 import React, { FC } from 'react';
 import { Button } from '../ui/button';
 import SmartImage from '../smart-image/SmartImage';
@@ -12,7 +10,6 @@ interface IOrderItemDesktop{
 }
 const OrderItemDesktop:FC<IOrderItemDesktop> = ({item}) => {
     const media = item.product.image as Media
-    const discountInfo = getDiscountInfo(item.product)
     const { remove, increment, dicrement } = useCartStore()
     const price = item.product.price || 0
     const sum = price * item.quantity
@@ -29,17 +26,9 @@ const OrderItemDesktop:FC<IOrderItemDesktop> = ({item}) => {
               alt={media?.alt || item.product.title}
               className="object-cover w-full h-full"
              />
-            {discountInfo.hasDiscount && (
-              <div className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
-                -{discountInfo.discountPercentage}%
-              </div>
-            )}
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-gray-900 truncate">{item.product.title}</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              {item.product.weight?.value} {item.product.weight?.unit}
-            </p>
             <div className="flex items-center justify-between mt-3">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 p-1 bg-white rounded-lg shadow-sm">

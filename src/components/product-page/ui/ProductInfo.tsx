@@ -7,7 +7,6 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import type { Product } from "@/payload-types"
 import { Minus, Plus, Heart } from "lucide-react"
 import { useGuestBenefitsStore } from "@/components/auth/guest-benefits-modal"
-import { getDiscountInfo, formatPrice } from "@/utils/discountUtils"
 
 const ProductInfo = ({ product }: { product: Product }) => {
   const { increment, dicrement, items } = useCartStore()
@@ -17,7 +16,6 @@ const ProductInfo = ({ product }: { product: Product }) => {
   const qty = items.find((it) => it.product.id === product?.id)?.quantity ?? 0
   const { openDialog } = useGuestBenefitsStore()
 
-  const discountInfo = getDiscountInfo(product)
 
   const handleFavoriteClick = async () => {
     if (!user) {
@@ -37,32 +35,13 @@ const ProductInfo = ({ product }: { product: Product }) => {
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
           {product.title.toUpperCase()}
         </h1>
-        <p className="text-gray-500 text-base sm:text-lg">
-          {product.weight.value} {product.weight.unit}
-        </p>
       </div>
 
       <div className="space-y-4">
         {/* Price Section */}
         <div>
           <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-            <span className="text-2xl sm:text-3xl font-bold text-gray-900">
-              {formatPrice(discountInfo.discountedPrice)}
-            </span>
-            {discountInfo.hasDiscount && (
-              <>
-                <span className="text-lg sm:text-xl text-gray-400 line-through">
-                  {formatPrice(discountInfo.originalPrice)}
-                </span>
-                <span className="bg-red-500 text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg">
-                  -{discountInfo.discountPercentage}%
-                </span>
-              </>
-            )}
           </div>
-          <span className="text-gray-500 text-sm sm:text-base">
-            за {product.weight.value} {product.weight.unit}
-          </span>
         </div>
 
         {/* Actions Section */}
@@ -119,23 +98,6 @@ const ProductInfo = ({ product }: { product: Product }) => {
         </div>
       </div>
 
-      {/* Product Description */}
-      <div className="space-y-3 sm:space-y-4">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Описание товара</h3>
-        <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{product.description}</p>
-      </div>
-
-      {/* Storage Conditions */}
-      <div className="space-y-2">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Условия хранения</h3>
-        <p className="text-gray-700 text-sm sm:text-base">{product.storageConditions}</p>
-      </div>
-
-      {/* Ingredients */}
-      <div className="space-y-2">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Состав</h3>
-        <p className="text-gray-700 text-sm sm:text-base">{product.ingredients}</p>
-      </div>
     </div>
   )
 }

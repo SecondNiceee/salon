@@ -44,7 +44,6 @@ export const getFilteredProducts = async (
           limit: 0,
           select : {
             averageRating : true,
-            discount : true,
             image : true,
             price : true,
             title : true,
