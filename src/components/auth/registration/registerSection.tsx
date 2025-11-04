@@ -1,27 +1,20 @@
-'use client'
+"use client"
 
-import { useAuthStore } from '@/entities/auth/authStore'
-import { useForm, type SubmitHandler } from 'react-hook-form'
-import { Alert, AlertTitle, AlertDescription } from '../../ui/alert'
-import { Button } from '../../ui/button'
-import { Input } from '../../ui/input'
-import { useCallback, useEffect, useState } from 'react'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import cl from '../auth.module.css'
-import { request, RequestError } from '@/utils/request'
-import { useRouter } from 'next/navigation'
-import { routerConfig } from '@/config/router.config'
-import { Mail } from 'lucide-react'
-import AuthPicker from '../ui/login-or-registrate-picker';
-import {zodResolver} from "@hookform/resolvers/zod";
-import { registrationSchema } from '../validation/schemas'
+import { useAuthStore } from "@/entities/auth/authStore"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { Alert, AlertTitle, AlertDescription } from "../../ui/alert"
+import { Button } from "../../ui/button"
+import { Input } from "../../ui/input"
+import { useCallback, useEffect, useState } from "react"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import cl from "../auth.module.css"
+import { request, type RequestError } from "@/utils/request"
+import { useRouter } from "next/navigation"
+import { routerConfig } from "@/config/router.config"
+import { Mail } from "lucide-react"
+import AuthPicker from "../ui/login-or-registrate-picker"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registrationSchema } from "../validation/schemas"
 
 type RegisterInputs = {
   email: string
@@ -29,8 +22,8 @@ type RegisterInputs = {
 }
 
 interface IRegisterSection {
-  mode: 'register' | 'login'
-  setMode: (mode: 'register' | 'login') => void
+  mode: "register" | "login"
+  setMode: (mode: "register" | "login") => void
 }
 
 export default function RegisterSection({ mode, setMode }: IRegisterSection) {
@@ -45,9 +38,9 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   const [password, setPassword] = useState<string | null>(null)
 
   const form = useForm<RegisterInputs>({
-    mode: 'onBlur',
-    defaultValues: { email: '', password: '' },
-    resolver : zodResolver(registrationSchema)
+    mode: "onBlur",
+    defaultValues: { email: "", password: "" },
+    resolver: zodResolver(registrationSchema),
   })
 
   // Хэндлер для входа
@@ -56,7 +49,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
     setLoading(true)
     try {
       await registerUser(values.email, values.password)
-      setSuccess('Регистрация прошла успешно. Проверьте почту и подтвердите аккаунт перед входом.')
+      setSuccess("Регистрация прошла успешно. Проверьте почту и подтвердите аккаунт перед входом.")
       setEmail(values.email)
       setPassword(values.password)
     } catch (e) {
@@ -71,8 +64,8 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
     if (password && email) {
       try {
         await request({
-          url: '/api/auth/isVerified',
-          method: 'POST',
+          url: "/api/auth/isVerified",
+          method: "POST",
           body: {
             email,
           },
@@ -99,14 +92,13 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   if (email) {
     return (
       <div className="space-y-6 text-center px-8 py-6 md:px-10 md:py-8">
-        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
-          <Mail className="w-8 h-8 text-green-600" />
+        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
+          <Mail className="w-8 h-8 text-brand-600" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-gray-900">Подтвердите почту</h3>
           <p className="text-gray-600">
-            Вы успешно зарегистрировались! Проверьте почту и перейдите по ссылке для подтверждения
-            аккаунта.
+            Вы успешно зарегистрировались! Проверьте почту и перейдите по ссылке для подтверждения аккаунта.
           </p>
           {email && (
             <p className="text-sm text-gray-500">
@@ -116,8 +108,8 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
         </div>
 
         {error && (
-          <Alert variant={error.message.includes('отправлено') ? 'default' : 'destructive'}>
-            <AlertTitle>{error.message.includes('отправлено') ? 'Готово' : 'Ошибка'}</AlertTitle>
+          <Alert variant={error.message.includes("отправлено") ? "default" : "destructive"}>
+            <AlertTitle>{error.message.includes("отправлено") ? "Готово" : "Ошибка"}</AlertTitle>
             <AlertDescription>{error.message}</AlertDescription>
           </Alert>
         )}
@@ -126,9 +118,9 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
           <Button
             onClick={() => tryLogin()}
             disabled={loading}
-            className="w-full h-12 text-base rounded-xl text-white bg-green-500 hover:bg-green-600"
+            className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
           >
-            {'Я подтвердил вход'}
+            {"Я подтвердил вход"}
           </Button>
         </div>
       </div>
@@ -158,9 +150,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">
-                    Почта
-                  </FormLabel>
+                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">Почта</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -180,14 +170,12 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
               control={form.control}
               name="password"
               rules={{
-                required: 'Укажите пароль',
-                minLength: { value: 8, message: 'Пароль должен быть не менее 8 символов' },
+                required: "Укажите пароль",
+                minLength: { value: 8, message: "Пароль должен быть не менее 8 символов" },
               }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">
-                    Пароль
-                  </FormLabel>
+                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
@@ -203,11 +191,11 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
             />
 
             <Button
-              className="w-full h-12 text-base rounded-xl text-white bg-green-500 hover:bg-green-600"
+              className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Регистрируем...' : 'Зарегистрироваться'}
+              {loading ? "Регистрируем..." : "Зарегистрироваться"}
             </Button>
           </form>
         </Form>

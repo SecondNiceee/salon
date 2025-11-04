@@ -1,19 +1,20 @@
-'use client'
+"use client"
 
-import { Search, X } from 'lucide-react'
-import React, { useState, useEffect, useRef } from 'react'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Product } from '@/payload-types'
-import { searchProducts } from '@/actions/server/products/getPruductsByQuery'
-import { ProductCard } from '../product-card/ProductCard'
+import { Search, X } from "lucide-react"
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
+import type { Product } from "@/payload-types"
+import { searchProducts } from "@/actions/server/products/getPruductsByQuery"
+import { ProductCard } from "../product-card/ProductCard"
 
 interface ProductSearchProps {
   onProductSelect?: (product: Product) => void
 }
 
 const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("")
   const [results, setResults] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -25,8 +26,8 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
           setResults(searchResults)
           setIsOpen(true)
         } catch (error) {
-          console.error('Search error:', error)
+          console.error("Search error:", error)
           setResults([])
         } finally {
           setIsLoading(false)
@@ -58,12 +59,12 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
 
   const handleProductClick = (product: Product) => {
     setIsOpen(false)
-    setQuery('')
+    setQuery("")
     onProductSelect?.(product)
   }
 
   const clearSearch = () => {
-    setQuery('')
+    setQuery("")
     setResults([])
     setIsOpen(false)
   }
@@ -71,13 +72,10 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
   return (
     <div className="relative z-[100]" ref={searchRef}>
       <div className="relative z-[100]">
-        <Search
-          size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 lg:w-5 lg:h-5"
-        />
+        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 lg:w-5 lg:h-5" />
         <Input
           type="text"
-          placeholder="Поиск по товарам"
+          placeholder="Поиск по услугам"
           className="pl-10 pr-10 h-10 lg:h-11 w-full"
           value={query}
           onChange={handleInputChange}
@@ -114,7 +112,7 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
               ))}
             </div>
           ) : query.trim().length > 0 ? (
-            <div className="p-4 text-center text-gray-500">Товары не найдены</div>
+            <div className="p-4 text-center text-gray-500">Услуги не найдены</div>
           ) : null}
         </Card>
       )}

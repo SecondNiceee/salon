@@ -3,7 +3,6 @@
 import { routerConfig } from "@/config/router.config"
 import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { type TUserResponse, useAuthStore } from "@/entities/auth/authStore"
-import { useCartStore } from "@/entities/cart/cartStore"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -18,7 +17,6 @@ const useAuth = () => {
     setIsLoggingOut(true)
     try {
       await authLogout()
-      useCartStore.getState().clear()
       useOrdersStore.getState().clearOrders()
       router.push(routerConfig.home)
     } catch (error) {

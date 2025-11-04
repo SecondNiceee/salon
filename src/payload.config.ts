@@ -12,7 +12,6 @@ import { Users } from "./collections/Users"
 import { Media } from "./collections/Media"
 import Categories from "./collections/Categories"
 import Products from "./collections/Products"
-import Carts from "./collections/Carts"
 import Orders from "./collections/Orders"
 import Reviews from "./collections/Reviews"
 import Favorites from "./collections/Favorites"
@@ -43,7 +42,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Products, Carts, Orders, Reviews, Favorites, Pages],
+  collections: [Users, Media, Categories, Products, Orders, Reviews, Favorites, Pages],
   globals: [SiteSettings],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

@@ -1,6 +1,6 @@
 import { routerConfig } from '@/config/router.config';
 import useAuth from '@/hooks/useAuth';
-import { Home, Search, ShoppingCart, User } from 'lucide-react';
+import { Home, Search, User } from 'lucide-react';
 import { useMemo } from 'react';
 
 const useGetNavigation = () => {
@@ -15,11 +15,6 @@ const useGetNavigation = () => {
         name: "Каталог",
         href: routerConfig.mobileCatalog,
         icon: Search,
-        },
-        {
-        name: "Корзина",
-        href: routerConfig.mobileCart,
-        icon: ShoppingCart,
         },
         {
         name: user ? "Аккаунт" : "Войти",

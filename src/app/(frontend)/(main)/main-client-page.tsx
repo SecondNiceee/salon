@@ -40,7 +40,7 @@ export default function GrandBazarClientApp() {
     getProductsWithCategories()
   }, [getProductsWithCategories])
 
-  // UI ошибки в случае ошибки загрузка с сервера
+  // UI ошибки в случае ошибка загрузка с сервера
   if (error) {
     console.log(error)
     return (
@@ -55,13 +55,12 @@ export default function GrandBazarClientApp() {
   if (isLoading || !productsAndCategories) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
+        <Loader2 className="w-8 h-8 text-brand-600 animate-spin" />
       </div>
     )
   }
   return (
     <>
-
       <section className="products bg-gray-50">
         <div className="flex flex-col gap-3 px-4 mx-auto mt-1 mb-4 rounded-md bg-gray-50 max-w-7xl">
           {productsAndCategories.map((item) => (
@@ -71,7 +70,7 @@ export default function GrandBazarClientApp() {
                   <div className="flex items-start justify-between w-full">
                     <h2 className="text-lg font-bold text-black md:text-2xl">{item.category.title}</h2>
                     <Link href={`/${item.category.value}`} className="flex items-center self-end">
-                      <Badge className="flex items-center gap-2 bg-green-400 cursor-pointer hover:bg-green-400">
+                      <Badge className="flex items-center gap-2 bg-brand-400 cursor-pointer hover:bg-brand-400">
                         <p className="text-sm text-white">Еще {item.productsCounter - 6}</p>
                         <MoveRight color="white" size={15} />
                       </Badge>

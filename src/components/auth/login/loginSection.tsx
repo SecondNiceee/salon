@@ -1,28 +1,21 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { useForm, type SubmitHandler } from 'react-hook-form'
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { request } from '@/utils/request'
-import type { RequestError } from '@/utils/request'
-import { ArrowLeft, Mail, CheckCircle } from 'lucide-react'
-import cl from '../auth.module.css'
-import { useAuthStore } from '@/entities/auth/authStore'
-import AuthPicker from '../ui/login-or-registrate-picker'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema } from '../validation/schemas'
-import z from 'zod'
-import { emailSchema } from '../validation/validation-constants'
+import { useEffect, useState } from "react"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { request } from "@/utils/request"
+import type { RequestError } from "@/utils/request"
+import { ArrowLeft, Mail, CheckCircle } from "lucide-react"
+import cl from "../auth.module.css"
+import { useAuthStore } from "@/entities/auth/authStore"
+import AuthPicker from "../ui/login-or-registrate-picker"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema } from "../validation/schemas"
+import z from "zod"
+import { emailSchema } from "../validation/validation-constants"
 
 type LoginInputs = {
   email: string
@@ -33,30 +26,30 @@ type ForgotPasswordInputs = {
   email: string
 }
 interface ILoginSection {
-  mode: 'login' | 'register'
-  setMode: (prev: 'login' | 'register') => void
+  mode: "login" | "register"
+  setMode: (prev: "login" | "register") => void
 }
 
 const forgotSchema = z.object({
-  email : emailSchema
+  email: emailSchema,
 })
 
 export default function LoginSection({ mode, setMode }: ILoginSection) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<RequestError | null>(null)
-  const [loginMode, setLoginMode] = useState<'login' | 'forgot-password' | 'success'>('login')
+  const [loginMode, setLoginMode] = useState<"login" | "forgot-password" | "success">("login")
   const { login } = useAuthStore()
 
   const loginForm = useForm<LoginInputs>({
-    mode: 'onBlur',
-    defaultValues: { email: '', password: '' },
-    resolver : zodResolver(loginSchema)
+    mode: "onBlur",
+    defaultValues: { email: "", password: "" },
+    resolver: zodResolver(loginSchema),
   })
 
   const forgotForm = useForm<ForgotPasswordInputs>({
-    mode: 'onBlur',
-    defaultValues: { email: '' },
-    resolver : zodResolver(forgotSchema)
+    mode: "onBlur",
+    defaultValues: { email: "" },
+    resolver: zodResolver(forgotSchema),
   })
 
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (values) => {
@@ -77,15 +70,15 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
     setError(null)
     try {
       await request({
-        url: '/api/users/forgot-password',
-        method: 'POST',
+        url: "/api/users/forgot-password",
+        method: "POST",
         credentials: true,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: { email: values.email },
       })
-      setLoginMode('success')
+      setLoginMode("success")
     } catch (e) {
       const requestError = e as RequestError
       setError(requestError)
@@ -99,17 +92,17 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
   }, [loginMode])
 
   const resetToLogin = () => {
-    setLoginMode('login')
+    setLoginMode("login")
     setError(null)
     forgotForm.reset()
   }
 
-  if (loginMode === 'forgot-password') {
+  if (loginMode === "forgot-password") {
     return (
       <div className="space-y-6 px-8 py-6 md:px-10 md:py-8">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
-            <Mail className="w-8 h-8 text-green-600" />
+          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
+            <Mail className="w-8 h-8 text-brand-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900">Восстановление пароля</h3>
           <p className="text-gray-600 placeholder">Введите Email, чтобы сбросить пароль</p>
@@ -129,9 +122,7 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">
-                    Email
-                  </FormLabel>
+                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">Email</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -149,11 +140,11 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
 
             <div className="space-y-3">
               <Button
-                className="w-full h-12 text-base rounded-xl text-white bg-green-500 hover:bg-green-600"
+                className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
                 type="submit"
                 disabled={loading}
               >
-                {loading ? 'Отправляем...' : 'Отправить письмо'}
+                {loading ? "Отправляем..." : "Отправить письмо"}
               </Button>
 
               <Button
@@ -172,11 +163,11 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
     )
   }
 
-  if (loginMode === 'success') {
+  if (loginMode === "success") {
     return (
       <div className="space-y-6 text-center px-8 py-6 md:px-10 md:py-8">
-        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
-          <CheckCircle className="w-8 h-8 text-green-600" />
+        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
+          <CheckCircle className="w-8 h-8 text-brand-600" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-gray-900">Письмо отправлено!</h3>
@@ -213,9 +204,7 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">
-                    Почта
-                  </FormLabel>
+                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">Почта</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -236,9 +225,7 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">
-                    Пароль
-                  </FormLabel>
+                  <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
@@ -256,19 +243,19 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
             <div className="flex items-center justify-end -mt-1">
               <button
                 type="button"
-                onClick={() => setLoginMode('forgot-password')}
-                className="text-sm text-green-600 hover:text-green-700 hover:underline font-medium transition-colors"
+                onClick={() => setLoginMode("forgot-password")}
+                className="text-sm text-brand-600 hover:text-brand-700 hover:underline font-medium transition-colors"
               >
                 Забыли пароль?
               </button>
             </div>
 
             <Button
-              className="w-full h-12 text-base rounded-xl text-white bg-green-500 hover:bg-green-600"
+              className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Входим...' : 'Войти'}
+              {loading ? "Входим..." : "Войти"}
             </Button>
           </form>
         </Form>

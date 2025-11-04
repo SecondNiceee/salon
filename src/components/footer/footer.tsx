@@ -13,7 +13,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Logo and Social Icons */}
           <div className="md:col-span-1">
-            <h2 className="mb-4 text-2xl font-bold text-green-600">ГрандБАЗАР</h2>
+            <h2 className="mb-4 text-2xl font-bold text-pink-600">Академия Спа</h2>
             <div className="flex mb-4 space-x-3">
               {/* VK Icon */}
               <Link
@@ -41,21 +41,6 @@ export async function Footer() {
                 />
               </Link>
 
-              {/* YouTube Icon */}
-              <Link
-                rel="noopener norreferrer"
-                target="_blank"
-                href={siteSettings?.socialLinks?.youtube || "#"}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                <Image
-                  className="w-6 h-6"
-                  width={24}
-                  height={24}
-                  alt="YOUTUBE ICON ГрандБАЗАР"
-                  src={"/youtube-icon.svg"}
-                />
-              </Link>
 
               {/* Instagram Icon */}
               <Link
@@ -73,15 +58,6 @@ export async function Footer() {
                 />
               </Link>
             </div>
-            <p className="text-sm text-gray-500">
-              © {siteSettings?.companyInfo?.year} {siteSettings?.companyInfo?.legalName}
-            </p>
-            {siteSettings?.companyInfo?.inn && (
-              <p className="text-sm text-gray-500 mt-1">ИНН: {siteSettings.companyInfo.inn}</p>
-            )}
-            {siteSettings?.companyInfo?.legalAddress && (
-              <p className="text-sm text-gray-500 mt-1">{siteSettings.companyInfo.legalAddress}</p>
-            )}
           </div>
 
           {/* Navigation Links */}
@@ -91,7 +67,7 @@ export async function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link href="/about" className="text-sm text-gray-600 hover:text-gray-800">
-                    О нас
+                    О салоне
                   </Link>
                 </li>
               </ul>
@@ -100,23 +76,6 @@ export async function Footer() {
             {/* Column 2 */}
             <div>
               <ul className="space-y-3">
-                <li>
-                  {siteSettings?.companyInfo?.offerDocument &&
-                  typeof siteSettings.companyInfo.offerDocument !== "string" ? (
-                    <a
-                      href={(siteSettings.companyInfo.offerDocument as Media).url || ""}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-gray-600 hover:text-gray-800"
-                    >
-                      Оферта
-                    </a>
-                  ) : (
-                    <Link href="/offer" className="text-sm text-gray-600 hover:text-gray-800">
-                      Оферта
-                    </Link>
-                  )}
-                </li>
                 <li>
                   {siteSettings?.companyInfo?.privacyPolicyDocument &&
                   typeof siteSettings.companyInfo.privacyPolicyDocument !== "string" ? (

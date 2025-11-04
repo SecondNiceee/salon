@@ -35,7 +35,7 @@ const VerifyEmailPage = async ({ searchParams }: { searchParams: Promise<any> | 
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button asChild className="w-full h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl">
+            <Button asChild className="w-full h-12 bg-pink-500 hover:bg-pink-600 text-white rounded-xl">
               <Link href={routerConfig.home} className="inline-flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
                 На главную
@@ -50,20 +50,20 @@ const VerifyEmailPage = async ({ searchParams }: { searchParams: Promise<any> | 
   try {
     await payload.verifyEmail({ collection: "users", token })
     return (
-      <main className="h-[90vh] bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
+      <main className="h-[90vh] bg-gradient-to-br from-pink-50 to-rose-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-xl border-0">
           <CardHeader className="text-center pb-4">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            <div className="mx-auto w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8 text-pink-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Email подтверждён!</CardTitle>
             <CardDescription className="text-gray-600">
-              Добро пожаловать в <span className="font-semibold text-green-600">ГРАНДБАЗАР</span>! Теперь вы можете
+              Добро пожаловать в <span className="font-semibold text-pink-600">Академия Спа</span>! Теперь вы можете
               войти в свой аккаунт и начать покупки.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button asChild className="w-full h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl">
+            <Button asChild className="w-full h-12 bg-pink-500 hover:bg-pink-600 text-white rounded-xl">
               <Link href={routerConfig.home} className="inline-flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
                 Перейти к покупкам
@@ -90,7 +90,7 @@ const VerifyEmailPage = async ({ searchParams }: { searchParams: Promise<any> | 
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button asChild className="w-full h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl">
+            <Button asChild className="w-full h-12 bg-pink-500 hover:bg-pink-600 text-white rounded-xl">
               <Link href={routerConfig.home} className="inline-flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
                 На главную

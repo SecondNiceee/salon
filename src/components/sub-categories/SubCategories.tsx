@@ -49,8 +49,8 @@ const SubCategories = forwardRef<HTMLDivElement, ISubCategories>(
     }
 
     return (
-      <div className="flex sticky z-20 top-[150px] sm:top-[173px] pb-3 pt-3 md:top-[200px] mx-auto bg-white ">
-        <div className="max-w-7xl w-full px-4 mx-auto">
+      <div className="flex z-20 top-[150px] sm:top-[173px] pb-3 pt-0 md:top-[200px] mx-auto bg-gray-50 ">
+        <div className="max-w-7xl w-full pt-4 px-4 mx-auto">
           <div
             ref={setCombinedRef}
             className="flex gap-4 overflow-x-scroll overflow-y-hidden hide-scrollbar overscroll-x-contain overscroll-y-none touch-pan-x"

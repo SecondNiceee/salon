@@ -155,7 +155,7 @@ useEffect(() => {
 
   return (
     <>
-    <section className="products-sub bg-gray-50">
+    <section className="products-sub bg-gray-50 shadow-[0_-6px_12px_-4px_rgba(0,0,0,0.05)]">
       <SubCategories ref={badgesContainerRef} activeSubCategory={activeSubCategory} badgesRef={badgesRef} sectionsRef={sectionsRef} sortedProducts={sortedProducts} />
       <div className="max-w-7xl px-4 flex flex-col mx-auto pb-16">
         <div className="flex flex-col gap-5 mt-2">
@@ -187,7 +187,7 @@ useEffect(() => {
           <div className="flex items-center justify-center mt-8">
             <button
               onClick={toNextCategory}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
             >
              <p className='text-white text-sm md:text-base font-semibold'>К разделу "{categories[currentCategoryIndex + 1].title}"</p> 
             <ArrowRight color='white' size={20} />

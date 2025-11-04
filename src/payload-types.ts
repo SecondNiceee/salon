@@ -71,7 +71,6 @@ export interface Config {
     media: Media;
     categories: Category;
     products: Product;
-    carts: Cart;
     orders: Order;
     reviews: Review;
     favorites: Favorite;
@@ -86,7 +85,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
-    carts: CartsSelect<false> | CartsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
@@ -243,29 +241,6 @@ export interface Product {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts".
- */
-export interface Cart {
-  id: number;
-  /**
-   * Cart owner (auto-assigned)
-   */
-  user: number | User;
-  /**
-   * Items in cart
-   */
-  items?:
-    | {
-        product: number | Product;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
 export interface Order {
@@ -392,10 +367,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
-      } | null)
-    | ({
-        relationTo: 'carts';
-        value: number | Cart;
       } | null)
     | ({
         relationTo: 'orders';
@@ -527,22 +498,6 @@ export interface ProductsSelect<T extends boolean = true> {
   recommendedProducts?: T;
   averageRating?: T;
   reviewsCount?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "carts_select".
- */
-export interface CartsSelect<T extends boolean = true> {
-  user?: T;
-  items?:
-    | T
-    | {
-        product?: T;
-        quantity?: T;
-        id?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -706,26 +661,18 @@ export interface SiteSetting {
      */
     legalAddress?: string | null;
     /**
-     * Загрузите документ оферты в формате PDF
-     */
-    offerDocument?: (number | null) | Media;
-    /**
      * Загрузите политику конфиденциальности в формате PDF
      */
     privacyPolicyDocument?: (number | null) | Media;
   };
   /**
-   * Настройки минимальной суммы заказа и стоимости доставки
+   * Настройки минимальной суммы заказа(Для физических товаров)
    */
   orderSettings: {
     /**
      * Минимальная сумма заказа для оформления
      */
     minOrderAmount: number;
-    /**
-     * Стоимость доставки заказа
-     */
-    deliveryFee: number;
   };
   /**
    * Ссылки на ваши социальные сети и мессенджеры
@@ -736,10 +683,6 @@ export interface SiteSetting {
      */
     email?: string | null;
     /**
-     * Ссылка на WhatsApp (номер телефона или ссылка)
-     */
-    whatsApp?: string | null;
-    /**
      * Ссылка на страницу ВКонтакте
      */
     vk?: string | null;
@@ -747,10 +690,6 @@ export interface SiteSetting {
      * Ссылка на Telegram канал или бот
      */
     telegram?: string | null;
-    /**
-     * Ссылка на YouTube канал
-     */
-    youtube?: string | null;
     /**
      * Ссылка на Instagram профиль
      */
@@ -788,23 +727,19 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         phone?: T;
         inn?: T;
         legalAddress?: T;
-        offerDocument?: T;
         privacyPolicyDocument?: T;
       };
   orderSettings?:
     | T
     | {
         minOrderAmount?: T;
-        deliveryFee?: T;
       };
   socialLinks?:
     | T
     | {
         email?: T;
-        whatsApp?: T;
         vk?: T;
         telegram?: T;
-        youtube?: T;
         instagram?: T;
       };
   updatedAt?: T;

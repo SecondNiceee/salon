@@ -1,7 +1,7 @@
-import React from 'react'
-import { Button } from '../ui/button'
-import Image from 'next/image'
-import { useCatalogStore } from '@/entities/catalog/catalogStore'
+"use client"
+import { Button } from "../ui/button"
+import Image from "next/image"
+import { useCatalogStore } from "@/entities/catalog/catalogStore"
 
 const CatalogButton = () => {
   const { setPopupCatalogOpened } = useCatalogStore()
@@ -11,16 +11,16 @@ const CatalogButton = () => {
         setPopupCatalogOpened(true)
       }}
       variant="outline"
-      className="flex h-[53.6px] sm:h-auto justify-start md:justify-center w-full md:w-auto items-center gap-2 bg-transparent  lg:h-11"
+      className="flex h-[53.6px] sm:h-auto md:h-10 lg:h-11 md:min-w-[140px] lg:min-w-[200px] justify-start md:justify-center items-center gap-2 bg-transparent hover:bg-gray-50 transition-colors"
     >
       <Image
-        alt="ГрандБАЗАР магазин"
+        alt="Каталог услуг"
         width={24}
         height={24}
-        src={'/catalog.svg'}
+        src={"/catalog.svg"}
         className="lg:w-[30px] lg:min-w-[30px] lg:h-[30px] my-0"
       />
-      <span className="text-sm font-medium block md:hidden xl:block">Каталог</span>
+      <span className="text-sm font-medium block md:block lg:block">Каталог</span>
     </Button>
   )
 }

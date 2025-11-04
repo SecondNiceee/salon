@@ -1,9 +1,8 @@
 'use client'
 
-import { Heart, ShoppingCart, Trash2 } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
 import { useFavoritesStore } from '@/entities/favorites/favoritesStore'
-import { useCartStore } from '@/entities/cart/cartStore'
 import { ProductCard } from '@/components/product-card/ProductCard'
 import { Button } from '@/components/ui/button'
 import type { Product } from '@/payload-types'
@@ -19,7 +18,6 @@ export default function FavoritesClientPage() {
     hasMore,
     isLoadingMore,
   } = useFavoritesStore()
-  const { increment } = useCartStore()
   const [isLoading, setIsLoading] = useState(true)
   const [loadMoreElement, setLoadMoreElement] = useState<HTMLDivElement | null>(null)
 
@@ -55,9 +53,6 @@ export default function FavoritesClientPage() {
     await removeFromFavorites(productId)
   }
 
-  const handleAddToCart = (product: Product) => {
-    increment(product)
-  }
 
   if (isLoading || loading) {
     return (

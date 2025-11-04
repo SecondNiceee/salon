@@ -10,8 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CheckCircle2, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { request, type RequestError } from "@/utils/request"
 import Link from "next/link"
-import { useRouter } from "next/navigation";
-import cl from "../auth.module.css";
+import { useRouter } from "next/navigation"
+import cl from "../auth.module.css"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { resetPasswordSchema } from "../validation/schemas"
 import { routerConfig } from "@/config/router.config"
@@ -25,7 +25,6 @@ interface PasswordResetFormProps {
   token: string
 }
 
-
 export default function PasswordResetForm({ token }: PasswordResetFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -37,7 +36,7 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
   const form = useForm<ResetPasswordInputs>({
     mode: "onBlur",
     defaultValues: { password: "", confirmPassword: "" },
-    resolver : zodResolver(resetPasswordSchema)
+    resolver: zodResolver(resetPasswordSchema),
   })
 
   const onSubmit: SubmitHandler<ResetPasswordInputs> = async (values) => {
@@ -72,8 +71,8 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
     return (
       <Card className="w-full max-w-md mx-auto shadow-lg border-0">
         <CardHeader className="text-center pb-4">
-          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-6 h-6 text-green-600" />
+          <div className="mx-auto w-12 h-12 bg-brand-100 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle2 className="w-6 h-6 text-brand-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">Пароль изменен</CardTitle>
           <CardDescription className="text-gray-600">
@@ -81,7 +80,7 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium">
+          <Link href="/" className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700 font-medium">
             <ArrowLeft className="w-4 h-4" />
             Перейти на главную
           </Link>
@@ -167,13 +166,16 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 text-base rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium"
+              className="w-full h-12 text-base rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium"
             >
               {loading ? "Сохраняем..." : "Сохранить пароль"}
             </Button>
 
             <div className="text-center">
-              <Link href="/" className="gap-2 text-center mx-auto justify-center text-gray-600 flex items-center hover:text-gray-800 text-sm">
+              <Link
+                href="/"
+                className="gap-2 text-center mx-auto justify-center text-gray-600 flex items-center hover:text-gray-800 text-sm"
+              >
                 <ArrowLeft className="w-4 h-4" />
                 Вернуться на главную
               </Link>

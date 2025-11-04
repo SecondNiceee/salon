@@ -188,16 +188,6 @@ export const SiteSettings: GlobalConfig = {
           },
         },
         {
-          name: "offerDocument",
-          type: "upload",
-          relationTo: "media",
-          label: "Документ оферты (PDF)",
-          required: false,
-          admin: {
-            description: "Загрузите документ оферты в формате PDF",
-          },
-        },
-        {
           name: "privacyPolicyDocument",
           type: "upload",
           relationTo: "media",
@@ -214,7 +204,7 @@ export const SiteSettings: GlobalConfig = {
       type: "group",
       label: "Настройки заказов и доставки",
       admin: {
-        description: "Настройки минимальной суммы заказа и стоимости доставки",
+        description: "Настройки минимальной суммы заказа(Для физических товаров)",
       },
       required: true,
       fields: [
@@ -226,16 +216,6 @@ export const SiteSettings: GlobalConfig = {
           defaultValue: 500,
           admin: {
             description: "Минимальная сумма заказа для оформления",
-          },
-        },
-        {
-          name: "deliveryFee",
-          type: "number",
-          label: "Стоимость доставки (₽)",
-          required: true,
-          defaultValue: 199,
-          admin: {
-            description: "Стоимость доставки заказа",
           },
         },
       ],
@@ -260,16 +240,6 @@ export const SiteSettings: GlobalConfig = {
           },
         },
         {
-          name: "whatsApp",
-          type: "text",
-          label: "WhatsApp",
-          required: false,
-          defaultValue: "ссылка на ваш ватсапп акк",
-          admin: {
-            description: "Ссылка на WhatsApp (номер телефона или ссылка)",
-          },
-        },
-        {
           name: "vk",
           type: "text",
           label: "VK",
@@ -287,16 +257,6 @@ export const SiteSettings: GlobalConfig = {
           defaultValue: "https://t.me/grandbazar",
           admin: {
             description: "Ссылка на Telegram канал или бот",
-          },
-        },
-        {
-          name: "youtube",
-          type: "text",
-          label: "YouTube",
-          required: false,
-          defaultValue: "https://youtube.com/@grandbazar",
-          admin: {
-            description: "Ссылка на YouTube канал",
           },
         },
         {
