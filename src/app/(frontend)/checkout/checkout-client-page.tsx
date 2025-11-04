@@ -8,11 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { useCartStore } from "@/entities/cart/cartStore"
-import { useAddressStore } from "@/entities/address/addressStore"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { useSiteSettings } from "@/entities/siteSettings/SiteSettingsStore"
-import AddressPopup from "@/components/address-popup/address-popup"
-import { ArrowLeft, MapPin, Phone, CreditCard, Edit3, Save, AlertTriangle } from "lucide-react"
+import { ArrowLeft, Phone, CreditCard, Save, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { toast } from "sonner"
@@ -25,7 +23,6 @@ import type { Media } from "@/payload-types"
 export default function CheckoutClientPage() {
   const router = useRouter()
   const { items, totalPrice, totalCount, clear } = useCartStore()
-  const { currentAddress, getFullAddress, loadAddress, openDialog } = useAddressStore()
   const { addOrder } = useOrdersStore()
   const { user } = useAuthStore()
   const { updateProfile } = useAuthStore()
@@ -37,10 +34,6 @@ export default function CheckoutClientPage() {
   const [isProcessingOrder, setIsProcessingOrder] = useState(false)
   const [showMinOrderDialog, setShowMinOrderDialog] = useState(false)
   const [privacyPolicyAccepted, setPrivacyPolicyAccepted] = useState(false)
-
-  useEffect(() => {
-    loadAddress()
-  }, [loadAddress])
 
   useEffect(() => {
     if (user?.phone) {
@@ -76,13 +69,13 @@ export default function CheckoutClientPage() {
     }
   }
 
-  const handlePayment = async () => {
+  const handleSubmitOrder = async () => {
     if (!user) {
       openGuestDialog("order")
       return
     }
 
-    if (!isPhoneValid() || !currentAddress || items.length === 0) {
+    if (!isPhoneValid() || items.length === 0) {
       toast.error("Заполните все обязательные поля")
       return
     }
@@ -108,48 +101,23 @@ export default function CheckoutClientPage() {
           quantity: item.quantity,
           price: item.product.price || 0,
         })),
-        deliveryAddress: {
-          address: currentAddress.street,
-          apartment: currentAddress.apartment || "",
-          entrance: currentAddress.entrance || "",
-          floor: currentAddress.floor || "",
-          comment: currentAddress.comment || "",
-        },
         customerPhone: normalizePhone(phone),
         totalAmount: totalPrice + deliveryFee,
         deliveryFee: deliveryFee,
+        notes: "Заказ создан через сайт",
       }
 
-      const paymentResponse = await fetch("/api/yookassa/create-payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(orderData),
-      })
-
-      if (!paymentResponse.ok) {
-        throw new Error("Ошибка создания платежа")
-      }
-
-      const paymentData = await paymentResponse.json()
-
-      if (paymentData.confirmation?.confirmation_url) {
-        window.location.href = paymentData.confirmation.confirmation_url
-      } else {
-        throw new Error("Не получена ссылка на оплату")
-      }
+      // Create order in database
+      await addOrder(orderData)
+      clear()
+      toast.success("Заказ успешно создан! С вами свяжутся для подтверждения.")
+      router.push("/account/orders")
     } catch (e) {
-      console.error("Ошибка при создании платежа:", e)
+      console.error("Ошибка при создании заказа:", e)
       toast.error("Ошибка при оформлении заказа. Попробуйте еще раз.")
     } finally {
       setIsProcessingOrder(false)
     }
-  }
-
-  const handleEditAddress = () => {
-    openDialog()
   }
 
   const isPhoneValid = () => {
@@ -159,7 +127,7 @@ export default function CheckoutClientPage() {
 
   const hasPhoneChanged = normalizePhone(phone) !== originalPhone && phone.trim() !== ""
 
-  const isOrderValid = isPhoneValid() && currentAddress && items.length > 0 && privacyPolicyAccepted
+  const isOrderValid = isPhoneValid() && items.length > 0 && privacyPolicyAccepted
 
   const deliveryFee = siteSettings?.orderSettings?.deliveryFee || 199
   const minOrderAmount = siteSettings?.orderSettings?.minOrderAmount || 500
@@ -237,17 +205,17 @@ export default function CheckoutClientPage() {
               </div>
 
               <Button
-                onClick={handlePayment}
+                onClick={handleSubmitOrder}
                 disabled={!isOrderValid || isProcessingOrder}
                 className="w-full bg-green-500 text-white hover:bg-green-600 font-bold py-6 text-xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all duration-200 hover:scale-[1.02] mt-4"
               >
                 {isProcessingOrder ? (
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 border-2 rounded-full border-white border-t-transparent animate-spin" />
-                    Переход к оплате...
+                    Создание заказа...
                   </div>
                 ) : (
-                  `Оплатить ${totalPrice + deliveryFee} ₽`
+                  `Создать заказ ${totalPrice + deliveryFee} ₽`
                 )}
               </Button>
             </CardContent>
@@ -259,44 +227,6 @@ export default function CheckoutClientPage() {
             <Card className="flex flex-col overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
-                  <MapPin className="w-6 h-6 text-blue-500" />
-                  Адрес доставки
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 pt-3">
-                <div
-                  onClick={handleEditAddress}
-                  className="group bg-gradient-to-r from-blue-50/80 to-purple-50/50 p-5 rounded-2xl cursor-pointer hover:shadow-lg transition-all duration-200 border border-blue-100/50 group-hover:border-blue-200 h-full flex flex-col justify-between min-h-[120px]"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-lg font-semibold leading-relaxed text-gray-900">
-                        {currentAddress ? getFullAddress() : "Адрес не указан"}
-                      </p>
-                      {currentAddress?.comment && (
-                        <p className="px-3 py-2 mt-2 text-sm text-gray-600 rounded-lg bg-white/60">
-                          💬 {currentAddress.comment}
-                        </p>
-                      )}
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="p-2 ml-3 transition-colors duration-200 rounded-full hover:bg-blue-100 group-hover:bg-blue-100"
-                    >
-                      <Edit3 className="w-4 h-4 text-blue-600" />
-                    </Button>
-                  </div>
-                  <p className="mt-3 text-xs text-blue-600 transition-opacity duration-200 opacity-70 group-hover:opacity-100">
-                    Нажмите для изменения адреса
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="flex flex-col overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-xl">
                   <Phone className="w-6 h-6 text-emerald-500" />
                   Контакты
                 </CardTitle>
@@ -305,7 +235,7 @@ export default function CheckoutClientPage() {
                 <div className="space-y-3 h-full flex flex-col justify-between min-h-[120px]">
                   <div className="space-y-3">
                     <label className="text-sm font-medium text-gray-600">
-                      По телефону мы сможем связаться с вами при доставке
+                      По телефону мы сможем связаться с вами для подтверждения заказа
                     </label>
                     <div className="flex gap-2">
                       <Input
@@ -360,8 +290,6 @@ export default function CheckoutClientPage() {
           </Card>
         </div>
       </div>
-
-      <AddressPopup />
 
       <Dialog open={showMinOrderDialog} onOpenChange={setShowMinOrderDialog}>
         <DialogContent className="max-w-md mx-auto bg-white border-0 shadow-2xl rounded-2xl p-6">

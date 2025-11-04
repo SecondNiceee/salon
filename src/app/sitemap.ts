@@ -34,25 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
       url: `${siteUrl}/contacts`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${siteUrl}/delivery`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${siteUrl}/payment`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
@@ -60,27 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const payload = await getPayload({ config })
-
-  let blogRoutes: MetadataRoute.Sitemap = []
-  try {
-    const blogsResult = await payload.find({
-      collection: "blogs",
-      limit: 1000,
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    })
-
-    blogRoutes = blogsResult.docs.map((blog) => ({
-      url: `${siteUrl}/blog/${blog.slug}`,
-      lastModified: safeDate(blog.updatedAt),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }))
-  } catch (e) {
-    console.error("Blogs sitemap error:", e)
-  }
 
   let categoryRoutes: MetadataRoute.Sitemap = []
   try {
@@ -129,5 +90,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Products sitemap error:", e)
   }
 
-  return [...staticRoutes, ...blogRoutes, ...categoryRoutes, ...productRoutes]
+  return [...staticRoutes, ...categoryRoutes, ...productRoutes]
 }

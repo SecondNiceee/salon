@@ -1,18 +1,16 @@
-'use client'
-import { Button } from '../../../ui/button'
-import { Menu, ShoppingCart, MapPin } from 'lucide-react'
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../../ui/sheet'
-import ProductSearch from '../../../product-search/ProductSearch'
-import CatalogButton from '../../../catalog-button/CatalogButton'
-import { useCartStore } from '@/entities/cart/cartStore'
-import { useMobileStore } from '@/entities/mobileMenu/mobileMenuStore'
-import UserLink from '../user-link/user-link'
-import AddressButton from '../address-button/address-button'
-import TopBar from '../top-bar/top-bar'
-import { useRouter } from 'next/navigation'
-import { routerConfig } from '@/config/router.config'
-import { useAuthDialogStore } from '@/entities/auth/authDialogStore'
-import { useAuthStore } from '@/entities/auth/authStore'
+"use client"
+import { Button } from "../../../ui/button"
+import { Menu, ShoppingCart } from "lucide-react"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../../ui/sheet"
+import ProductSearch from "../../../product-search/ProductSearch"
+import CatalogButton from "../../../catalog-button/CatalogButton"
+import { useCartStore } from "@/entities/cart/cartStore"
+import { useMobileStore } from "@/entities/mobileMenu/mobileMenuStore"
+import UserLink from "../user-link/user-link"
+import { useRouter } from "next/navigation"
+import { routerConfig } from "@/config/router.config"
+import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
+import { useAuthStore } from "@/entities/auth/authStore"
 
 const HeaderMobile = () => {
   const { open, totalCount } = useCartStore()
@@ -22,11 +20,11 @@ const HeaderMobile = () => {
   const { user } = useAuthStore()
   const { openDialog } = useAuthDialogStore()
   const clickHandler = () => {
-    setOpened(false);
+    setOpened(false)
     if (user) {
       router.push(`${routerConfig.profile}`)
     } else {
-      openDialog('login')
+      openDialog("login")
     }
   }
 
@@ -60,14 +58,10 @@ const HeaderMobile = () => {
                 <ShoppingCart className="h-5 w-5" />
                 <div className="flex flex-col items-start">
                   <span>Корзина</span>
-                  {totalCount > 0 && (
-                    <span className="text-sm text-gray-500">{totalCount} товаров</span>
-                  )}
+                  {totalCount > 0 && <span className="text-sm text-gray-500">{totalCount} товаров</span>}
                 </div>
                 {totalCount > 0 && (
-                  <span className="ml-auto bg-green-500 text-white text-xs rounded-full px-2 py-1">
-                    {totalCount}
-                  </span>
+                  <span className="ml-auto bg-green-500 text-white text-xs rounded-full px-2 py-1">{totalCount}</span>
                 )}
               </Button>
 
@@ -79,12 +73,6 @@ const HeaderMobile = () => {
                 <UserLink />
                 <p className="">Аккаунт</p>
               </Button>
-
-              <AddressButton className="w-full flex justify-start gap-3 p-4 h-auto border-2 border-gray-200 rounded-lg" />
-            </div>
-
-            <div className="mt-2">
-              <TopBar />
             </div>
           </SheetContent>
         </Sheet>

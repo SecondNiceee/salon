@@ -5,20 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { Package, Clock, CheckCircle, Truck, XCircle, RefreshCw, ChevronDown, ChevronUp, MapPin } from "lucide-react"
+import { Package, Clock, CheckCircle, XCircle, RefreshCw, ChevronDown, ChevronUp, MapPin } from "lucide-react"
 import { useRouter } from "next/navigation"
 import useAuth from "@/hooks/useAuth"
 import type { Media } from "@/payload-types"
 import { toast } from "sonner"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { formatDate } from "@/utils/formatData"
-import { getFullAddress } from "@/utils/getFullAddress"
 
 const statusConfig = {
-  pending: { label: "Ожидает обработки", color: "bg-yellow-500", icon: Clock },
-  confirmed: { label: "Подтвержден", color: "bg-blue-500", icon: CheckCircle },
-  preparing: { label: "Готовится", color: "bg-orange-500", icon: Package },
-  delivering: { label: "В доставке", color: "bg-purple-500", icon: Truck },
+  pending: { label: "Принят", color: "bg-yellow-500", icon: Clock },
+  waiting_call: { label: "Ожидаем звонок", color: "bg-blue-500", icon: Clock },
   delivered: { label: "Доставлен", color: "bg-green-500", icon: CheckCircle },
   cancelled: { label: "Отменен", color: "bg-red-500", icon: XCircle },
 }
@@ -29,7 +26,6 @@ export default function OrdersClientPage() {
   const { orders, loading, error, loadOrders, clearOrders, refreshOrder, refreshingOrderId } = useOrdersStore()
 
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
-  const [expandedAddresses, setExpandedAddresses] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     loadOrders()
@@ -94,7 +90,6 @@ export default function OrdersClientPage() {
             const status = statusConfig[order.status as keyof typeof statusConfig]
             const StatusIcon = status.icon
             const isItemsExpanded = expandedItems[order.id] || false
-            const isAddressExpanded = expandedAddresses[order.id] || false
             const isRefreshing = refreshingOrderId === order.id
 
             return (
@@ -142,6 +137,7 @@ export default function OrdersClientPage() {
                                 media?.url ||
                                 "/placeholder.svg?height=48&width=48&query=product-thumbnail" ||
                                 "/placeholder.svg" ||
+                                "/placeholder.svg" ||
                                 "/placeholder.svg"
                               }
                               alt={media?.alt || product?.title || "Товар"}
@@ -188,18 +184,15 @@ export default function OrdersClientPage() {
                   </div>
 
                   {/* Delivery Address */}
-                  <div className="bg-blue-50 p-2 sm:p-3 rounded-lg">
-                    <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600 flex-shrink-0" />
-                      <h4 className="font-medium text-xs sm:text-sm text-gray-900">Адрес доставки:</h4>
+                  {order.address && (
+                    <div className="bg-blue-50 p-2 sm:p-3 rounded-lg">
+                      <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600 flex-shrink-0" />
+                        <h4 className="font-medium text-xs sm:text-sm text-gray-900">Адрес доставки:</h4>
+                      </div>
+                      <p className="text-xs sm:text-sm text-gray-600 leading-tight">{order.address}</p>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 leading-tight">
-                      {getFullAddress(order.deliveryAddress)}
-                    </p>
-                    {order.deliveryAddress?.comment && isAddressExpanded && (
-                      <p className="text-xs text-gray-500 mt-1 leading-tight">💬 {order.deliveryAddress.comment}</p>
-                    )}
-                  </div>
+                  )}
 
                   {/* Order Total */}
                   <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-3 sm:p-4 rounded-lg">

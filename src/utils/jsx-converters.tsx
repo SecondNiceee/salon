@@ -1,4 +1,3 @@
-
 import type { JSXConvertersFunction } from "@payloadcms/richtext-lexical/react";
 import type {
   DefaultNodeTypes

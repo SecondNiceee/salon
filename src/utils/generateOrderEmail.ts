@@ -351,4 +351,3 @@ export function generateOrderEmailHTML(orderData: {
       html: generateOrderEmailHTML(orderData),
     }
   }
-  

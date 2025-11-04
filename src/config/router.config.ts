@@ -1,14 +1,12 @@
-class Router{
-    profile = "/profile"
-    home = "/"
-    checkout = "/checkout"
-    orders = "/orders"
-    favorited = "/favorites"
-    mobileLogin = "/login"
-    mobileCart = "/mobile-cart"
-    mobileCatalog = "/catalog"
-    product = "/product"
-    blog = "/blog"
-
+class Router {
+  profile = "/profile"
+  home = "/"
+  checkout = "/checkout"
+  orders = "/orders"
+  favorited = "/favorites"
+  mobileLogin = "/login"
+  mobileCart = "/mobile-cart"
+  mobileCatalog = "/catalog"
+  product = "/product"
 }
-export const routerConfig = new Router();
+export const routerConfig = new Router()

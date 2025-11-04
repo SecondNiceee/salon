@@ -1,14 +1,12 @@
-'use client'
-import React from 'react'
-import { Menu } from 'lucide-react'
-import Cart from '@/components/cart/cart'
-import CatalogButton from '@/components/catalog-button/CatalogButton'
-import ProductSearch from '@/components/product-search/ProductSearch'
-import { Button } from '@/components/ui/button'
-import { SheetTrigger, SheetContent, SheetTitle, Sheet } from '@/components/ui/sheet'
-import UserLink from '../user-link/user-link'
-import AddressButton from '../address-button/address-button'
-import HeaderLogo from '../header-logo/header-logo'
+"use client"
+import { Menu } from "lucide-react"
+import Cart from "@/components/cart/cart"
+import CatalogButton from "@/components/catalog-button/CatalogButton"
+import ProductSearch from "@/components/product-search/ProductSearch"
+import { Button } from "@/components/ui/button"
+import { SheetTrigger, SheetContent, SheetTitle, Sheet } from "@/components/ui/sheet"
+import UserLink from "../user-link/user-link"
+import HeaderLogo from "../header-logo/header-logo"
 
 const HeaderDesktop = () => {
   return (
@@ -20,7 +18,7 @@ const HeaderDesktop = () => {
       </div>
 
       <CatalogButton />
-      {/* Menu for tablet - shows address and delivery info */}
+      {/* Menu for tablet */}
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="lg:hidden w-10 h-10 p-2 bg-transparent">
@@ -29,15 +27,11 @@ const HeaderDesktop = () => {
         </SheetTrigger>
         <SheetContent side="right" className="w-80 bg-white">
           <SheetTitle className="space-y-4 mt-6">
-            <AddressButton className="cursor-pointer border-black border-solid border-2 rounded-lg p-2 flex  " />
             <Cart />
           </SheetTitle>
         </SheetContent>
       </Sheet>
 
-      {/* Address info - hidden on tablet, shown on desktop */}
-
-      <AddressButton className="hidden lg:flex" />
       {/* Mini cart summary (dynamic) */}
       <Cart />
       <UserLink />

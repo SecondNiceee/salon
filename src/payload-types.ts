@@ -72,12 +72,10 @@ export interface Config {
     categories: Category;
     products: Product;
     carts: Cart;
-    addresses: Address;
     orders: Order;
     reviews: Review;
     favorites: Favorite;
     pages: Page;
-    blogs: Blog;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,12 +87,10 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     carts: CartsSelect<false> | CartsSelect<true>;
-    addresses: AddressesSelect<false> | AddressesSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    blogs: BlogsSelect<false> | BlogsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -149,9 +145,7 @@ export interface User {
   /**
    * Выберите коллекции, к которым пользователь будет иметь доступ. Если не выбрано ничего, доступ ко всем коллекциям (только для админов).
    */
-  accessCollections?:
-    | ('users' | 'categories' | 'products' | 'media' | 'orders' | 'reviews' | 'pages' | 'blogs')[]
-    | null;
+  accessCollections?: ('users' | 'categories' | 'products' | 'media' | 'orders' | 'reviews' | 'pages')[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -245,10 +239,6 @@ export interface Product {
      */
     description?: string | null;
   };
-  weight: {
-    value: number;
-    unit: 'кг' | 'г' | 'л' | 'мл';
-  };
   /**
    * Выберите только категорию, без подкатегорий
    */
@@ -258,20 +248,11 @@ export interface Product {
    */
   subCategory: number | Category;
   /**
-   * Загрузите основное изображение продукта
+   * Загрузите основное изображение товара
    */
   image: number | Media;
   description?: string | null;
-  storageConditions?: string | null;
-  ingredients?: string | null;
   recommendedProducts?: (number | Product)[] | null;
-  nutritionalValue?: {
-    calories?: number | null;
-    proteins?: number | null;
-    carbohydrates?: number | null;
-    fats?: number | null;
-    fiber?: number | null;
-  };
   /**
    * Обновляется автоматически при добавлении отзыва
    */
@@ -305,31 +286,6 @@ export interface Cart {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "addresses".
- */
-export interface Address {
-  id: number;
-  /**
-   * Address owner (auto-assigned)
-   */
-  user?: (number | null) | User;
-  /**
-   * Полный адрес улицы
-   */
-  street: string;
-  apartment?: string | null;
-  entrance?: string | null;
-  floor?: string | null;
-  comment?: string | null;
-  coordinates?: {
-    lat?: number | null;
-    lng?: number | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
 export interface Order {
@@ -342,7 +298,7 @@ export interface Order {
    * Order owner (auto-assigned)
    */
   user: number | User;
-  status: 'pending' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
+  status: 'pending' | 'waiting_call';
   /**
    * Order items
    */
@@ -355,13 +311,6 @@ export interface Order {
     price: number;
     id?: string | null;
   }[];
-  deliveryAddress: {
-    address: string;
-    apartment?: string | null;
-    entrance?: string | null;
-    floor?: string | null;
-    comment?: string | null;
-  };
   /**
    * Customer phone number
    */
@@ -370,10 +319,6 @@ export interface Order {
    * Total order amount including delivery
    */
   totalAmount: number;
-  /**
-   * Delivery fee
-   */
-  deliveryFee: number;
   /**
    * Additional notes or comments
    */
@@ -447,49 +392,6 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs".
- */
-export interface Blog {
-  id: number;
-  /**
-   * SLUG на англ.языке без пробелов, для пути странички
-   */
-  slug: string;
-  /**
-   * Заголовок для SEO
-   */
-  title: string;
-  /**
-   * Описание для SEO
-   */
-  description: string;
-  /**
-   * Фоновое изображение для блога(на страничке выбора блогов)
-   */
-  background: number | Media;
-  /**
-   * Контент
-   */
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -516,10 +418,6 @@ export interface PayloadLockedDocument {
         value: number | Cart;
       } | null)
     | ({
-        relationTo: 'addresses';
-        value: number | Address;
-      } | null)
-    | ({
         relationTo: 'orders';
         value: number | Order;
       } | null)
@@ -534,10 +432,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'blogs';
-        value: number | Blog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -656,28 +550,11 @@ export interface ProductsSelect<T extends boolean = true> {
         endDate?: T;
         description?: T;
       };
-  weight?:
-    | T
-    | {
-        value?: T;
-        unit?: T;
-      };
   category?: T;
   subCategory?: T;
   image?: T;
   description?: T;
-  storageConditions?: T;
-  ingredients?: T;
   recommendedProducts?: T;
-  nutritionalValue?:
-    | T
-    | {
-        calories?: T;
-        proteins?: T;
-        carbohydrates?: T;
-        fats?: T;
-        fiber?: T;
-      };
   averageRating?: T;
   reviewsCount?: T;
   updatedAt?: T;
@@ -701,26 +578,6 @@ export interface CartsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "addresses_select".
- */
-export interface AddressesSelect<T extends boolean = true> {
-  user?: T;
-  street?: T;
-  apartment?: T;
-  entrance?: T;
-  floor?: T;
-  comment?: T;
-  coordinates?:
-    | T
-    | {
-        lat?: T;
-        lng?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
@@ -735,18 +592,8 @@ export interface OrdersSelect<T extends boolean = true> {
         price?: T;
         id?: T;
       };
-  deliveryAddress?:
-    | T
-    | {
-        address?: T;
-        apartment?: T;
-        entrance?: T;
-        floor?: T;
-        comment?: T;
-      };
   customerPhone?: T;
   totalAmount?: T;
-  deliveryFee?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -785,19 +632,6 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs_select".
- */
-export interface BlogsSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
-  description?: T;
-  background?: T;
-  content?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

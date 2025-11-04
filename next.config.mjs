@@ -33,22 +33,22 @@ const nextConfig = {
     ]
   },
   // Your Next.js config here
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'grandbazarr.ru',
-        port: '',
-        pathname: '/api/media/file/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '',
-        pathname: '/api/media/file/**',
-      },
-    ],
-  },
+  // images: {
+  //   remotePatterns: [
+  //     // {
+  //     //   protocol: 'https',
+  //     //   hostname: 'grandbazarr.ru',
+  //     //   port: '',
+  //     //   pathname: '/api/media/file/**',
+  //     // },
+  //     {
+  //       protocol: 'http',
+  //       hostname: 'localhost',
+  //       port: '3000',
+  //       pathname: '/api/media/file/**',
+  //     },
+  //   ],
+  // },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

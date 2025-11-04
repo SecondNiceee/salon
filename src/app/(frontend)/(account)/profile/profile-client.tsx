@@ -1,10 +1,8 @@
 "use client"
 
-import { ChevronRight, MapPin, UserIcon, Phone, Save } from "lucide-react"
+import { UserIcon, Phone, Save } from "lucide-react"
 import type React from "react"
-import { useAddressStore } from "@/entities/address/addressStore"
 import { useEffect, useState } from "react"
-import AddressPopup from "@/components/address-popup/address-popup"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/entities/auth/authStore"
@@ -15,15 +13,9 @@ import useAuth from "@/hooks/useAuth"
 export default function ProfileClientPage() {
   const { user } = useAuth()
   const { updateProfile } = useAuthStore()
-  const { currentAddress, openDialog, loadAddress, getFullAddress } = useAddressStore()
-
   const [phone, setPhone] = useState("")
   const [originalPhone, setOriginalPhone] = useState("")
   const [isUpdatingPhone, setIsUpdatingPhone] = useState(false)
-
-  useEffect(() => {
-    loadAddress()
-  }, [loadAddress])
 
   useEffect(() => {
     if (user?.phone) {
@@ -125,64 +117,6 @@ export default function ProfileClientPage() {
           </div>
         </div>
       </div>
-
-      <div className="space-y-6">
-        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-          Адрес доставки
-        </h3>
-
-        <button
-          type="button"
-          onClick={openDialog}
-          className="w-full flex items-center justify-between bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 transition-all duration-200 rounded-2xl px-6 py-5 border border-orange-100 shadow-sm hover:shadow-md group"
-        >
-          <div className="flex items-center gap-4">
-            <div className="min-w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
-              <MapPin className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-sm md:text-base text-gray-900 font-medium">
-              {currentAddress ? getFullAddress() : "Добавить адрес доставки"}
-            </span>
-          </div>
-          <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-orange-500 transition-colors duration-200" />
-        </button>
-
-        {currentAddress && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <button
-              type="button"
-              onClick={openDialog}
-              className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 text-center border border-purple-100 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer group"
-            >
-              <div className="text-xs text-purple-600 mb-2 font-semibold uppercase tracking-wide group-hover:text-purple-700">
-                Кв/офис
-              </div>
-              <div className="text-gray-900 font-bold text-lg group-hover:text-purple-800">
-                {currentAddress.apartment || "—"}
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={openDialog}
-              className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 text-center border border-teal-100 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer group"
-            >
-              <div className="text-xs text-teal-600 mb-2 font-semibold uppercase tracking-wide group-hover:text-teal-700">
-                Подъезд
-              </div>
-              <div className="text-gray-900 font-bold text-lg group-hover:text-teal-800">
-                {currentAddress.entrance || "—"}
-              </div>
-            </button>
-            <button onClick={openDialog} className="bg-gradient-to-br cursor-pointer from-rose-50 to-pink-50 rounded-2xl p-5 text-center border border-rose-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-              <div className="text-xs text-rose-600 mb-2 font-semibold uppercase tracking-wide">Этаж</div>
-              <div className="text-gray-900 font-bold text-lg">{currentAddress.floor || "—"}</div>
-            </button>
-          </div>
-        )}
-      </div>
-
-      <AddressPopup />
     </div>
   )
 }

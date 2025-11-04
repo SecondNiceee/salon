@@ -13,7 +13,6 @@ export default function robots(): MetadataRoute.Robots {
         "/forgotPassword",
         "/verify",
         "/mobile-cart",
-        "/payment/success",
         "/api/",
         "/_next/",
         "/admin/",

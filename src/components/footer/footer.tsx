@@ -1,5 +1,5 @@
 import { getSiteSettings } from "@/actions/server/globals/getSiteSettings"
-import { Media } from "@/payload-types"
+import type { Media } from "@/payload-types"
 import Image from "next/image"
 import Link from "next/link"
 export const dynamic = "auto"
@@ -94,27 +94,12 @@ export async function Footer() {
                     О нас
                   </Link>
                 </li>
-                <li>
-                  <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-800">
-                    Блог
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/payment" className="text-sm text-gray-600 hover:text-gray-800">
-                    Оплата
-                  </Link>
-                </li>
               </ul>
             </div>
 
             {/* Column 2 */}
             <div>
               <ul className="space-y-3">
-                <li>
-                  <Link href="/delivery" className="text-sm text-gray-600 hover:text-gray-800">
-                    Доставка
-                  </Link>
-                </li>
                 <li>
                   {siteSettings?.companyInfo?.offerDocument &&
                   typeof siteSettings.companyInfo.offerDocument !== "string" ? (

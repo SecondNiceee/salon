@@ -1,12 +1,12 @@
-import { isAdmin, isOwn } from '@/utils/accessUtils'
-import { createEmail } from '@/utils/createEmail'
-import type { CollectionConfig, PayloadRequest } from 'payload'
+import { isAdmin } from "@/utils/accessUtils"
+import { createEmail } from "@/utils/createEmail"
+import type { CollectionConfig, PayloadRequest } from "payload"
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   admin: {
-    useAsTitle: 'email',
-    group: 'Пользователи',
+    useAsTitle: "email",
+    group: "Пользователи",
   },
   defaultPopulate: {
     email: true,
@@ -15,13 +15,13 @@ export const Users: CollectionConfig = {
   access: {
     create: () => false,
     admin: ({ req: { user } }) => {
-      return Boolean(user?.role === 'admin' || user?.role === 'manager')
+      return Boolean(user?.role === "admin" || user?.role === "manager")
     },
     read: () => true,
     delete: isAdmin,
     update: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if (req.user.role === "admin") return true
       return {
         id: {
           equals: req.user.id,
@@ -40,21 +40,21 @@ export const Users: CollectionConfig = {
         }
         const { token, user } = typedArgs
         const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/forgotPassword?token=${token}`
-        return createEmail({ mode: 'forgetPassword', url, userEmail: user.email }).html
+        return createEmail({ mode: "forgetPassword", url, userEmail: user.email }).html
       },
     },
     tokenExpiration: Number(process.env.AUTH_TOKEN_EXPIRATION) || 60 * 60 * 24 * 7, // 7 дней в секундах
     verify: {
       generateEmailHTML: ({ token, user }) => {
         const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/verify?token=${token}`
-        return createEmail({ mode: 'verify', url: url, userEmail: user?.email }).html
+        return createEmail({ mode: "verify", url: url, userEmail: user?.email }).html
       },
     },
     maxLoginAttempts: 5,
     lockTime: 6000,
     cookies: {
-      sameSite: 'Lax',
-      secure: true,
+      sameSite: "Lax",
+      secure: false,
       domain: process.env.DOMAIN,
     },
   },
@@ -62,12 +62,12 @@ export const Users: CollectionConfig = {
   fields: [
     // Email added by default
     {
-      name: 'phone',
-      type: 'text',
-      label: 'Phone',
+      name: "phone",
+      type: "text",
+      label: "Phone",
       required: false,
       admin: {
-        description: 'Phone number for delivery contact',
+        description: "Phone number for delivery contact",
       },
       validate: (value: string | string[] | null | undefined) => {
         if (!value) return true // null, undefined, пустая строка — ок (по твоей логике)
@@ -76,64 +76,63 @@ export const Users: CollectionConfig = {
         // Допустим, мы ожидаем строку, а не массив
         if (Array.isArray(value)) {
           // console.log("Error here")
-          return 'Телефон должен быть строкой, а не массивом'
+          return "Телефон должен быть строкой, а не массивом"
         }
 
         // Теперь TypeScript знает, что value — string
         const phoneRegex = /^8\d{10}$/
         console.log(value)
         if (!phoneRegex.test(value)) {
-          console.log('Error here')
-          return 'Invalid phone format. Use format: +7 (XXX) XXX-XX-XX'
+          console.log("Error here")
+          return "Invalid phone format. Use format: +7 (XXX) XXX-XX-XX"
         }
 
         return true
       },
     },
     {
-      name: 'role',
-      type: 'select',
+      name: "role",
+      type: "select",
       options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
-        { label: 'Manager', value: 'manager' },
+        { label: "Admin", value: "admin" },
+        { label: "User", value: "user" },
+        { label: "Manager", value: "manager" },
       ],
-      defaultValue: 'user',
+      defaultValue: "user",
       access: {
         read: () => true,
         create: () => false,
-        update: ({ req: { user } }) => user?.role === 'admin',
+        update: ({ req: { user } }) => user?.role === "admin",
       },
       admin: {
-        position: 'sidebar',
+        position: "sidebar",
       },
     },
     {
-      name: 'accessCollections',
-      type: 'select',
+      name: "accessCollections",
+      type: "select",
       hasMany: true,
       defaultValue: [],
       options: [
-        { label: 'Пользователи', value: 'users' },
-        { label: 'Категории', value: 'categories' },
-        { label: 'Товары', value: 'products' },
-        { label: 'Медиа', value: 'media' },
-        { label: 'Заказы', value: 'orders' },
-        { label: 'Отзывы', value: 'reviews' },
-        { label: 'Страницы', value: 'pages' },
-        { label: 'Блоги', value: 'blogs' },
+        { label: "Пользователи", value: "users" },
+        { label: "Категории", value: "categories" },
+        { label: "Товары", value: "products" },
+        { label: "Медиа", value: "media" },
+        { label: "Заказы", value: "orders" },
+        { label: "Отзывы", value: "reviews" },
+        { label: "Страницы", value: "pages" },
       ],
       access: {
         read: () => true,
-        create: ({ req: { user } }) => user?.role === 'admin',
-        update: ({ req: { user } }) => user?.role === 'admin',
+        create: ({ req: { user } }) => user?.role === "admin",
+        update: ({ req: { user } }) => user?.role === "admin",
       },
       admin: {
-        position: 'sidebar',
+        position: "sidebar",
         description:
-          'Выберите коллекции, к которым пользователь будет иметь доступ. Если не выбрано ничего, доступ ко всем коллекциям (только для админов).',
+          "Выберите коллекции, к которым пользователь будет иметь доступ. Если не выбрано ничего, доступ ко всем коллекциям (только для админов).",
         condition: (data, siblingData) => {
-          return siblingData?.role === 'manager'
+          return siblingData?.role === "manager"
         },
       },
     },
