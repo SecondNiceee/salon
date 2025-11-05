@@ -51,7 +51,7 @@ export default buildConfig({
         blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock],
       }),
       HeadingFeature({
-        enabledHeadingSizes: ["h3", "h4", "h5", "h6"],
+        enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
       }),
     ],
   }),

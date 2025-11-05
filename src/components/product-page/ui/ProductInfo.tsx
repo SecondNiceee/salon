@@ -4,15 +4,16 @@ import { Button } from "@/components/ui/button"
 import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { useAuthStore } from "@/entities/auth/authStore"
 import type { Product } from "@/payload-types"
-import { Minus, Plus, Heart } from "lucide-react"
+import { Heart, Phone } from "lucide-react"
 import { useGuestBenefitsStore } from "@/components/auth/guest-benefits-modal"
+import { useState } from "react"
 
 const ProductInfo = ({ product }: { product: Product }) => {
   const { addToFavorites, removeFromFavorites, favoriteProductIds } = useFavoritesStore()
   const { user } = useAuthStore()
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
   const { openDialog } = useGuestBenefitsStore()
-
+  const [isBooking, setIsBooking] = useState(false)
 
   const handleFavoriteClick = async () => {
     if (!user) {
@@ -26,6 +27,18 @@ const ProductInfo = ({ product }: { product: Product }) => {
     }
   }
 
+  const handleBooking = async () => {
+    setIsBooking(true)
+    // TODO: Implement callback request logic
+    console.log("[v0] Booking service:", product.title)
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsBooking(false)
+      alert("Спасибо! Мы свяжемся с вами в ближайшее время.")
+    }, 1000)
+  }
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
@@ -35,13 +48,6 @@ const ProductInfo = ({ product }: { product: Product }) => {
       </div>
 
       <div className="space-y-4">
-        {/* Price Section */}
-        <div>
-          <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-          </div>
-        </div>
-
-        {/* Actions Section */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* Favorites Button */}
           <Button
@@ -57,32 +63,17 @@ const ProductInfo = ({ product }: { product: Product }) => {
             />
           </Button>
 
-          {/* Counter or Add to Cart */}
-            <div className="flex items-center gap-2 sm:gap-3 justify-between bg-white rounded-lg p-2 border border-gray-200 flex-1 min-w-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="shadow-sm w-10 h-10 sm:w-12 sm:h-12 p-0 hover:bg-gray-200 rounded-lg flex-shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
-                <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="shadow-sm w-10 h-10 sm:w-12 sm:h-12 p-0 hover:bg-gray-200 rounded-lg flex-shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-            </div>
+          {/* Booking Button */}
+          <Button
+            onClick={handleBooking}
+            disabled={isBooking}
+            className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-semibold bg-primary hover:bg-primary/90 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <Phone className="w-5 h-5" />
+            {isBooking ? "Отправка..." : "Забронировать"}
+          </Button>
         </div>
       </div>
-
     </div>
   )
 }

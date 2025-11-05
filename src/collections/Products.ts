@@ -1,5 +1,6 @@
 import type { Product } from "@/payload-types"
 import { isAccess } from "@/utils/accessUtils"
+import { lexicalEditor } from "@payloadcms/richtext-lexical"
 import type { CollectionConfig } from "payload"
 
 const Products: CollectionConfig = {
@@ -83,9 +84,10 @@ const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "textarea",
+      type: "richText",
       label: "Описание товара",
       required: false,
+      editor : lexicalEditor({})
     },
     {
       name: "recommendedProducts",

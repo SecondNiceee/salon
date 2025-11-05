@@ -1,0 +1,27 @@
+"use client"
+
+import { RichText } from "@payloadcms/richtext-lexical/react"
+import jsxConverters from "@/utils/jsx-converters"
+import "@/styles/richText.scss"
+import type { Product } from "@/payload-types"
+
+interface ServiceDescriptionProps {
+  product: Product
+}
+
+const ServiceDescription = ({ product }: ServiceDescriptionProps) => {
+  if (!product.description) {
+    return null
+  }
+
+  return (
+    <div className="px-3 py-6 sm:px-6 sm:py-8">
+      <h2 className="text-2xl font-semibold text-gray-900 mb-4">Описание услуги</h2>
+      <div className="rich-container bg-gray-50 rounded-lg p-4 sm:p-6">
+        <RichText converters={jsxConverters} data={product.description} />
+      </div>
+    </div>
+  )
+}
+
+export default ServiceDescription

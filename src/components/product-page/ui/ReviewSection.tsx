@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useProductsStore } from "@/entities/products/productsStore"
 import type { Product, Review } from "@/payload-types"
-import { purchaseService } from "@/services/purchaseService/purchaseService"
 import { reviewService } from "@/services/review/reviewsService"
 import { Star, MessageCircle, Loader2, Send, User, Edit2 } from "lucide-react"
 import { type FC, useEffect, useState } from "react"
@@ -23,8 +22,6 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
   const [reviewsLoading, setReviewsLoading] = useState(false)
   const [editingReview, setEditingReview] = useState<number | null>(null)
   const [editReviewData, setEditReviewData] = useState({ rating: 4, comment: "" })
-  const [hasPurchased, setHasPurchased] = useState<boolean | null>(null)
-  const [checkingPurchase, setCheckingPurchase] = useState(false)
   const { user } = useAuthStore()
 
   const loadReviews = async (productId: number) => {
@@ -41,27 +38,8 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
     }
   }
 
-  const checkPurchaseStatus = async (productId: number) => {
-    if (!user) {
-      setHasPurchased(false)
-      return
-    }
-
-    setCheckingPurchase(true)
-    try {
-      const result = await purchaseService.checkPurchase(productId)
-      setHasPurchased(result.hasPurchased)
-    } catch (error) {
-      console.error("Ошибка проверки покупки:", error)
-      setHasPurchased(false)
-    } finally {
-      setCheckingPurchase(false)
-    }
-  }
-
   useEffect(() => {
-      loadReviews(Number(id))
-      checkPurchaseStatus(Number(id))
+    loadReviews(Number(id))
   }, [id, user])
 
   const handleReviewSubmit = async () => {
@@ -70,12 +48,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
       return
     }
     if (!user) {
-      toast("Для оставления отзыва необходимо войти в систему")
-      return
-    }
-
-    if (hasPurchased === false) {
-      toast("Чтобы оставлять отзывы, нужно приобрести этот товар")
+      toast("Нужно быть зарегестрированным, чтобы оставить отзыв")
       return
     }
 
@@ -124,12 +97,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
 
   const handleShowReviewForm = () => {
     if (!user) {
-      toast("Для оставления отзыва необходимо войти в систему")
-      return
-    }
-
-    if (hasPurchased === false) {
-      toast("Чтобы оставлять отзывы, нужно приобрести этот товар")
+      toast("Нужно быть зарегестрированным, чтобы оставить отзыв")
       return
     }
 
@@ -196,7 +164,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
       <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-4 sm:mb-6">
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
           <h2 className="text-lg sm:text-2xl font-semibold text-gray-900">Отзывы покупателей</h2>
-          {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 && (
+          {(product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0) ? (
             <div className="flex items-center space-x-2 bg-orange-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg self-start">
               <span className="text-lg sm:text-xl font-bold text-orange-600">{product.averageRating.toFixed(1)}</span>
               <Star className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400 fill-current" />
@@ -205,33 +173,21 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
                 {product.reviewsCount === 1 ? "отзыв" : product.reviewsCount < 5 ? "отзыва" : "отзывов"}
               </span>
             </div>
-          )}
+          ) : <></>}
         </div>
 
-        {user && !userReview && !reviewsLoading && !checkingPurchase && (
+        {user && !userReview && !reviewsLoading && (
           <Button
             onClick={handleShowReviewForm}
             className="bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
-            disabled={hasPurchased === false}
           >
             <MessageCircle className="w-4 h-4 flex-shrink-0" />
-            <span className="hidden xs:inline">
-              {hasPurchased === false ? "Нужна покупка для отзыва" : "Написать отзыв"}
-            </span>
-            <span className="xs:hidden">{hasPurchased === false ? "Нужна покупка" : "Отзыв"}</span>
+            <span>Написать отзыв</span>
           </Button>
-        )}
-
-        {checkingPurchase && (
-          <div className="flex items-center space-x-2 text-gray-500 text-sm">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span className="hidden sm:inline">Проверяем покупку...</span>
-            <span className="sm:hidden">Проверяем...</span>
-          </div>
         )}
       </div>
 
-      {Boolean(showReviewForm && user && !userReview && !reviewsLoading && hasPurchased) && (
+      {Boolean(showReviewForm && user && !userReview && !reviewsLoading) && (
         <div className="bg-gray-50 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6 animate-in slide-in-from-bottom-2 duration-300">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Оставить отзыв</h3>
           <form
