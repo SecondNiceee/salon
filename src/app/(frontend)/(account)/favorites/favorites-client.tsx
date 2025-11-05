@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { Heart } from 'lucide-react'
-import { useEffect, useState, useCallback } from 'react'
-import { useFavoritesStore } from '@/entities/favorites/favoritesStore'
-import { ProductCard } from '@/components/product-card/ProductCard'
-import { Button } from '@/components/ui/button'
-import type { Product } from '@/payload-types'
+import { Heart } from "lucide-react"
+import { useEffect, useState, useCallback } from "react"
+import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
+import { ProductCard } from "@/components/product-card/ProductCard"
+import { Button } from "@/components/ui/button"
+import type { Product } from "@/payload-types"
 
 export default function FavoritesClientPage() {
   const {
@@ -42,7 +42,7 @@ export default function FavoritesClientPage() {
   useEffect(() => {
     if (!loadMoreElement) return
     const observer = new IntersectionObserver(handleObserver, {
-      rootMargin: '50px 0px',
+      rootMargin: "50px 0px",
       threshold: 0.1,
     })
     observer.observe(loadMoreElement)
@@ -53,13 +53,12 @@ export default function FavoritesClientPage() {
     await removeFromFavorites(productId)
   }
 
-
   if (isLoading || loading) {
     return (
       <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-10 border border-white/20 shadow-xl">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mb-4"></div>
             <p className="text-gray-600 text-lg">Загрузка избранного...</p>
           </div>
         </div>
@@ -83,8 +82,8 @@ export default function FavoritesClientPage() {
             Добавляйте товары в избранное, нажимая на сердечко в карточке товара
           </p>
           <Button
-            onClick={() => (window.location.href = '/')}
-            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-3 text-lg rounded-xl"
+            onClick={() => (window.location.href = "/")}
+            className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 text-lg rounded-xl"
           >
             Перейти к покупкам
           </Button>
@@ -107,8 +106,7 @@ export default function FavoritesClientPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {favorites.map((favorite) => {
-          const product =
-            typeof favorite.product === 'string' ? null : (favorite.product as Product)
+          const product = typeof favorite.product === "string" ? null : (favorite.product as Product)
 
           if (!product) return null
 
@@ -123,7 +121,7 @@ export default function FavoritesClientPage() {
       <div ref={setLoadMoreElement} className="flex items-center justify-center h-[40px] mt-[20px]">
         {hasMore && (
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-2"></div>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500 mb-2"></div>
             <p className="text-gray-600">Загружаем еще товары...</p>
           </div>
         )}

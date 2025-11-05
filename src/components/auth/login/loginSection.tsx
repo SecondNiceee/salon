@@ -101,8 +101,8 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
     return (
       <div className="space-y-6 px-8 py-6 md:px-10 md:py-8">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
-            <Mail className="w-8 h-8 text-brand-600" />
+          <div className="flex items-center justify-center w-16 h-16 mx-auto bg-pink-100 rounded-full">
+            <Mail className="w-8 h-8 text-pink-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900">Восстановление пароля</h3>
           <p className="text-gray-600 placeholder">Введите Email, чтобы сбросить пароль</p>
@@ -140,7 +140,7 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
 
             <div className="space-y-3">
               <Button
-                className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
+                className="w-full h-12 text-base rounded-xl text-white bg-pink-500 hover:bg-pink-600"
                 type="submit"
                 disabled={loading}
               >
@@ -166,8 +166,8 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
   if (loginMode === "success") {
     return (
       <div className="space-y-6 text-center px-8 py-6 md:px-10 md:py-8">
-        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
-          <CheckCircle className="w-8 h-8 text-brand-600" />
+        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-pink-100 rounded-full">
+          <CheckCircle className="w-8 h-8 text-pink-600" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-gray-900">Письмо отправлено!</h3>
@@ -244,14 +244,14 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
               <button
                 type="button"
                 onClick={() => setLoginMode("forgot-password")}
-                className="text-sm text-brand-600 hover:text-brand-700 hover:underline font-medium transition-colors"
+                className="text-sm text-pink-600 hover:text-pink-700 hover:underline font-medium transition-colors"
               >
                 Забыли пароль?
               </button>
             </div>
 
             <Button
-              className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
+              className="w-full h-12 text-base rounded-xl text-white bg-pink-500 hover:bg-pink-600"
               type="submit"
               disabled={loading}
             >

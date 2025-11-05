@@ -62,6 +62,12 @@ export const Users: CollectionConfig = {
   fields: [
     // Email added by default
     {
+      name: "name",
+      type: "text",
+      label: "Имя пользователя",
+      required: false,
+    },
+    {
       name: "phone",
       type: "text",
       label: "Phone",

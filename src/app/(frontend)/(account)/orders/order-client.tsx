@@ -51,7 +51,7 @@ export default function OrdersClientPage() {
     return (
       <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-10 border border-white/20 shadow-xl">
         <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
     )
@@ -59,7 +59,7 @@ export default function OrdersClientPage() {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-3 sm:p-6 md:p-10 border border-white/20 shadow-xl">
       <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-10">
-        <div className="p-1.5 sm:p-2 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full">
+        <div className="p-1.5 sm:p-2 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full">
           <Package className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
         </div>
         <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -80,7 +80,7 @@ export default function OrdersClientPage() {
             </p>
             <Button
               onClick={() => router.push("/")}
-              className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white text-sm sm:text-base"
+              className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm sm:text-base"
             >
               Перейти к покупкам
             </Button>
@@ -138,6 +138,7 @@ export default function OrdersClientPage() {
                                 "/placeholder.svg?height=48&width=48&query=product-thumbnail" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg" ||
+                                "/placeholder.svg" ||
                                 "/placeholder.svg"
                               }
                               alt={media?.alt || product?.title || "Товар"}
@@ -152,7 +153,7 @@ export default function OrdersClientPage() {
                               <span className="text-xs text-gray-500">
                                 {item.quantity} × {item.price} ₽
                               </span>
-                              <span className="font-semibold text-xs sm:text-sm text-emerald-600">
+                              <span className="font-semibold text-xs sm:text-sm text-pink-600">
                                 {(item.price || 0) * (item.quantity || 0)} ₽
                               </span>
                             </div>
@@ -195,7 +196,7 @@ export default function OrdersClientPage() {
                   )}
 
                   {/* Order Total */}
-                  <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-3 sm:p-4 rounded-lg">
                     <div className="flex justify-between items-center text-xs sm:text-sm mb-1">
                       <span>Товары:</span>
                       <span>{(order.totalAmount || 0) - (order.deliveryFee || 0)} ₽</span>
@@ -207,7 +208,7 @@ export default function OrdersClientPage() {
                     <div className="border-t border-gray-200 pt-2">
                       <div className="flex justify-between items-center font-bold">
                         <span className="text-sm sm:text-base">Итого:</span>
-                        <span className="text-base sm:text-lg text-emerald-600">{order.totalAmount} ₽</span>
+                        <span className="text-base sm:text-lg text-pink-600">{order.totalAmount} ₽</span>
                       </div>
                     </div>
                   </div>

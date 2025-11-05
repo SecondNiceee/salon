@@ -135,6 +135,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  name?: string | null;
   /**
    * Phone number for delivery contact
    */
@@ -445,6 +446,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
   phone?: T;
   role?: T;
   accessCollections?: T;

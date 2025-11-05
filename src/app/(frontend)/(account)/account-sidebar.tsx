@@ -42,8 +42,8 @@ export default function AccountSidebar() {
                 onClick={() => router.push(item.path)}
                 className={`w-full text-left text-sm md:text-base font-medium flex items-center gap-3 p-2 rounded-xl transition-colors duration-200 ${
                   item.isActive
-                    ? "font-bold text-green-600 bg-green-50"
-                    : "text-gray-700 hover:text-green-600 hover:bg-green-50"
+                    ? "font-bold text-pink-600 bg-pink-50"
+                    : "text-gray-700 hover:text-pink-600 hover:bg-pink-50"
                 }`}
               >
                 <Icon className="h-4 w-4" />

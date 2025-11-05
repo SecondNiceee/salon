@@ -92,8 +92,8 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   if (email) {
     return (
       <div className="space-y-6 text-center px-8 py-6 md:px-10 md:py-8">
-        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-brand-100 rounded-full">
-          <Mail className="w-8 h-8 text-brand-600" />
+        <div className="flex items-center justify-center w-16 h-16 mx-auto bg-pink-100 rounded-full">
+          <Mail className="w-8 h-8 text-pink-600" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-gray-900">Подтвердите почту</h3>
@@ -118,7 +118,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
           <Button
             onClick={() => tryLogin()}
             disabled={loading}
-            className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
+            className="w-full h-12 text-base rounded-xl text-white bg-pink-500 hover:bg-pink-600"
           >
             {"Я подтвердил вход"}
           </Button>
@@ -191,7 +191,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
             />
 
             <Button
-              className="w-full h-12 text-base rounded-xl text-white bg-brand-500 hover:bg-brand-600"
+              className="w-full h-12 text-base rounded-xl text-white bg-pink-500 hover:bg-pink-600"
               type="submit"
               disabled={loading}
             >
