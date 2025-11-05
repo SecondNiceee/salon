@@ -64,7 +64,7 @@ export default function GrandBazarClientApp() {
       <section className="products bg-gray-50">
         <div className="flex flex-col gap-3 px-4 mx-auto mt-1 mb-4 rounded-md bg-gray-50 max-w-7xl">
           {productsAndCategories.map((item) => (
-            <div key={item.category.id} className="flex flex-col gap-4">
+            <div key={item.category.id} className="flex flex-col gap-4 pt-3">
               {item.products.length ? (
                 <>
                   <div className="flex items-start justify-between w-full">
