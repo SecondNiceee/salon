@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
   try {
     const payload = await getPayload({ config })
     const { productId } = await request.json()
-    console.log(productId)
 
     // Получаем пользователя из cookies
     const user = await getUserFromCookie()

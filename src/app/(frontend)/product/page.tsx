@@ -26,8 +26,6 @@ export async function generateMetadata({
   try {
     const response = await getProductById(id);
     const product = response.product;
-    
-    console.log(product);
 
     if (!product || !product.category[0] || !product.subCategory) {
       return {

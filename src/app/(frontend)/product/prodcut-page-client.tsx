@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Heart, Phone, MessageSquare } from "lucide-react"
+import { ArrowLeft, Heart, Phone } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import ProductImage from "@/components/product-page/ui/ProductImage"
@@ -13,6 +13,7 @@ import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useGuestBenefitsStore } from "@/components/auth/guest-benefits-modal"
 import { Button } from "@/components/ui/button"
+import BookingModal from "@/components/product-page/ui/BookingModal"
 
 interface ProductPageClientProps {
   product: Product
@@ -26,6 +27,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
   const { openDialog } = useGuestBenefitsStore()
   const [isBooking, setIsBooking] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleGoBack = () => {
     router.back()
@@ -44,14 +46,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   }
 
   const handleBooking = async () => {
-    setIsBooking(true)
-    console.log("[v0] Booking service:", product.title)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsBooking(false)
-      alert("Спасибо! Мы свяжемся с вами в ближайшее время.")
-    }, 1000)
+    setIsModalOpen(true)
   }
 
   const handleReviewClick = () => {
@@ -69,7 +64,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
           className="flex items-center gap-2 px-4 py-2 text-gray-600 transition-colors duration-200 rounded-lg hover:text-gray-800 hover:bg-gray-100"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Вернуться назад</span>
+          <span className="-translate-y-0.5">Вернуться назад</span>
         </button>
       </div>
 
@@ -122,13 +117,14 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
             <Phone className="w-6 h-6" />
             {isBooking ? "Отправка..." : "Записаться"}
           </Button>
-
         </div>
       </div>
 
       <div id="reviews-section">
         <ReviewSection id={productId} product={product} />
       </div>
+
+      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} productTitle={product.title} />
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {

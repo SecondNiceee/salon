@@ -72,7 +72,7 @@ export default buildConfig({
   endpoints: [],
   email: nodemailerAdapter({
     defaultFromAddress: MAIL_NAME,
-    defaultFromName: "ГРАНДБАЗАР",
+    defaultFromName: MAIL_NAME,
     transport: nodemailer.createTransport({
       service: "Mail.ru",
       host: "smtp.mail.ru",
@@ -94,8 +94,8 @@ export default buildConfig({
       greetingTimeout: 10000,
       socketTimeout: 10000,
       // Логирование для отладки (можно включить при проблемах)
-      // debug: isDevelopment, // включить debug только в dev режиме
-      // logger: isDevelopment, // логирование только в dev режиме
+      debug: isDevelopment, // включить debug только в dev режиме
+      logger: isDevelopment, // логирование только в dev режиме
     }),
   }),
 })

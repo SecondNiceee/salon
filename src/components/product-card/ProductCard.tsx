@@ -114,12 +114,9 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
             {product.price && <span className="text-sm text-gray-600">От {product.price} рублей</span>}
           </div>
             <Button
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-2 text-sm font-medium"
             >
-              В корзину
+              Подробнее
             </Button>
         </div>
       </div>

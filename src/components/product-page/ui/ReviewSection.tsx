@@ -164,7 +164,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
       <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-4 sm:mb-6">
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
           <h2 className="text-lg sm:text-2xl font-semibold text-gray-900">Отзывы покупателей</h2>
-          {(product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0) ? (
+          {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 ? (
             <div className="flex items-center space-x-2 bg-orange-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg self-start">
               <span className="text-lg sm:text-xl font-bold text-orange-600">{product.averageRating.toFixed(1)}</span>
               <Star className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400 fill-current" />
@@ -173,13 +173,15 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
                 {product.reviewsCount === 1 ? "отзыв" : product.reviewsCount < 5 ? "отзыва" : "отзывов"}
               </span>
             </div>
-          ) : <></>}
+          ) : (
+            <></>
+          )}
         </div>
 
         {user && !userReview && !reviewsLoading && (
           <Button
             onClick={handleShowReviewForm}
-            className="bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
+            className="bg-lime-500 hover:bg-lime-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
           >
             <MessageCircle className="w-4 h-4 flex-shrink-0" />
             <span>Написать отзыв</span>
