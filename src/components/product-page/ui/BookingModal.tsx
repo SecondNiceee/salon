@@ -2,22 +2,36 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { formatPhoneNumber, validatePhone } from "@/utils/phone"
+import { formatPhoneNumber, normalizePhone, validatePhone } from "@/utils/phone"
 import { toast } from "sonner"
+import { useAuthStore } from "@/entities/auth/authStore"
+import type { User } from "@/payload-types"
 
 interface BookingModalProps {
   isOpen: boolean
   onClose: () => void
   productTitle: string
+  user: User | null
 }
 
-export default function BookingModal({ isOpen, onClose, productTitle }: BookingModalProps) {
+export default function BookingModal({ isOpen, onClose, productTitle, user }: BookingModalProps) {
   const [formData, setFormData] = useState({ name: "", phone: "" })
   const [errors, setErrors] = useState({ name: "", phone: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [saveToAccount, setSaveToAccount] = useState(true)
+  const { updateProfile } = useAuthStore()
+
+  useEffect(() => {
+    if (isOpen && user) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+      })
+    }
+  }, [isOpen, user])
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value)
@@ -56,6 +70,18 @@ export default function BookingModal({ isOpen, onClose, productTitle }: BookingM
     setIsSubmitting(true)
 
     try {
+      if (user && saveToAccount) {
+        try {
+          await updateProfile({
+            name: formData.name,
+            phone: normalizePhone(formData.phone),
+          })
+        } catch (error) {
+          console.error("Error updating profile:", error)
+          // Continue with booking even if profile update fails
+        }
+      }
+
       const response = await fetch("/api/booking/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,6 +161,21 @@ export default function BookingModal({ isOpen, onClose, productTitle }: BookingM
               />
               {errors.phone && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.phone}</p>}
             </div>
+
+            {user && (
+              <div className="flex items-center gap-2">
+                <input
+                  id="saveToAccount"
+                  type="checkbox"
+                  checked={saveToAccount}
+                  onChange={(e) => setSaveToAccount(e.target.checked)}
+                  className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                />
+                <label htmlFor="saveToAccount" className="text-sm text-gray-700 cursor-pointer">
+                  Сохранить для этого аккаунта
+                </label>
+              </div>
+            )}
 
             <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
               <Button

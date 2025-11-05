@@ -14,6 +14,8 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import { useGuestBenefitsStore } from "@/components/auth/guest-benefits-modal"
 import { Button } from "@/components/ui/button"
 import BookingModal from "@/components/product-page/ui/BookingModal"
+import ThankYouModal from "@/components/product-page/ui/ThankYouModal"
+import { toast } from "sonner"
 
 interface ProductPageClientProps {
   product: Product
@@ -28,6 +30,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const { openDialog } = useGuestBenefitsStore()
   const [isBooking, setIsBooking] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false)
 
   const handleGoBack = () => {
     router.back()
@@ -46,7 +49,39 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   }
 
   const handleBooking = async () => {
-    setIsModalOpen(true)
+    // Check if user is authenticated and has both name and phone
+    if (user && user.name && user.phone) {
+      setIsBooking(true)
+      try {
+        const response = await fetch("/api/booking/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: user.name,
+            phone: user.phone,
+            serviceName: product.title,
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          toast.error(result.message || "Ошибка при отправке заявки")
+          return
+        }
+
+        // Show thank you modal instead of toast
+        setIsThankYouModalOpen(true)
+      } catch (error) {
+        console.error("Error submitting booking:", error)
+        toast.error("Ошибка при отправке заявки. Попробуйте еще раз.")
+      } finally {
+        setIsBooking(false)
+      }
+    } else {
+      // If user doesn't have complete data, show the booking modal
+      setIsModalOpen(true)
+    }
   }
 
   const handleReviewClick = () => {
@@ -124,7 +159,14 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         <ReviewSection id={productId} product={product} />
       </div>
 
-      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} productTitle={product.title} />
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        productTitle={product.title}
+        user={user}
+      />
+
+      <ThankYouModal isOpen={isThankYouModalOpen} onClose={() => setIsThankYouModalOpen(false)} />
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {

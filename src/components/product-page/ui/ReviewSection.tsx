@@ -181,7 +181,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
         {user && !userReview && !reviewsLoading && (
           <Button
             onClick={handleShowReviewForm}
-            className="bg-lime-500 hover:bg-lime-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
+            className="bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
           >
             <MessageCircle className="w-4 h-4 flex-shrink-0" />
             <span>Написать отзыв</span>

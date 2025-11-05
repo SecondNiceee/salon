@@ -46,6 +46,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   // Хэндлер для входа
   const onSubmit: SubmitHandler<RegisterInputs> = async (values) => {
     setSuccess(null)
+    setError(null)
     setLoading(true)
     try {
       await registerUser(values.email, values.password)

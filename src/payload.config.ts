@@ -71,8 +71,8 @@ export default buildConfig({
   ],
   endpoints: [],
   email: nodemailerAdapter({
-    defaultFromAddress: MAIL_NAME,
-    defaultFromName: MAIL_NAME,
+    defaultFromAddress: "kolya.titov.05@inbox.ru",
+    defaultFromName: "Академия Спа",
     transport: nodemailer.createTransport({
       service: "Mail.ru",
       host: "smtp.mail.ru",
