@@ -1,23 +1,21 @@
-// src/app/account/orders/page.tsx
-import React from 'react';
-import OrdersClientPage from './order-client';
-import { Metadata } from 'next';
+import OrdersClientPage from "./order-client"
+import type { Metadata } from "next"
 
 // 🔒 Приватная страница — не индексировать!
-export const metadata:Metadata = {
-  title: 'Мои заказы — ГрандБАЗАР',
-  description: 'Отслеживайте статусы ваших заказов в интернет-магазине ГрандБАЗАР',
+export const metadata: Metadata = {
+  title: "Мои услуги — Академия Спа | Салон красоты",
+  description: "Отслеживайте ваши забронированные услуги и курсы в салоне красоты Академия Спа",
   robots: {
-    index: false,    // ← не показывать в поиске
-    follow: false,   // ← не переходить по ссылкам с этой страницы
+    index: false, // ← не показывать в поиске
+    follow: false, // ← не переходить по ссылкам с этой страницы
   },
   // Соцсетевые метатеги не нужны — это личная информация
   openGraph: undefined,
   twitter: undefined,
-};
+}
 
 const Orders = () => {
-  return <OrdersClientPage />;
-};
+  return <OrdersClientPage />
+}
 
-export default Orders;
+export default Orders

@@ -17,7 +17,7 @@ export default function AccountLayoutClient({
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
           <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold text-green-600">
-              Аккаунт ГрандБАЗАР
+              Ваш Аккаунт 
             </h1>
           </div>
 
@@ -37,7 +37,7 @@ export default function AccountLayoutClient({
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold text-green-600">
-            Аккаунт ГрандБАЗАР
+            Ваш аккаунт
           </h1>
         </div>
 

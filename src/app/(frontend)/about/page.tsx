@@ -1,17 +1,17 @@
-import { RichText } from '@payloadcms/richtext-lexical/react';
-import { notFound } from 'next/navigation';
-import { getAbout } from '@/actions/server/pages/getAbout';
-import jsxConverters from '@/utils/jsx-converters';
-import '@/styles/richText.scss';
-import Script from 'next/script';
+import { RichText } from "@payloadcms/richtext-lexical/react"
+import { notFound } from "next/navigation"
+import { getAbout } from "@/actions/server/pages/getAbout"
+import jsxConverters from "@/utils/jsx-converters"
+import "@/styles/richText.scss"
+import Script from "next/script"
 
-export const revalidate = 86400;
+export const revalidate = 86400
 
 export default async function AboutPage() {
   try {
-    const about = await getAbout();
+    const about = await getAbout()
     if (!about) {
-      notFound();
+      notFound()
     }
     const siteUrl = process.env.NEXT_PUBLIC_URL
     return (
@@ -23,60 +23,62 @@ export default async function AboutPage() {
         {/* JSON-LD для SEO */}
         <Script id="about-json-ld" type="application/ld+json">
           {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: 'ГрандБАЗАР',
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Академия Спа",
             url: siteUrl,
-            description: about.description || 'Интернет-магазин ГрандБАЗАР — надежный поставщик техники и аксессуаров.',
+            description:
+              about.description ||
+              "Академия Спа — салон красоты с профессиональными услугами массажа, спа, косметологии и курсами.",
             address: {
-              '@type': 'PostalAddress',
-              addressCountry: 'RU',
+              "@type": "PostalAddress",
+              addressCountry: "RU",
             },
             contactPoint: {
-              '@type': 'ContactPoint',
-              contactType: 'customer support',
-              telephone: '+74951234567', // ← замени на реальный номер
-              availableLanguage: 'Russian',
+              "@type": "ContactPoint",
+              contactType: "customer support",
+              telephone: "+74951234567", // ← замени на реальный номер
+              availableLanguage: "Russian",
             },
           })}
         </Script>
       </>
-    );
+    )
   } catch (error) {
-    console.error('Error loading about page:', error);
-    notFound();
+    console.error("Error loading about page:", error)
+    notFound()
   }
 }
 
 // Генерация метаданных с использованием NEXT_PUBLIC_URL
 export async function generateMetadata() {
-  const siteUrl = process.env.NEXT_PUBLIC_URL 
-  const aboutPageUrl = `${siteUrl}/about`;
+  const siteUrl = process.env.NEXT_PUBLIC_URL
+  const aboutPageUrl = `${siteUrl}/about`
 
   try {
-    const aboutData = await getAbout();
+    const aboutData = await getAbout()
 
-    const title = aboutData?.title || 'О нас — ГрандБАЗАР';
+    const title = aboutData?.title || "О нас — Академия Спа | Салон красоты"
     const description =
       aboutData?.description ||
-      'Узнайте больше о нашей компании ГрандБАЗАР: история, миссия и ценности.';
+      "О салоне красоты Академия Спа: история, услуги, миссия. Профессиональный массаж, спа, косметология и татуировки."
 
     return {
       title,
       description,
-      keywords: 'ГрандБАЗАР, о компании, магазин, доставка, электроника, аксессуары',
+      keywords: "Академия Спа, салон красоты, массаж, спа, косметология, о нас, история салона",
 
       openGraph: {
         title,
         description,
         url: aboutPageUrl,
-        siteName: 'ГрандБАЗАР',
-        locale: 'ru_RU',
-        type: 'website'
+        siteName: "Академия Спа",
+        locale: "ru_RU",
+        type: "website",
       },
 
       twitter: {
-        card: 'summary_large_image',
+        card: "summary_large_image",
         title,
         description,
       },
@@ -84,25 +86,25 @@ export async function generateMetadata() {
       alternates: {
         canonical: aboutPageUrl,
       },
-    };
+    }
   } catch (error) {
     // Fallback
     return {
-      title: 'О нас — ГрандБАЗАР',
-      description: 'Узнайте больше о нашей компании ГрандБАЗАР',
+      title: "О нас — Академия Спа",
+      description: "О салоне красоты Академия Спа: услуги, миссия и ценности.",
       openGraph: {
-        title: 'О нас — ГрандБАЗАР',
-        description: 'Узнайте больше о нашей компании ГрандБАЗАР',
+        title: "О нас — Академия Спа",
+        description: "О салоне красоты Академия Спа: услуги, миссия и ценности.",
         url: aboutPageUrl,
-        siteName: 'ГрандБАЗАР',
-        locale: 'ru_RU',
-        type: 'website',
+        siteName: "Академия Спа",
+        locale: "ru_RU",
+        type: "website",
       },
       twitter: {
-        card: 'summary_large_image',
-        title: 'О нас — ГрандБАЗАР',
-        description: 'Узнайте больше о нашей компании ГрандБАЗАР',
+        card: "summary_large_image",
+        title: "О нас — Академия Спа",
+        description: "О салоне красоты Академия Спа: услуги, миссия и ценности.",
       },
-    };
+    }
   }
 }

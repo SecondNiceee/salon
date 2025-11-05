@@ -5,9 +5,10 @@ import ForgotPasswordClientPage from "./forgotPasswordClient"
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
-  title: "Восстановление пароля | ГрандБАЗАР",
-  description: "Сбросьте пароль от личного кабинета в интернет-магазине ГрандБАЗАР. Введите email, и мы вышлем ссылку для восстановления доступа.",
-  keywords: ["восстановить пароль", "забыл пароль", "сброс пароля", "ГрандБАЗАР", "вход в аккаунт"],
+  title: "Восстановление пароля | Академия Спа | Салон красоты",
+  description:
+    "Сбросьте пароль от личного кабинета салона красоты Академия Спа. Введите email и получите ссылку для восстановления.",
+  keywords: ["восстановить пароль", "забыл пароль", "сброс пароля", "Академия Спа", "вход в аккаунт"],
 
   robots: {
     index: false,
@@ -15,19 +16,18 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Восстановление пароля | ГрандБАЗАР",
-    description: "Страница восстановления доступа к аккаунту в ГрандБАЗАР",
+    title: "Восстановление пароля | Академия Спа",
+    description: "Страница восстановления доступа к аккаунту в салоне красоты Академия Спа",
     url: siteUrl ? `${siteUrl}/forgotPassword` : undefined,
     type: "website",
     locale: "ru_RU",
-    siteName: "ГрандБАЗАР",
-
+    siteName: "Академия Спа",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Восстановление пароля | ГрандБАЗАР",
-    description: "Страница сброса пароля в ГрандБАЗАР",
+    title: "Восстановление пароля | Академия Спа",
+    description: "Страница сброса пароля в салоне красоты Академия Спа",
   },
 
   alternates: {

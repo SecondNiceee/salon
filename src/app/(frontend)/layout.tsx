@@ -9,7 +9,7 @@ import { BottomNavigation } from "@/components/bottom-navigation/BottomNavigatio
 import { Footer } from "@/components/footer/footer"
 import { ContactWidget } from "@/components/contact-widget/contact-widget"
 import { Poppins, Inter } from "next/font/google"
-import { Metadata } from "next"
+import type { Metadata } from "next"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,27 +24,28 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || 'https://grandbazarr.ru'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
   title: {
-    default: "Курсы массажа и косметологии · Запись в спа · Подарочные сертификаты | ГрандБАЗАР",
-    template: "%s | ГрандБАЗАР",
+    default: "Академия Спа — Салон красоты | Массаж, спа, косметология, татуировки, курсы",
+    template: "%s | Академия Спа",
   },
   description:
-    "Онлайн-курсы по массажу, косметологии и тату. Запись на спа-процедуры и покупка подарочных сертификатов. Профессиональные товары для мастеров красоты и ухода за собой.",
+    "Салон красоты Академия Спа: профессиональный массаж, спа-услуги, косметология, татуировки. Онлайн-курсы по массажу и косметологии. Подарочные сертификаты. Запись онлайн!",
   keywords: [
+    "салон красоты",
+    "массаж",
+    "спа",
+    "косметология",
+    "татуировки",
     "курсы массажа",
     "обучение косметологии",
-    "спа-салон запись онлайн",
-    "подарочный сертификат спа",
-    "курсы тату",
-    "товары для косметологов",
-    "обучение массажу онлайн",
-    "спа услуги",
-    "ГрандБАЗАР"
+    "подарочный сертификат",
+    "спа-услуги",
+    "Академия Спа",
   ],
-  authors: [{ name: "ГрандБАЗАР" }],
-  creator: "ГрандБАЗАР",
-  publisher: "ГрандБАЗАР",
+  authors: [{ name: "Академия Спа" }],
+  creator: "Академия Спа",
+  publisher: "Академия Спа",
   formatDetection: {
     email: false,
     address: false,
@@ -54,14 +55,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_RU",
     url: process.env.NEXT_PUBLIC_URL,
-    siteName: "ГрандБАЗАР",
-    title: "Курсы массажа и косметологии · Запись в спа · Подарочные сертификаты",
-    description: "Онлайн-курсы, запись в спа и подарочные сертификаты для ценителей красоты и профессионалов индустрии.",
+    siteName: "Академия Спа",
+    title: "Академия Спа — Салон красоты | Массаж, спа и косметология",
+    description:
+      "Профессиональный салон красоты с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ГрандБАЗАР — Курсы, спа и подарки",
-    description: "Обучение, спа-услуги и подарочные сертификаты в одном месте.",
+    title: "Академия Спа — Салон красоты",
+    description: "Массаж, спа-услуги, косметология и курсы. Запись онлайн!",
   },
   robots: {
     index: true,
@@ -76,7 +78,6 @@ export const metadata: Metadata = {
   },
 }
 
-
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
@@ -86,14 +87,14 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body className="min-h-screen bg-background">
         <PopupProvider>
           <AppInit />
-            <Header />
-            <main className="mx-auto min-h-[60vh]">
-              {children}
-              <BottomNavigation />
-            </main>
-            <Footer />
-            <Toaster />
-            <ContactWidget />
+          <Header />
+          <main className="mx-auto min-h-[60vh]">
+            {children}
+            <BottomNavigation />
+          </main>
+          <Footer />
+          <Toaster />
+          <ContactWidget />
         </PopupProvider>
       </body>
     </html>

@@ -144,7 +144,7 @@ export const SiteSettings: GlobalConfig = {
           type: "text",
           label: "Юридическое название",
           required: true,
-          defaultValue: 'ООО "ГРАНДБАЗАР"',
+          defaultValue: 'ООО "Академия Спа"',
           admin: {
             description: "Полное юридическое название компании",
           },

@@ -9,13 +9,12 @@ import { ProductSchema } from "./productSchema"
 export async function generateMetadata({
   searchParams,
 }: { searchParams: Promise<{ id?: string }> }): Promise<Metadata> {
-  const { id } = await searchParams;
-  
+  const { id } = await searchParams
 
   if (!id) {
     return {
-      title: "Товар не найден",
-      description: "Товар не найден",
+      title: "Услуга не найдена",
+      description: "Услуга не найдена",
       robots: {
         index: false,
         follow: false,
@@ -24,13 +23,13 @@ export async function generateMetadata({
   }
 
   try {
-    const response = await getProductById(id);
-    const product = response.product;
+    const response = await getProductById(id)
+    const product = response.product
 
     if (!product || !product.category[0] || !product.subCategory) {
       return {
-        title: "Товар не найден",
-        description: "Запрашиваемый товар не найден",
+        title: "Услуга не найдена",
+        description: "Запрашиваемая услуга не найдена",
         robots: {
           index: false,
           follow: false,
@@ -46,11 +45,11 @@ export async function generateMetadata({
       title: product.title,
       description:
         product.description ||
-        `Купить ${product.title} в ГрандБАЗАР с доставкой. ${(category[0] as Category).title || ""} ${(subCategory.title) || ""}`,
-      keywords: [product.title, category[0].title || "", subCategory.title || "", "купить", "доставка"],
+        `Забронировать ${product.title} в салоне красоты Академия Спа. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`,
+      keywords: [product.title, category[0].title || "", subCategory.title || "", "забронировать", "запись онлайн"],
       openGraph: {
-        title: `${product.title} | ГрандБАЗАР`,
-        description: product.description || `Купить ${product.title} с доставкой`,
+        title: `${product.title} | Академия Спа`,
+        description: product.description || `Забронировать ${product.title} в Академия Спа`,
         images: media?.url
           ? [
               {
@@ -66,14 +65,14 @@ export async function generateMetadata({
       twitter: {
         card: "summary_large_image",
         title: product.title,
-        description: product.description || `Купить ${product.title} с доставкой`,
+        description: product.description || `Забронировать ${product.title} в Академия Спа`,
         images: media?.url ? [media.url] : [],
       },
     }
   } catch (error) {
     return {
-      title: "Ошибка загрузки товара",
-      description: "Не удалось загрузить информацию о товаре",
+      title: "Ошибка загрузки услуги",
+      description: "Не удалось загрузить информацию об услуге",
       robots: {
         index: false,
         follow: false,
@@ -86,7 +85,9 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
   const { id } = await searchParams
 
   if (!id) {
-    return <ErrorAlert buttonAction={() => (window.location.href = routerConfig.home)} errorMessage="Товар не найден" />
+    return (
+      <ErrorAlert buttonAction={() => (window.location.href = routerConfig.home)} errorMessage="Услуга не найдена" />
+    )
   }
 
   try {
@@ -96,16 +97,18 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
       return (
         <ErrorAlert
           buttonAction={() => (window.location.href = routerConfig.home)}
-          errorMessage="Товар не найден или был удален"
+          errorMessage="Услуга не найдена или была удалена"
         />
       )
     }
 
-    return <>
-    <ProductSchema product={product.product} />
-    <ProductPageClient product={product.product} productId={id} />
-    </>
+    return (
+      <>
+        <ProductSchema product={product.product} />
+        <ProductPageClient product={product.product} productId={id} />
+      </>
+    )
   } catch (error) {
-    return <ErrorAlert buttonAction={() => window.location.reload()} errorMessage="Не удалось загрузить товар" />
+    return <ErrorAlert buttonAction={() => window.location.reload()} errorMessage="Не удалось загрузить услугу" />
   }
 }

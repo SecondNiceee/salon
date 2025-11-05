@@ -26,7 +26,7 @@ const UserLink: FC<IUserLink> = ({ className = "" }) => {
       variant="default"
       size="sm"
       onClick={clickHandler}
-      className={`flex items-center h-[53.6px] sm:h-auto md:h-10 lg:h-11 gap-2 px-3 lg:px-4 py-2 bg-pink-400 hover:bg-pink-300 rounded-lg transition-colors ${className}`}
+      className={`flex items-center h-[53.6px] sm:h-auto lg:min-w-[160px] md:h-10 lg:h-11 gap-2 px-3 lg:px-4 py-2 bg-pink-400 hover:bg-pink-300 rounded-lg transition-colors ${className}`}
     >
       <User className="h-4 w-4 text-white" />
       <span className="hidden md:inline text-sm font-medium text-white">{user ? "Профиль" : "Войти"}</span>

@@ -9,7 +9,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Подтверждение email",
-  description: "Подтверждение email адреса",
+  description: "Подтверждение email адреса в салоне красоты Академия Спа",
   robots: {
     index: false,
     follow: false,
@@ -58,15 +58,15 @@ const VerifyEmailPage = async ({ searchParams }: { searchParams: Promise<any> | 
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Email подтверждён!</CardTitle>
             <CardDescription className="text-gray-600">
-              Добро пожаловать в <span className="font-semibold text-pink-600">Академия Спа</span>! Теперь вы можете
-              войти в свой аккаунт и начать покупки.
+              Добро пожаловать в салон красоты <span className="font-semibold text-pink-600">Академия Спа</span>! Теперь
+              вы можете войти в свой аккаунт и записаться на услуги.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button asChild className="w-full h-12 bg-pink-500 hover:bg-pink-600 text-white rounded-xl">
               <Link href={routerConfig.home} className="inline-flex items-center justify-center gap-2">
                 <Home className="w-4 h-4" />
-                Перейти к покупкам
+                Перейти к услугам
               </Link>
             </Button>
             <div className="text-center">

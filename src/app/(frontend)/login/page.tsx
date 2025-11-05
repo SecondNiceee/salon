@@ -1,25 +1,26 @@
 // app/(frontend)/login/page.tsx
-import type { Metadata } from "next";
-import LoginPageClient from "./login-client-page";
+import type { Metadata } from "next"
+import LoginPageClient from "./login-client-page"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
-  title: "Вход в аккаунт | ГрандБАЗАР",
-  description: "Войдите в личный кабинет интернет-магазина ГрандБАЗАР, чтобы отслеживать заказы, управлять профилем и получать персональные предложения.",
-  
+  title: "Вход в аккаунт | Академия Спа | Салон красоты",
+  description:
+    "Войдите в личный кабинет салона красоты Академия Спа, чтобы управлять заказами услуг и забронированными процедурами.",
+
   robots: {
     index: false,
     follow: false,
   },
 
   verification: {
-    google: "", 
+    google: "",
   },
 
   openGraph: {
-    title: "Вход в аккаунт | ГрандБАЗАР",
-    description: "Войдите в личный кабинет ГрандБАЗАР",
+    title: "Вход в аккаунт | Академия Спа",
+    description: "Войдите в личный кабинет салона красоты Академия Спа",
     type: "website",
     url: siteUrl ? `${siteUrl}/login` : undefined,
   },
@@ -28,8 +29,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl ? `${siteUrl}/login` : undefined,
   },
-};
+}
 
 export default function LoginPage() {
-  return <LoginPageClient />;
+  return <LoginPageClient />
 }
