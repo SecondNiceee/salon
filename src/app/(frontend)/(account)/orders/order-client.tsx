@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { formatDate } from "@/utils/formatData"
 
 const statusConfig = {
-  pending: { label: "Принят", color: "bg-yellow-500", icon: Clock },
+  pending: { label: "Подтвержден", color: "bg-green-500", icon: CheckCircle },
   waiting_call: { label: "Скоро позвоним", color: "bg-blue-500", icon: Clock },
   delivered: { label: "Доставлен", color: "bg-green-500", icon: CheckCircle },
   cancelled: { label: "Отменен", color: "bg-red-500", icon: XCircle },
@@ -24,6 +24,7 @@ export default function OrdersClientPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { orders, loading, error, loadOrders, clearOrders, refreshOrder, refreshingOrderId } = useOrdersStore()
+  const [hideCancel, setHideCancel] = useState(true)
 
   useEffect(() => {
     loadOrders()
@@ -39,6 +40,8 @@ export default function OrdersClientPage() {
     await refreshOrder(orderId)
     toast.success("Статус заказа обновлен")
   }
+
+  const filteredOrders = hideCancel ? orders.filter((order) => order.status !== "cancelled") : orders
 
   if (loading) {
     return (
@@ -60,9 +63,21 @@ export default function OrdersClientPage() {
         </h2>
       </div>
 
+      <div className="mb-6 flex items-center gap-2">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={hideCancel}
+            onChange={(e) => setHideCancel(e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-pink-500 focus:ring-pink-500 cursor-pointer"
+          />
+          <span className="text-sm sm:text-base text-gray-700 font-medium">Не показывать отмененные</span>
+        </label>
+      </div>
+
       {/* Orders List */}
       <div className="space-y-4 sm:space-y-6">
-        {orders.length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-16">
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
@@ -79,7 +94,7 @@ export default function OrdersClientPage() {
             </Button>
           </div>
         ) : (
-          orders.map((order) => {
+          filteredOrders.map((order) => {
             const status = statusConfig[order.status as keyof typeof statusConfig]
             const StatusIcon = status.icon
             const isRefreshing = refreshingOrderId === order.id
@@ -134,7 +149,7 @@ export default function OrdersClientPage() {
                           {product?.title || "Услуга"}
                         </h3>
                         <Button
-                          onClick={() => router.push(`/product/${product?.id}`)}
+                          onClick={() => router.push(`/product/${product?.id}?id=${product?.id}`)}
                           variant="outline"
                           size="sm"
                           className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"

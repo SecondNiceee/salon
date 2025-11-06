@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Heart, Phone, ChevronRight, ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import ProductImage from "@/components/product-page/ui/ProductImage"
 import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
@@ -31,6 +31,16 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const [isBooking, setIsBooking] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false)
+  const [isShortDescription, setIsShortDescription] = useState(false)
+  const descriptionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      const height = descriptionRef.current.offsetHeight
+      // Если высота меньше ~240px (примерно 8 строк текста), то это короткое описание
+      setIsShortDescription(height < 240)
+    }
+  }, [product])
 
   const handleGoBack = () => {
     router.back()
@@ -127,17 +137,22 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
       <div className="px-3 py-8 sm:px-6 sm:py-10">
         <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {/* Description - on the left */}
-            <div className="flex flex-col lg:order-1">
+            {/* Description - on the left, centered */}
+            <div className="flex flex-col items-center justify-center lg:order-1">
               {product.description && (
-                <div className="rich-container">
+                <div
+                  ref={descriptionRef}
+                  className={`rich-container w-full ${
+                    isShortDescription ? "text-center py-6 px-4 border-t-2 border-b-2 border-gray-300" : ""
+                  }`}
+                >
                   <RichText converters={jsxConverters} data={product.description} />
                 </div>
               )}
             </div>
 
             {/* Image - on the right */}
-            <div className="w-full lg:order-2">
+            <div className="w-full flex items-center justify-center lg:order-2">
               <ProductImage product={product} />
             </div>
           </div>
@@ -147,11 +162,11 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
           <Button
             onClick={handleBooking}
             disabled={isBooking}
-            className="h-12 px-6 text-base font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 animate-gradient"
+            className="h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient"
           >
             <ChevronRight className="w-5 h-5" />
             <Phone className="w-5 h-5" />
-            {isBooking ? "Отправка..." : "Записаться"}
+            <span>{isBooking ? "Отправка..." : "Записаться"}</span>
             <ChevronLeft className="w-5 h-5" />
           </Button>
         </div>

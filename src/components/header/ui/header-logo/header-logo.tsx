@@ -1,5 +1,7 @@
+"use client"
 import { routerConfig } from "@/config/router.config"
 import Link from "next/link"
+import Image from "next/image"
 
 const HeaderLogo = () => {
   return (
@@ -7,8 +9,14 @@ const HeaderLogo = () => {
       href={routerConfig.home}
       className="flex items-center flex-shrink-0 group hover:opacity-80 transition-opacity"
     >
-      <div className="flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-pink-300 to-pink-500 text-white font-bold text-sm lg:text-base shadow-md group-hover:shadow-lg transition-shadow">
-        ✨
+      <div className="flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-lg group-hover:shadow-xl transition-shadow">
+        <Image
+          src="/logo-icon.png"
+          alt="Академия Спа Логотип"
+          width={32}
+          height={32}
+          className="lg:w-8 lg:h-8 w-7 h-7"
+        />
       </div>
       <div className="ml-2 lg:ml-3 flex flex-col">
         <h1 className="text-lg lg:text-2xl font-bold text-gray-900 leading-tight">Академия Спа</h1>
