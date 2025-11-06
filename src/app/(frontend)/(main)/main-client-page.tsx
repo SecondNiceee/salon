@@ -69,12 +69,14 @@ export default function GrandBazarClientApp() {
                 <>
                   <div className="flex items-start justify-between w-full">
                     <h2 className="text-lg font-bold text-black md:text-2xl">{item.category.title}</h2>
-                    <Link href={`/${item.category.value}`} className="flex items-center self-end">
-                      <Badge className="flex items-center gap-2 bg-brand-400 cursor-pointer hover:bg-brand-400">
-                        <p className="text-sm text-white">Еще {item.productsCounter - 6}</p>
-                        <MoveRight color="white" size={15} />
-                      </Badge>
-                    </Link>
+                    {item.productsCounter - 6 > 0 && (
+                      <Link href={`/${item.category.value}`} className="flex items-center self-end">
+                        <Badge className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 cursor-pointer transition-colors">
+                          <p className="text-sm text-white">Еще {item.productsCounter - 6}</p>
+                          <MoveRight color="white" size={15} />
+                        </Badge>
+                      </Link>
+                    )}
                   </div>
                   <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                     {item.products.map((product) => (

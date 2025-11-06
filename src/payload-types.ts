@@ -261,34 +261,26 @@ export interface Product {
 export interface Order {
   id: number;
   /**
-   * Unique order identifier (auto-generated)
+   * Просто уникальный номер заказа(для разработки, можно не обращать внимания)
    */
   orderNumber: string;
   /**
-   * Order owner (auto-assigned)
+   * Услуга
    */
-  user: number | User;
-  status: 'pending' | 'waiting_call';
+  product: number | Product;
   /**
-   * Order items
+   * Имя клиента
    */
-  items: {
-    product: number | Product;
-    quantity: number;
-    /**
-     * Price at the time of order
-     */
-    price: number;
-    id?: string | null;
-  }[];
+  customerName: string;
+  /**
+   * пользователь (если был зарегестрирован, то привязывается)
+   */
+  user?: (number | null) | User;
+  status: 'pending' | 'waiting_call' | 'cancelled';
   /**
    * Customer phone number
    */
   customerPhone: string;
-  /**
-   * Total order amount including delivery
-   */
-  totalAmount: number;
   /**
    * Additional notes or comments
    */
@@ -523,18 +515,11 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface OrdersSelect<T extends boolean = true> {
   orderNumber?: T;
+  product?: T;
+  customerName?: T;
   user?: T;
   status?: T;
-  items?:
-    | T
-    | {
-        product?: T;
-        quantity?: T;
-        price?: T;
-        id?: T;
-      };
   customerPhone?: T;
-  totalAmount?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;

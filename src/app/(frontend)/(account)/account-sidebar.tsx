@@ -13,7 +13,7 @@ export default function AccountSidebar() {
   const menuItems = [
     {
       icon: Clock,
-      label: "История заказов",
+      label: "Заказы",
       path: routerConfig.orders,
       isActive: pathname === routerConfig.orders,
     },

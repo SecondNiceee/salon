@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Heart, Phone } from "lucide-react"
+import { ArrowLeft, Heart, Phone, ChevronRight, ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import ProductImage from "@/components/product-page/ui/ProductImage"
@@ -59,7 +59,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
           body: JSON.stringify({
             name: user.name,
             phone: user.phone,
-            serviceName: product.title,
+            productId: product.id,
           }),
         })
 
@@ -143,14 +143,16 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex justify-center">
           <Button
             onClick={handleBooking}
             disabled={isBooking}
-            className="flex-1 h-14 sm:h-16 text-lg sm:text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient"
+            className="h-12 px-6 text-base font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 animate-gradient"
           >
-            <Phone className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5" />
+            <Phone className="w-5 h-5" />
             {isBooking ? "Отправка..." : "Записаться"}
+            <ChevronLeft className="w-5 h-5" />
           </Button>
         </div>
       </div>
@@ -164,6 +166,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         onClose={() => setIsModalOpen(false)}
         productTitle={product.title}
         user={user}
+        productId={product.id}
       />
 
       <ThankYouModal isOpen={isThankYouModalOpen} onClose={() => setIsThankYouModalOpen(false)} />

@@ -1,6 +1,5 @@
 import { isAccess, isLoggedIn, isOwn } from "@/utils/accessUtils"
-import { generateOrderEmailHTML } from "@/utils/generateOrderEmail"
-import { formatOrderMessage } from "@/utils/telegramNotification"
+import { formatBookingMessage, generateBookingEmailHTML } from "@/utils/bookingNotification"
 import type { CollectionConfig } from "payload"
 
 const Orders: CollectionConfig = {
@@ -8,7 +7,7 @@ const Orders: CollectionConfig = {
   admin: {
     useAsTitle: "orderNumber",
     group: "Заказы(Важно)",
-    defaultColumns: ["orderNumber", "user", "status", "totalAmount", "createdAt"],
+    defaultColumns: ["orderNumber", "user", "product", "status", "createdAt"],
   },
   access: {
     read: isOwn,
@@ -31,10 +30,22 @@ const Orders: CollectionConfig = {
               return
             }
 
-            const message = formatOrderMessage({
-              ...doc,
-              adminOrderUrl: `${process.env.BACKEND_URL}/admin/collections/orders/${doc.id}`,
+            const product = typeof doc.product === "object" ? doc.product : null
+            const serviceName = product?.title || "Услуга"
+
+            const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_PAYLOAD_URL || "http://localhost:3000"
+            const orderId = (doc as any).id
+            const adminOrderUrl = `${backendUrl}/admin/collections/orders/${orderId}`
+
+            const message = formatBookingMessage({
+              orderNumber: doc.orderNumber,
+              customerName: doc.customerName,
+              customerPhone: doc.customerPhone,
+              serviceName,
+              hasAccount: !!doc.user,
+              adminOrderUrl,
             })
+
             const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
 
             const response = await fetch(telegramUrl, {
@@ -75,38 +86,22 @@ const Orders: CollectionConfig = {
                 const orderId = (doc as any).id
                 const adminOrderUrl = `${backendUrl}/admin/collections/orders/${orderId}`
 
-                const itemsHtml = (doc.items || [])
-                  .map((it: any) => {
-                    const productTitle = typeof it.product === "object" ? it.product?.title : "Товар"
-                    return `<li>${productTitle} × ${it.quantity} — ${it.price}₽</li>`
-                  })
-                  .join("")
+                const product = typeof doc.product === "object" ? doc.product : null
+                const serviceName = product?.title || "Услуга"
 
-                const address = doc.address || {}
-                const fullAddress = [
-                  address.address,
-                  address.apartment && `кв. ${address.apartment}`,
-                  address.entrance && `подъезд ${address.entrance}`,
-                  address.floor && `этаж ${address.floor}`,
-                ]
-                  .filter(Boolean)
-                  .join(", ")
-
-                const emailHtml = generateOrderEmailHTML({
-                  adminOrderUrl,
-                  customerPhone: doc.customerPhone,
-                  deliveryFee: doc.dedeliveryFee,
-                  fullAddress,
-                  itemsHtml,
+                const emailHtml = generateBookingEmailHTML({
                   orderNumber: doc.orderNumber,
-                  totalAmount: doc.totalAmount,
-                  addressComment: address.comment,
-                  notes: doc.notes,
+                  customerName: doc.customerName,
+                  customerPhone: doc.customerPhone,
+                  serviceName,
+                  hasAccount: !!doc.user,
+                  adminOrderUrl,
                 })
+                const subject = `Новое бронирование: ${doc.orderNumber || ""}`
 
                 await req.payload.sendEmail({
                   to: adminEmail,
-                  subject: `Новый заказ: ${doc.orderNumber || ""}`,
+                  subject,
                   html: emailHtml,
                 })
 
@@ -119,43 +114,11 @@ const Orders: CollectionConfig = {
         }
       },
     ],
-    beforeValidate: [
-      ({ data, req, operation }) => {
-        if (!data) return data
-        if (!req.user) return data // Значит мы используем ovverideAccess (Возможно только  в хуке)
-
-        // Auto-assign user on create
-        if (operation === "create" && !data.user) {
-          data.user = req.user.id
-        }
-
-        // Prevent non-admins from assigning orders to others
-        if (operation === "create" && req.user.role !== "admin") {
-          const userId = typeof data.user === "number" ? data.user : data.user?.id
-          if (userId && userId !== req.user.id) {
-            throw new Error("You can only create orders for yourself")
-          }
-        }
-
-        return data
-      },
-    ],
     beforeChange: [
-      ({ data, originalDoc, operation }) => {
+      ({ data, operation }) => {
         // Generate order number only on create
         if (operation === "create" && !data.orderNumber) {
           data.orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
-        }
-
-        // Prevent changing owner of existing order
-        if (operation === "update" && originalDoc) {
-          const originalUserId = typeof originalDoc.user === "object" ? originalDoc.user.id : originalDoc.user
-
-          const newUserId = typeof data.user === "object" ? data.user.id : data.user
-
-          if (newUserId && newUserId !== originalUserId) {
-            throw new Error("Cannot change order owner after creation")
-          }
         }
 
         return data
@@ -171,7 +134,27 @@ const Orders: CollectionConfig = {
       unique: true,
       admin: {
         readOnly: true,
-        description: "Unique order identifier (auto-generated)",
+        description: "Просто уникальный номер заказа(для разработки, можно не обращать внимания)",
+      },
+    },
+    {
+      name: "product",
+      type: "relationship",
+      relationTo: "products",
+      label: "Услуга",
+      required: true,
+      hasMany: false,
+      admin: {
+        description: "Услуга",
+      },
+    },
+    {
+      name: "customerName",
+      type: "text",
+      label: "Имя клиента",
+      required: true,
+      admin: {
+        description: "Имя клиента",
       },
     },
     {
@@ -179,10 +162,10 @@ const Orders: CollectionConfig = {
       type: "relationship",
       relationTo: "users",
       label: "Пользователь",
-      required: true,
+      required: false,
       admin: {
         readOnly: true,
-        description: "Order owner (auto-assigned)",
+        description: "пользователь (если был зарегестрирован, то привязывается)",
       },
     },
     {
@@ -200,39 +183,9 @@ const Orders: CollectionConfig = {
           label: "Ожидаем звонок",
           value: "waiting_call",
         },
-      ],
-    },
-    {
-      name: "items",
-      type: "array",
-      label: "Товары в заказе",
-      required: true,
-      admin: {
-        description: "Order items",
-      },
-      fields: [
         {
-          name: "product",
-          type: "relationship",
-          relationTo: "products",
-          label: "Товар",
-          required: true,
-        },
-        {
-          name: "quantity",
-          type: "number",
-          label: "Количество",
-          required: true,
-          min: 1,
-        },
-        {
-          name: "price",
-          type: "number",
-          label: "Цена",
-          required: true,
-          admin: {
-            description: "Price at the time of order",
-          },
+          label: "Отменен",
+          value: "cancelled",
         },
       ],
     },
@@ -243,15 +196,6 @@ const Orders: CollectionConfig = {
       required: true,
       admin: {
         description: "Customer phone number",
-      },
-    },
-    {
-      name: "totalAmount",
-      type: "number",
-      label: "Общая сумма",
-      required: true,
-      admin: {
-        description: "Total order amount including delivery",
       },
     },
     {
