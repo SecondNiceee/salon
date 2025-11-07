@@ -22,22 +22,56 @@
     @apply my-2 text-base md:text-lg leading-relaxed text-foreground text-pretty;
   }
   
-  /* Lists */
+  /* Enhanced list styling - prettier and better structured */
   ul,
   ol {
-    @apply my-4 ml-6 space-y-2;
+    @apply my-5 space-y-3;
+    padding-left: 0;
   }
   
   ul {
-    @apply list-disc;
+    list-style: none;
+    
+    li {
+      @apply text-base md:text-lg leading-relaxed text-foreground pl-6 relative;
+      
+      /* Custom bullet styling */
+      &::before {
+        content: '•';
+        @apply absolute left-0 text-primary font-bold text-lg;
+        width: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   }
   
   ol {
-    @apply list-decimal;
+    counter-reset: list-counter;
+    
+    li {
+      @apply text-base md:text-lg leading-relaxed text-foreground pl-7 relative;
+      counter-increment: list-counter;
+      
+      /* Custom number styling */
+      &::before {
+        content: counter(list-counter) '.';
+        @apply absolute left-0 font-semibold text-primary;
+        width: 1.5rem;
+        display: flex;
+        align-items: center;
+      }
+    }
   }
   
-  li {
-    @apply text-base md:text-lg leading-relaxed text-foreground pl-2;
+  /* Nested lists */
+  ul ul,
+  ol ol,
+  ul ol,
+  ol ul {
+    @apply my-2 mt-3;
+    margin-left: 1.5rem;
   }
   
   /* Links */
@@ -150,5 +184,28 @@
 .rich-imageWithTextBlok{
   img{
     @apply my-0
+  }
+}
+
+/* Add beautiful list block styling */
+.list-block {
+  @apply my-6 max-w-7xl mx-auto;
+}
+
+.beautiful-list {
+  @apply list-none space-y-4 p-0 m-0;
+  
+  .list-item {
+    @apply flex items-start gap-4 text-base md:text-lg leading-relaxed text-foreground;
+    
+    /* Custom bullet point styling */
+    &::before {
+      content: '●';
+      @apply flex-shrink-0 text-primary font-bold text-2xl mt-0 leading-none;
+      width: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
   }
 }

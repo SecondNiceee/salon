@@ -9,6 +9,7 @@ import { ImageBlock } from "@/components/blocks/ImageBlock";
 import { HeadingBlock } from "@/components/blocks/HeaderBlock";
 import { ImageGalleryBlock } from "@/components/blocks/ImageGalleryBlock";
 import { ContactsBlock } from "@/components/blocks/ContactsBlock";
+import { ListBlock } from "@/components/blocks/ListBlock";
 
 
 
@@ -21,7 +22,8 @@ const jsxConverters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConvert
     paragraph : ({node} : {node:any}) => <ParagraphBlock text={node.fields.text} />,
     image : ({node} : {node:any}) => <ImageBlock image={node.fields.image}  />,
     imageGallery : ({node} : {node:any}) => <ImageGalleryBlock imagesData={node.fields.images} columns={node.fields.columns} />,
-    contacts : ({node} : {node:any}) => <ContactsBlock contacts={node.fields.contacts} />
+    contacts : ({node} : {node:any}) => <ContactsBlock contacts={node.fields.contacts} />,
+    list : ({node} : {node : any}) => <ListBlock items={node.fields.items} />
   } 
 })
 

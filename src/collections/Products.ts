@@ -1,6 +1,9 @@
-import type { Product } from "@/payload-types"
+import { HeaderBlock } from "@/lib/payload-blocks/HeaderBlock"
+import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
+import { ListBlock } from "@/lib/payload-blocks/ListBlock"
+import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
 import { isAccess } from "@/utils/accessUtils"
-import { lexicalEditor } from "@payloadcms/richtext-lexical"
+import { lexicalEditor, UnorderedListFeature, OrderedListFeature, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
 import type { CollectionConfig } from "payload"
 
 const Products: CollectionConfig = {
@@ -16,8 +19,7 @@ const Products: CollectionConfig = {
     delete: isAccess("products"),
   },
 
-  hooks: {
-  },
+  hooks: {},
   fields: [
     {
       name: "title",
@@ -87,7 +89,17 @@ const Products: CollectionConfig = {
       type: "richText",
       label: "Описание товара",
       required: false,
-      editor : lexicalEditor({})
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [HeaderBlock, ListBlock],
+          }),
+          HeadingFeature({
+            enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+          }),
+        ],
+      }),
     },
     {
       name: "recommendedProducts",
