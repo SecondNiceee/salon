@@ -230,7 +230,11 @@ export interface Product {
    * Загрузите основное изображение товара
    */
   image: number | Media;
-  description?: {
+  /**
+   * Для SEO
+   */
+  description?: string | null;
+  content?: {
     root: {
       type: string;
       children: {
@@ -245,7 +249,6 @@ export interface Product {
     };
     [k: string]: unknown;
   } | null;
-  recommendedProducts?: (number | Product)[] | null;
   /**
    * Обновляется автоматически при добавлении отзыва
    */
@@ -503,7 +506,7 @@ export interface ProductsSelect<T extends boolean = true> {
   subCategory?: T;
   image?: T;
   description?: T;
-  recommendedProducts?: T;
+  content?: T;
   averageRating?: T;
   reviewsCount?: T;
   updatedAt?: T;

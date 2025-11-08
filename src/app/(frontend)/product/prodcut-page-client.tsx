@@ -136,24 +136,19 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
 
       <div className="px-3 py-8 sm:px-6 sm:py-10">
         <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="flex">
             {/* Description - on the left, centered */}
-            <div className="flex flex-col items-center justify-center lg:order-1">
-              {product.description && (
+            <div className="flex flex-col items-center justify-center w-full">
+              {product.content && (
                 <div
                   ref={descriptionRef}
                   className={`rich-container w-full ${
-                    isShortDescription ? "text-center py-6 px-4 border-t-2 border-b-2 border-gray-300" : ""
+                    isShortDescription ? "text-center pt-6 pb-3 px-4 border-t-2 border-b-2 border-gray-300" : ""
                   }`}
                 >
-                  <RichText converters={jsxConverters} data={product.description} />
+                  <RichText converters={jsxConverters} data={product.content} />
                 </div>
               )}
-            </div>
-
-            {/* Image - on the right */}
-            <div className="w-full flex items-center justify-center lg:order-2">
-              <ProductImage product={product} />
             </div>
           </div>
         </div>

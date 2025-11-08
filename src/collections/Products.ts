@@ -3,7 +3,7 @@ import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
 import { ListBlock } from "@/lib/payload-blocks/ListBlock"
 import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
 import { isAccess } from "@/utils/accessUtils"
-import { lexicalEditor, UnorderedListFeature, OrderedListFeature, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
+import { lexicalEditor, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
 import type { CollectionConfig } from "payload"
 
 const Products: CollectionConfig = {
@@ -86,28 +86,29 @@ const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "richText",
+      type: "text",
       label: "Описание товара",
+      admin: {
+        description: "Для SEO",
+      },
+      required: false,
+    },
+    {
+      name: "content",
+      type: "richText",
+      label: "Содержание",
       required: false,
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ListBlock],
+            blocks: [HeaderBlock, ImageBlock, ListBlock, TextWithImageBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
           }),
         ],
       }),
-    },
-    {
-      name: "recommendedProducts",
-      type: "relationship",
-      label: "Рекомендованные услуги(будут ниже указываться)",
-      relationTo: "products",
-      hasMany: true,
-      required: false,
     },
     {
       name: "averageRating",

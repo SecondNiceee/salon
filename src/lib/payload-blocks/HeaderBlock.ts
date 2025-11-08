@@ -21,10 +21,10 @@ export const HeaderBlock: Block = {
       label: "Уровень заголовка",
       defaultValue: "h3",
       options: [
-        { label: "Заголовок 3 (основной)", value: "h3" },
+        { label: "Заголовок 1 (основной)", value: "h1" },
+        { label: "Заголовок 2", value: "h2" },
+        { label: "Заголовок 3", value: "h3" },
         { label: "Заголовок 4", value: "h4" },
-        { label: "Заголовок 5", value: "h5" },
-        { label: "Заголовок 6", value: "h6" },
       ],
       admin: {
         description: "Выберите уровень заголовка (H1-H6)",
