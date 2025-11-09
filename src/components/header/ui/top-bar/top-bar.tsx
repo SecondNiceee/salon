@@ -18,7 +18,7 @@ const TopBar = () => {
           {/* Левая часть - ссылки */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
             <Link onClick={onLinkClick} href="/about" className="text-gray-600 transition-colors hover:text-gray-900">
-              О салоне
+              Главная
             </Link>
           </div>
 

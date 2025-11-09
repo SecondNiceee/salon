@@ -1,7 +1,7 @@
-'use server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { Category, Product } from '@/payload-types'
+"use server"
+import { getPayload } from "payload"
+import config from "@payload-config"
+import type { Category, Product } from "@/payload-types"
 
 type CategoryWithProducts = {
   category: Category
@@ -15,11 +15,11 @@ export const getCategoriesWithProducts = async (): Promise<CategoryWithProducts[
 
     // Шаг 1: Получить основные категории (без родителя)
     const categoriesResult = await payload.find({
-      collection: 'categories',
+      collection: "categories",
       where: {
         parent: { exists: false },
       },
-      sort: 'createdAt',
+      sort: "createdAt",
       limit: 0, // Все категории
       depth: 1,
       select: {
@@ -37,10 +37,11 @@ export const getCategoriesWithProducts = async (): Promise<CategoryWithProducts[
       categoriesResult.docs.map(async (category) => {
         // Получаем до 6 товаров
         const productsResult = await payload.find({
-          collection: 'products',
+          collection: "products",
           where: {
             category: { equals: category.id },
           },
+          sort: "createdAt",
           limit: 6,
           depth: 1,
           select: {
@@ -55,7 +56,7 @@ export const getCategoriesWithProducts = async (): Promise<CategoryWithProducts[
 
         // Считаем общее количество товаров в категории
         const productCounter = await payload.count({
-          collection: 'products',
+          collection: "products",
           where: {
             category: { equals: category.id },
           },
@@ -71,7 +72,7 @@ export const getCategoriesWithProducts = async (): Promise<CategoryWithProducts[
 
     return result
   } catch (error) {
-    console.error('Ошибка при загрузке категорий с товарами:', error)
+    console.error("Ошибка при загрузке категорий с товарами:", error)
     return []
   }
 }

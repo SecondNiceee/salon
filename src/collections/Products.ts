@@ -66,10 +66,18 @@ const Products: CollectionConfig = {
       relationTo: "categories",
       required: true,
       hasMany: false,
-      // Показывать только категории, у которых задан parent
-      filterOptions: () => ({
-        parent: { exists: true },
-      }),
+      filterOptions: ({ data }) => {
+        if (!data?.category || data.category.length === 0) {
+          return {
+            parent: { exists: true },
+          }
+        }
+
+        const categoryId = Array.isArray(data.category) ? data.category[0] : data.category
+        return {
+          parent: { equals: categoryId },
+        }
+      },
       admin: {
         description: "Выберите подкатегорию",
       },

@@ -1,12 +1,19 @@
 import { isAccess } from "@/utils/accessUtils"
 import { revalidatePath } from "next/cache"
+import { lexicalEditor, HeadingFeature, BlocksFeature } from "@payloadcms/richtext-lexical"
 import type { CollectionConfig } from "payload"
+import { HeaderBlock } from "@/lib/payload-blocks/HeaderBlock"
+import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
+import { PararaphBlock } from "@/lib/payload-blocks/ParagraphBlock"
+import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
+import { ImageGalleryBlock } from "@/lib/payload-blocks/ImageGalleryBlock"
+import { ContactsBlock } from "@/lib/payload-blocks/ContactsBlock"
 
 export const Pages: CollectionConfig = {
   slug: "pages",
   admin: {
     useAsTitle: "title",
-    group : "Страницы"
+    group: "Страницы",
   },
   access: {
     read: ({ req: { user } }) => {
@@ -19,17 +26,19 @@ export const Pages: CollectionConfig = {
         },
       }
     },
-    create : isAccess("pages"),
-    delete : isAccess("pages"),
-    update : isAccess("pages")
+    create: isAccess("pages"),
+    delete: isAccess("pages"),
+    update: isAccess("pages"),
   },
   hooks: {
     afterChange: [
       ({ data }) => {
-        revalidatePath(`/${data.slug}`)
+        if (data.slug){
+          revalidatePath(`/${data.slug}`)
+        }
         return data
-      }
-    ] 
+      },
+    ],
   },
   versions: {
     drafts: {
@@ -38,40 +47,51 @@ export const Pages: CollectionConfig = {
   },
   fields: [
     {
-      name : "slug",
-      type : "text",
+      name: "slug",
+      type: "text",
       label: "URL-адрес",
-      required : true,
-      admin : { 
-        description : "Уникальный slug, не менять!"
-       },
+      required: true,
+      admin: {
+        description: "Уникальный slug, не менять!",
+      },
     },
     {
-      name : "title",
-      type : "text",
+      name: "title",
+      type: "text",
       label: "Заголовок",
-      required : true,
-      admin : {
-        description : "Название странички (в поисковике будет)"
-      }
+      required: true,
+      admin: {
+        description: "Название странички (в поисковике будет)",
+      },
     },
     {
-      name : "description",
-      type : "text",
+      name: "description",
+      type: "text",
       label: "Описание",
-      required : true,
-      admin : {
-        description : "Описание, которое в поисковике."
-      }
+      required: true,
+      admin: {
+        description: "Описание, которое в поисковике.",
+      },
     },
     {
-      name : "content",
-      type : "richText",
+      name: "content",
+      type: "richText",
       label: "Контент",
-      required : true,
-      admin : {
-        description : "Это контент страницы"
-      }
-    }
+      required: true,
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock],
+          }),
+          HeadingFeature({
+            enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+          }),
+        ],
+      }),
+      admin: {
+        description: "Это контент страницы",
+      },
+    },
   ],
 }

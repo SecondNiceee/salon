@@ -36,7 +36,7 @@ export default function HeroSlider() {
   const [preloadImages, setPreloadImages] = useState(false)
   const [visibleSlides, setVisibleSlides] = useState(new Set([0]))
 
-  const autoplayRef = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }))
+  const autoplayRef = useRef(Autoplay({ delay: 10000, stopOnInteraction: true }))
 
   const router = useRouter()
 
