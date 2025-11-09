@@ -1,9 +1,8 @@
 "use client"
 
-import { ArrowLeft, Heart, Phone, ChevronRight, ChevronLeft } from "lucide-react"
+import { ArrowLeft, Phone, ChevronRight, ChevronLeft, Heart } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
-import ProductImage from "@/components/product-page/ui/ProductImage"
 import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react"
@@ -13,9 +12,9 @@ import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useGuestBenefitsStore } from "@/components/auth/guest-benefits-modal"
 import { Button } from "@/components/ui/button"
-import BookingModal from "@/components/product-page/ui/BookingModal"
 import ThankYouModal from "@/components/product-page/ui/ThankYouModal"
 import { toast } from "sonner"
+import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 
 interface ProductPageClientProps {
   product: Product
@@ -28,11 +27,12 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const { user } = useAuthStore()
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
   const { openDialog } = useGuestBenefitsStore()
-  const [isBooking, setIsBooking] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { openModal: openBookingModal } = useBookingModalStore()
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false)
   const [isShortDescription, setIsShortDescription] = useState(false)
-  const descriptionRef = useRef<HTMLDivElement>(null)
+  const descriptionRef = useRef<HTMLDivElement>(null);
+
+  const { setIsSubmitting, isSubmitting } = useBookingModalStore.getState()
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -61,8 +61,9 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const handleBooking = async () => {
     // Check if user is authenticated and has both name and phone
     if (user && user.name && user.phone) {
-      setIsBooking(true)
       try {
+        setIsSubmitting(true)
+
         const response = await fetch("/api/booking/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -77,27 +78,20 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
 
         if (!response.ok) {
           toast.error(result.message || "Ошибка при отправке заявки")
+          setIsSubmitting(false)
           return
         }
 
-        // Show thank you modal instead of toast
-        setIsThankYouModalOpen(true)
+        setIsSubmitting(false)
+        openBookingModal(user, product.id, "success") // Open modal in success mode
       } catch (error) {
         console.error("Error submitting booking:", error)
         toast.error("Ошибка при отправке заявки. Попробуйте еще раз.")
-      } finally {
-        setIsBooking(false)
+        setIsSubmitting(false)
       }
     } else {
       // If user doesn't have complete data, show the booking modal
-      setIsModalOpen(true)
-    }
-  }
-
-  const handleReviewClick = () => {
-    const reviewSection = document.getElementById("reviews-section")
-    if (reviewSection) {
-      reviewSection.scrollIntoView({ behavior: "smooth", block: "start" })
+      openBookingModal(user, product.id)
     }
   }
 
@@ -134,7 +128,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         </div>
       </div>
 
-      <div className="px-3 py-8 sm:px-6 sm:py-10">
+      <div className="px-3 py-4 sm:px-6 sm:py-10">
         <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6">
           <div className="flex">
             {/* Description - on the left, centered */}
@@ -154,30 +148,33 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         </div>
 
         <div className="flex justify-center">
-          <Button
-            onClick={handleBooking}
-            disabled={isBooking}
-            className="h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient"
-          >
-            <ChevronRight className="w-5 h-5" />
-            <Phone className="w-5 h-5" />
-            <span>{isBooking ? "Отправка..." : "Записаться"}</span>
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
+                <Button
+          onClick={handleBooking}
+          disabled={isSubmitting}
+          className={`h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient ${
+            isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+          }`}
+        >
+          {isSubmitting ? (
+            <>
+              <Phone className="w-5 h-5 animate-pulse" />
+              <span>Отправляется...</span>
+            </>
+          ) : (
+            <>
+              <ChevronRight className="w-5 h-5" />
+              <Phone className="w-5 h-5" />
+              <span>Записаться</span>
+              <ChevronLeft className="w-5 h-5" />
+            </>
+          )}
+        </Button>
         </div>
       </div>
 
       <div id="reviews-section">
         <ReviewSection id={productId} product={product} />
       </div>
-
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        productTitle={product.title}
-        user={user}
-        productId={product.id}
-      />
 
       <ThankYouModal isOpen={isThankYouModalOpen} onClose={() => setIsThankYouModalOpen(false)} />
 

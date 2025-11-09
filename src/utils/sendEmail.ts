@@ -2,7 +2,6 @@
 
 import { getPayload } from "payload"
 import config from "@payload-config"
-import { MAIL_NAME } from "@/constants/dynamic-constants"
 type sendEmailProps = {
   to: string
   message: string

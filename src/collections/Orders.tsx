@@ -1,5 +1,6 @@
 import { isAccess, isLoggedIn, isOwn } from "@/utils/accessUtils"
 import { formatBookingMessage, generateBookingEmailHTML } from "@/utils/bookingNotification"
+import { sendEmail } from "@/utils/sendEmail"
 import type { CollectionConfig } from "payload"
 
 const Orders: CollectionConfig = {
@@ -98,7 +99,9 @@ const Orders: CollectionConfig = {
                   adminOrderUrl,
                 })
                 const subject = `Новое бронирование: ${doc.orderNumber || ""}`
-
+                
+                console.log(adminEmail);
+                
                 await req.payload.sendEmail({
                   to: adminEmail,
                   subject,

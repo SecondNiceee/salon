@@ -695,6 +695,10 @@ export interface SiteSetting {
      */
     telegram?: string | null;
     /**
+     * Ссылка на whatsApp канал или бота.
+     */
+    whatsApp?: string | null;
+    /**
      * Ссылка на Instagram профиль
      */
     instagram?: string | null;
@@ -744,6 +748,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         email?: T;
         vk?: T;
         telegram?: T;
+        whatsApp?: T;
         instagram?: T;
       };
   updatedAt?: T;

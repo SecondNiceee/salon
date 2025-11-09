@@ -260,6 +260,16 @@ export const SiteSettings: GlobalConfig = {
           },
         },
         {
+          name: "whatsApp",
+          type: "text",
+          label: "WhatsApp",
+          required: false,
+          defaultValue: "",
+          admin: {
+            description: "Ссылка на whatsApp канал или бота.",
+          }, 
+        },
+        {
           name: "instagram",
           type: "text",
           label: "Instagram",
