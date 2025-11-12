@@ -29,16 +29,18 @@ const TopBar = () => {
               Главная
             </Link>
           </div>
-          <CitySelector  />
 
-          {/* Правая часть - номер телефона */}
-          <div className="flex items-center gap-2 text-gray-700">
-            <Phone className="w-4 h-4" />
-            <a href="tel:+74951599009" className="font-medium transition-colors hover:text-gray-900">
-              {siteSettings?.companyInfo.phone}
-            </a>
+          <div className="flex items-center gap-4">
+            <CitySelector />
+
+            {/* Правая часть - номер телефона */}
+            <div className="flex items-center gap-2 text-gray-700">
+              <Phone className="w-4 h-4" />
+              <a href="tel:+74951599009" className="font-medium transition-colors hover:text-gray-900">
+                {siteSettings?.companyInfo.phone}
+              </a>
+            </div>
           </div>
-
         </div>
       </div>
     </div>

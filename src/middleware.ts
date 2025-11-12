@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { getCities, getDefaultCity } from "./actions/server/cities/getCities"
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -20,8 +19,14 @@ export async function middleware(request: NextRequest) {
   const firstSegment = pathSegments[0]
 
   try {
-    // Получаем все города из Payload
-    const cities = await getCities()
+    const citiesResponse = await fetch(new URL("/api/cities", request.url).toString())
+
+    if (!citiesResponse.ok) {
+      console.error("[v0] Middleware: Failed to fetch cities")
+      return NextResponse.next()
+    }
+
+    const { cities, defaultCity } = await citiesResponse.json()
 
     if (!cities || cities.length === 0) {
       console.error("[v0] Middleware: No cities found")
@@ -53,9 +58,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    const defaultCity = await getDefaultCity()
-    if (defaultCity && defaultCity.slug) {
-      const newUrl = new URL(`/${defaultCity.slug}${pathname}`, request.url)
+    if (defaultCity) {
+      const newUrl = new URL(`/${defaultCity}${pathname}`, request.url)
       return NextResponse.redirect(newUrl)
     }
 

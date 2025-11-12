@@ -21,7 +21,7 @@ export function CitySelector() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(" ")
+    fetch("/api/cities")
       .then((res) => res.json())
       .then((data) => {
         setCities(data.cities || [])
@@ -47,12 +47,12 @@ export function CitySelector() {
 
   return (
     <Select value={currentCity} onValueChange={handleCityChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-[180px] bg-white cursor-pointer">
         <SelectValue placeholder="Выберите город" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="z-[300] bg-white">
         {cities.map((city) => (
-          <SelectItem key={city.slug} value={city.slug}>
+          <SelectItem key={city.slug} value={city.slug} className="cursor-pointer">
             {city.declensions.nominative}
           </SelectItem>
         ))}
