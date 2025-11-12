@@ -48,8 +48,8 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
     title: {
-      default: `Академия Спа — Салон красоты | Массаж, спа, косметология, татуировки, курсы${citySuffix}`,
-      template: `%s${citySuffix} | Академия Спа`,
+      default: `Массаж, спа, косметология, татуировки, курсы в ${cityPrepositional}`,
+      template: `%s | Академия Спа`,
     },
     description:
       city.metaDescription ||
@@ -110,7 +110,6 @@ export default async function CityLayout({
   params: Promise<{ city: string }>
 }) {
   const { city: citySlug } = await params
-  console.log(citySlug);
   const city = await getCityBySlug(citySlug);
 
   if (!city) {

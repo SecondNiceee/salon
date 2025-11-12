@@ -8,8 +8,13 @@ import { ProductSchema } from "./productSchema"
 
 export async function generateMetadata({
   searchParams,
-}: { searchParams: Promise<{ id?: string }> }): Promise<Metadata> {
+  params,
+}: {
+  searchParams: Promise<{ id?: string }>
+  params: Promise<{ city: string }>
+}): Promise<Metadata> {
   const { id } = await searchParams
+  const { city: citySlug } = await params
 
   if (!id) {
     return {
@@ -37,26 +42,41 @@ export async function generateMetadata({
       }
     }
 
+    const { getCityBySlug } = await import("@/actions/server/cities/getCities")
+    const { replaceCityVariables } = await import("@/utils/replaceCityVariables")
+    const city = await getCityBySlug(citySlug)
+
+    const cityDeclensions = city
+      ? {
+          nominative: city.declensions.nominative,
+          genitive: city.declensions.genitive,
+          prepositional: city.declensions.prepositional,
+        }
+      : null
+
     const media = product.image as Media
     const category = product.category as Category[]
     const subCategory = product.subCategory as Category
 
+    const processedSeoTitle = replaceCityVariables(product.pageTitle || product.title, cityDeclensions)
+    const processedDescription = product.description
+      ? replaceCityVariables(product.description, cityDeclensions)
+      : `Забронировать ${processedSeoTitle} в салоне красоты Академия Спа. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`
+
     return {
-      title: product.title,
-      description:
-        product.description ||
-        `Забронировать ${product.title} в салоне красоты Академия Спа. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`,
-      keywords: [product.title, category[0].title || "", subCategory.title || "", "забронировать", "запись онлайн"],
+      title: processedSeoTitle,
+      description: processedDescription,
+      keywords: [processedSeoTitle, category[0].title || "", subCategory.title || "", "забронировать", "запись онлайн"],
       openGraph: {
-        title: `${product.title} | Академия Спа`,
-        description: product.description || `Забронировать ${product.title} в Академия Спа`,
+        title: `${processedSeoTitle} | Академия Спа`,
+        description: processedDescription,
         images: media?.url
           ? [
               {
                 url: media.url,
                 width: 800,
                 height: 600,
-                alt: media.alt || product.title,
+                alt: media.alt || processedSeoTitle,
               },
             ]
           : [],
@@ -64,8 +84,8 @@ export async function generateMetadata({
       },
       twitter: {
         card: "summary_large_image",
-        title: product.title,
-        description: product.description || `Забронировать ${product.title} в Академия Спа`,
+        title: processedSeoTitle,
+        description: processedDescription,
         images: media?.url ? [media.url] : [],
       },
     }
@@ -81,8 +101,15 @@ export async function generateMetadata({
   }
 }
 
-export default async function ProductPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
+export default async function ProductPage({
+  searchParams,
+  params,
+}: {
+  searchParams: Promise<{ id?: string }>
+  params: Promise<{ city: string }>
+}) {
   const { id } = await searchParams
+  const { city: citySlug } = await params
 
   if (!id) {
     return (
@@ -102,10 +129,13 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
       )
     }
 
+    const { getCityBySlug } = await import("@/actions/server/cities/getCities")
+    const city = await getCityBySlug(citySlug)
+
     return (
       <>
         <ProductSchema product={product.product} />
-        <ProductPageClient product={product.product} productId={id} />
+        <ProductPageClient product={product.product} productId={id} city={city} />
       </>
     )
   } catch (error) {

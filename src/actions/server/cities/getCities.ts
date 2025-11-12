@@ -38,16 +38,10 @@ export async function getDefaultCity(): Promise<any> {
 
 export async function getCityBySlug(slug: string): Promise<any> {
   const cities = await getCities();
-  console.log(cities);
 
   // Проверяем основной slug
   const cityBySlug = cities.find((city:any) => city.slug === slug)
-  if (cityBySlug) return cityBySlug
-
-  // Проверяем алиасы
-  const cityByAlias = cities.find((city:any) => city.aliases?.some((a) => a.alias === slug))
-
-  return cityByAlias || null
+  return cityBySlug || null
 }
 
 

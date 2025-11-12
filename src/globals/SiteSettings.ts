@@ -53,7 +53,8 @@ export const SiteSettings: GlobalConfig = {
               label: "Заголовок",
               required: false,
               admin: {
-                description: "Основной заголовок слайда",
+                description:
+                  "Основной заголовок слайда. Можете использовать переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.",
               },
             },
             {
@@ -62,7 +63,8 @@ export const SiteSettings: GlobalConfig = {
               label: "Подзаголовок",
               required: false,
               admin: {
-                description: "Дополнительный текст под заголовком",
+                description:
+                  "Дополнительный текст под заголовком. Также поддерживает переменные города: /city, /city/r, /city/p - будут заменены на соответствующее склонение города.",
               },
             },
             {
@@ -123,8 +125,11 @@ export const SiteSettings: GlobalConfig = {
               name: "link",
               type: "text",
               required: false,
-              label:
-                "Ссылка у слайда(куда ведет при нажатии) (Если ссылка внутри сайта, не пишите ссылку полностью лишь /meal или что-то такое.)",
+              label: "Ссылка у слайда (куда ведет при нажатии)",
+              admin: {
+                description:
+                  "Если ссылка внутри сайта, напишите только относительный путь: /city, /city/p (для фильтра по цене), /city/r (для фильтра по рейтингу), /meal и т.п. Полные ссылки только для внешних сайтов.",
+              },
             },
           ],
         },
@@ -267,7 +272,7 @@ export const SiteSettings: GlobalConfig = {
           defaultValue: "",
           admin: {
             description: "Ссылка на whatsApp канал или бота.",
-          }, 
+          },
         },
         {
           name: "instagram",

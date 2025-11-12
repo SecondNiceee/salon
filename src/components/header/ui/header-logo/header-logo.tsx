@@ -9,7 +9,7 @@ const HeaderLogo = () => {
 
   return (
     <Link
-      href={routerConfig.getPath(city, "home")}
+      href={routerConfig.getPath(city, "/")}
       className="flex items-center flex-shrink-0 group hover:opacity-80 transition-opacity"
     >
       <div className="flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-lg group-hover:shadow-xl transition-shadow">

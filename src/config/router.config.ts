@@ -8,7 +8,7 @@ class Router {
 
   // Base routes (will be prefixed with city)
   profile = "profile"
-  home = ""
+  home = "/"
   checkout = "checkout"
   orders = "orders"
   favorited = "favorites"

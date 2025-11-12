@@ -26,6 +26,20 @@ const Products: CollectionConfig = {
       type: "text",
       label: "Название",
       required: true,
+      admin: {
+        description:
+          "Название услуги. Поддерживает переменные города для автоматической замены: /city (Москва), /city/r (Москвы), /city/p (в Москве).",
+      },
+    },
+    {
+      name: "pageTitle",
+      type: "text",
+      label: "Название для страницы и SEO",
+      required: false,
+      admin: {
+        description:
+          "Название услуги на странице услуги и в SEO метаданных. Поддерживает переменные города: /city (Москва), /city/r (Москвы), /city/p (в Москве).",
+      },
     },
     {
       name: "price",
@@ -97,7 +111,8 @@ const Products: CollectionConfig = {
       type: "text",
       label: "Описание товара",
       admin: {
-        description: "Для SEO",
+        description:
+          "Описание для SEO. Также поддерживает переменные города: /city, /city/r, /city/p - они заменятся на город пользователя в соответствующем падеже.",
       },
       required: false,
     },

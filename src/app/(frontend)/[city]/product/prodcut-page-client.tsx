@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
 import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
+import type { City } from "@/payload-types"
+import { replaceCityVariables, replaceCityInRichText } from "@/utils/replaceCityVariables"
 import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
@@ -19,9 +21,10 @@ import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 interface ProductPageClientProps {
   product: Product
   productId: string
+  city: City | null
 }
 
-export default function ProductPageClient({ product, productId }: ProductPageClientProps) {
+export default function ProductPageClient({ product, productId, city }: ProductPageClientProps) {
   const router = useRouter()
   const { addToFavorites, removeFromFavorites, favoriteProductIds } = useFavoritesStore()
   const { user } = useAuthStore()
@@ -30,7 +33,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
   const { openModal: openBookingModal } = useBookingModalStore()
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false)
   const [isShortDescription, setIsShortDescription] = useState(false)
-  const descriptionRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null)
 
   const { setIsSubmitting, isSubmitting } = useBookingModalStore.getState()
 
@@ -95,6 +98,17 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
     }
   }
 
+  const cityDeclensions = city
+    ? {
+        nominative: city.declensions.nominative,
+        genitive: city.declensions.genitive,
+        prepositional: city.declensions.prepositional,
+      }
+    : null;
+
+  const processedTitle = replaceCityVariables(product.pageTitle, cityDeclensions)
+  const processedContent = product.content ? replaceCityInRichText(product.content, cityDeclensions) : null
+
   return (
     <section className="min-h-screen mx-auto bg-white max-w-7xl">
       <div className="px-3 pt-4 sm:px-6">
@@ -111,7 +125,7 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         <div className="flex items-center justify-center gap-4">
           <div className="flex flex-col items-center">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight text-center">
-              {product.title.toUpperCase()}
+              {processedTitle.toUpperCase()}
             </h1>
             <div className="mt-2 h-1 w-32 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-full"></div>
           </div>
@@ -133,14 +147,14 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
           <div className="flex">
             {/* Description - on the left, centered */}
             <div className="flex flex-col items-center justify-center w-full">
-              {product.content && (
+              {processedContent && (
                 <div
                   ref={descriptionRef}
                   className={`rich-container w-full ${
                     isShortDescription ? "text-center pt-6 pb-3 px-4 border-t-2 border-b-2 border-gray-300" : ""
                   }`}
                 >
-                  <RichText converters={jsxConverters} data={product.content} />
+                  <RichText converters={jsxConverters} data={processedContent} />
                 </div>
               )}
             </div>
@@ -148,27 +162,27 @@ export default function ProductPageClient({ product, productId }: ProductPageCli
         </div>
 
         <div className="flex justify-center">
-                <Button
-          onClick={handleBooking}
-          disabled={isSubmitting}
-          className={`h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient ${
-            isSubmitting ? "opacity-60 cursor-not-allowed" : ""
-          }`}
-        >
-          {isSubmitting ? (
-            <>
-              <Phone className="w-5 h-5 animate-pulse" />
-              <span>Отправляется...</span>
-            </>
-          ) : (
-            <>
-              <ChevronRight className="w-5 h-5" />
-              <Phone className="w-5 h-5" />
-              <span>Записаться</span>
-              <ChevronLeft className="w-5 h-5" />
-            </>
-          )}
-        </Button>
+          <Button
+            onClick={handleBooking}
+            disabled={isSubmitting}
+            className={`h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 animate-gradient ${
+              isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+          >
+            {isSubmitting ? (
+              <>
+                <Phone className="w-5 h-5 animate-pulse" />
+                <span>Отправляется...</span>
+              </>
+            ) : (
+              <>
+                <ChevronRight className="w-5 h-5" />
+                <Phone className="w-5 h-5" />
+                <span>Записаться</span>
+                <ChevronLeft className="w-5 h-5" />
+              </>
+            )}
+          </Button>
         </div>
       </div>
 

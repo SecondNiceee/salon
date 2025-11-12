@@ -4,6 +4,7 @@ import { Phone } from "lucide-react"
 import { useSiteSettings } from "@/entities/siteSettings/SiteSettingsStore"
 import { useMobileStore } from "@/entities/mobileMenu/mobileMenuStore"
 import { useCity } from "@/lib/use-city"
+import { CitySelector } from "@/components/city-selector/city-selector"
 
 const TopBar = () => {
   const { siteSettings } = useSiteSettings()
@@ -28,6 +29,7 @@ const TopBar = () => {
               Главная
             </Link>
           </div>
+          <CitySelector  />
 
           {/* Правая часть - номер телефона */}
           <div className="flex items-center gap-2 text-gray-700">
@@ -36,6 +38,7 @@ const TopBar = () => {
               {siteSettings?.companyInfo.phone}
             </a>
           </div>
+
         </div>
       </div>
     </div>

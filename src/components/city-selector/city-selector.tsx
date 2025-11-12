@@ -21,7 +21,7 @@ export function CitySelector() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("/api/cities")
+    fetch(" ")
       .then((res) => res.json())
       .then((data) => {
         setCities(data.cities || [])

@@ -218,7 +218,14 @@ export interface Category {
  */
 export interface Product {
   id: number;
+  /**
+   * Название услуги. Поддерживает переменные города для автоматической замены: /city (Москва), /city/r (Москвы), /city/p (в Москве).
+   */
   title: string;
+  /**
+   * Название услуги на странице услуги и в SEO метаданных. Поддерживает переменные города: /city (Москва), /city/r (Москвы), /city/p (в Москве).
+   */
+  pageTitle?: string | null;
   price: number;
   /**
    * Выберите только категорию, без подкатегорий
@@ -233,7 +240,7 @@ export interface Product {
    */
   image: number | Media;
   /**
-   * Для SEO
+   * Описание для SEO. Также поддерживает переменные города: /city, /city/r, /city/p - они заменятся на город пользователя в соответствующем падеже.
    */
   description?: string | null;
   content?: {
@@ -503,6 +510,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
+  pageTitle?: T;
   price?: T;
   category?: T;
   subCategory?: T;
@@ -618,11 +626,11 @@ export interface SiteSetting {
            */
           image: number | Media;
           /**
-           * Основной заголовок слайда
+           * Основной заголовок слайда. Можете использовать переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
            */
           title?: string | null;
           /**
-           * Дополнительный текст под заголовком
+           * Дополнительный текст под заголовком. Также поддерживает переменные города: /city, /city/r, /city/p - будут заменены на соответствующее склонение города.
            */
           subtitle?: string | null;
           /**
@@ -637,6 +645,9 @@ export interface SiteSetting {
            * Уровень затемнения изображения для лучшей читаемости текста
            */
           imageOverlay?: ('none' | 'light' | 'medium' | 'dark') | null;
+          /**
+           * Если ссылка внутри сайта, напишите только относительный путь: /city, /city/p (для фильтра по цене), /city/r (для фильтра по рейтингу), /meal и т.п. Полные ссылки только для внешних сайтов.
+           */
           link?: string | null;
           id?: string | null;
         }[]

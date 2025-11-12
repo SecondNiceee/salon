@@ -1,36 +1,81 @@
+import { getCityBySlug } from "@/actions/server/cities/getCities"
 import GrandBazarClientApp from "./main-client-page"
 import Script from "next/script"
+import { Metadata } from "next"
 
 // SEO: генерация метаданных для салона красоты
-export async function generateMetadata() {
-  const siteUrl = process.env.NEXT_PUBLIC_URL
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}): Promise<Metadata> {
+  const { city: citySlug } = await params
+  const city = await getCityBySlug(citySlug)
+
+  if (!city) {
+    return {
+      title: "Город не найден",
+      robots: { index: false, follow: false },
+    }
+  }
+
+  const cityName = city.declensions.nominative
+  const cityPrepositional = city.declensions.prepositional
+  const citySuffix = city.seoTitle ? ` — ${city.seoTitle}` : ` — ${cityName}`
+
   return {
-    title: "Академия Спа — Салон красоты и спа | Массаж, косметология, татуировки",
-    description:
-      "Профессиональный салон красоты с услугами массажа, спа, косметологии и татуировок. Онлайн-курсы по массажу и косметологии. Подарочные сертификаты. Запись онлайн!",
-    keywords:
-      "салон красоты, массаж, спа услуги, косметология, татуировки, курсы массажа, курсы косметологии, подарочный сертификат, Академия Спа",
-
-    // Open Graph (для WhatsApp, Telegram, соцсетей)
-    openGraph: {
-      title: "Академия Спа — Салон красоты и спа",
-      description: "Массаж, спа, косметология, татуировки и курсы. Запись онлайн!",
-      url: siteUrl,
-      siteName: "Академия Спа",
-      locale: "ru_RU",
-      type: "website",
+    metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
+    title: {
+      default: `Академия Спа — Салон красоты | Массаж, спа, косметология, татуировки, курсы в ${cityPrepositional}`,
+      template: `%s`,
     },
-
-    // Twitter
+    description:
+      city.metaDescription ||
+      `Салон красоты Академия Спа ${cityPrepositional}: профессиональный массаж, спа-услуги, косметология, татуировки. Онлайн-курсы по массажу и косметологии. Подарочные сертификаты. Запись онлайн!`,
+    keywords: [
+      "салон красоты",
+      "массаж",
+      "спа",
+      "косметология",
+      "татуировки",
+      "курсы массажа",
+      "обучение косметологии",
+      "подарочный сертификат",
+      "спа-услуги",
+      "Академия Спа",
+      cityName,
+    ],
+    authors: [{ name: "Академия Спа" }],
+    creator: "Академия Спа",
+    publisher: "Академия Спа",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    openGraph: {
+      type: "website",
+      locale: "ru_RU",
+      url: `${process.env.NEXT_PUBLIC_URL}/${citySlug}`,
+      siteName: "Академия Спа",
+      title: `Академия Спа — Салон красоты | Массаж, спа и косметология${citySuffix}`,
+      description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
+    },
     twitter: {
       card: "summary_large_image",
-      title: "Академия Спа — Салон красоты",
-      description: "Профессиональные услуги красоты и спа. Запись сейчас!",
+      title: `Академия Спа — Салон красоты${citySuffix}`,
+      description: `Массаж, спа-услуги, косметология и курсы ${cityPrepositional}. Запись онлайн!`,
     },
-
-    // Canonical URL
-    alternates: {
-      canonical: siteUrl,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   }
 }
