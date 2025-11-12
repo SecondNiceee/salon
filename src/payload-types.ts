@@ -98,9 +98,11 @@ export interface Config {
   };
   globals: {
     'site-settings': SiteSetting;
+    cities: City;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    cities: CitiesSelect<false> | CitiesSelect<true>;
   };
   locale: null;
   user: User & {
@@ -707,6 +709,62 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * Управление городами на сайте. Города используются в URL (например, /moscow/, /piter/)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: number;
+  /**
+   * Список всех городов, доступных на сайте
+   */
+  cities?:
+    | {
+        /**
+         * Полное название города (например, Москва, Санкт-Петербург)
+         */
+        name: string;
+        /**
+         * Уникальный идентификатор для URL (например, moscow, piter). Только латинские буквы, без пробелов
+         */
+        slug: string;
+        /**
+         * Склонения названия города для правильного использования в тексте
+         */
+        declensions: {
+          /**
+           * Например: Москва, Санкт-Петербург
+           */
+          nominative: string;
+          /**
+           * Например: Москвы, Санкт-Петербурга
+           */
+          genitive: string;
+          /**
+           * Например: в Москве, в Санкт-Петербурге
+           */
+          prepositional: string;
+        };
+        /**
+         * Дополнительный текст для SEO заголовков (например, 'Москва и область')
+         */
+        seoTitle?: string | null;
+        /**
+         * Описание для мета-тегов (SEO)
+         */
+        metaDescription?: string | null;
+        /**
+         * Этот город будет использоваться при переходе на главную страницу без города в URL
+         */
+        isDefault?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -750,6 +808,32 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         telegram?: T;
         whatsApp?: T;
         instagram?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
+export interface CitiesSelect<T extends boolean = true> {
+  cities?:
+    | T
+    | {
+        name?: T;
+        slug?: T;
+        declensions?:
+          | T
+          | {
+              nominative?: T;
+              genitive?: T;
+              prepositional?: T;
+            };
+        seoTitle?: T;
+        metaDescription?: T;
+        isDefault?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

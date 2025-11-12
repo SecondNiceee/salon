@@ -6,21 +6,26 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
+import { useCity } from "@/lib/use-city"
 
 interface IUserLink {
   className?: string
 }
+
 const UserLink: FC<IUserLink> = ({ className = "" }) => {
   const { user } = useAuthStore()
   const { openDialog } = useAuthDialogStore()
   const router = useRouter()
+  const city = useCity() // Get city from hook
+
   const clickHandler = () => {
     if (user) {
-      router.push(`${routerConfig.profile}`)
+      router.push(routerConfig.getPath(city, "profile"))
     } else {
       openDialog("login")
     }
   }
+
   return (
     <Button
       variant="default"

@@ -15,6 +15,7 @@ import { Mail } from "lucide-react"
 import AuthPicker from "../ui/login-or-registrate-picker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registrationSchema } from "../validation/schemas"
+import { useCity } from "@/lib/use-city" // Import useCity hook to get city for router navigation
 
 type RegisterInputs = {
   email: string
@@ -29,6 +30,7 @@ interface IRegisterSection {
 export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   const { register: registerUser, login } = useAuthStore()
   const router = useRouter()
+  const city = useCity() // Get city from hook
 
   // Состояния для информаирования пользователя
   const [success, setSuccess] = useState<string | null>(null)
@@ -73,13 +75,13 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
           credentials: true,
         })
         await login(email, password)
-        router.push(routerConfig.profile)
+        router.push(routerConfig.getPath(city, "profile"))
       } catch (e) {
         console.log(e)
         // ingnoring
       }
     }
-  }, [email])
+  }, [email, city]) // Added city to dependencies
 
   // Проверка верификации каждые 12 секунд
   useEffect(() => {

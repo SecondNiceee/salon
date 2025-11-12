@@ -10,6 +10,8 @@ import type { Media } from "@/payload-types"
 import { Button } from "../ui/button"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { routerConfig } from "@/config/router.config"
+import { useCity } from "@/lib/use-city"
 
 export function Categories() {
   const { categories, getCategories, error, isLoading } = useCategoriesStore()
@@ -19,7 +21,9 @@ export function Categories() {
   const [canScrollRight, setCanScrollRight] = useState(false)
 
   const params = useParams()
-  const slug = params?.slug ? (Array.isArray(params.slug) ? params.slug[0] : params.slug) : ""
+  const slug = params?.slug ? (Array.isArray(params.slug) ? params.slug[0] : params.slug) : "";
+  
+  const city = useCity();
 
   useEffect(() => {
     if (!categories.length && !isCategoriesFetched.current) {
@@ -137,7 +141,7 @@ export function Categories() {
 
             return (
               <Link
-                href={category.value}
+                href={routerConfig.getPath(city, category.value)}
                 key={index}
                 className={`flex flex-col items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors`}
               >

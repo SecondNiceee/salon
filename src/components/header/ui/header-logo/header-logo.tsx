@@ -2,11 +2,14 @@
 import { routerConfig } from "@/config/router.config"
 import Link from "next/link"
 import Image from "next/image"
+import { useCity } from "@/lib/use-city"
 
 const HeaderLogo = () => {
+  const city = useCity() // Get city from hook
+
   return (
     <Link
-      href={routerConfig.home}
+      href={routerConfig.getPath(city, "home")}
       className="flex items-center flex-shrink-0 group hover:opacity-80 transition-opacity"
     >
       <div className="flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-lg group-hover:shadow-xl transition-shadow">

@@ -47,9 +47,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "localhost",
-        port: "3000",
-        pathname: "/api/media/*/*",
+        hostname: "109.69.23.147",
       },
       {
         protocol: "https",

@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { useGuestBenefitsStore } from "../auth/guest-benefits-modal"
 import { routerConfig } from "@/config/router.config"
 import SmartImage from "../smart-image/SmartImage"
+import { useCity } from "@/lib/use-city"
 
 interface IProductCard {
   product: Product
@@ -26,9 +27,9 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
   const { openDialog: openGuestDialog } = useGuestBenefitsStore()
 
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
-
+  const city = useCity();
   const onProductClick = () => {
-    router.push(`${routerConfig.product}?id=${product.id}`)
+    router.push(routerConfig.getPath(city, `${routerConfig.product}?id=${product.id}`) )
     if (clickHandler) {
       clickHandler()
     }

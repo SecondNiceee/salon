@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
@@ -9,19 +9,20 @@ import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { routerConfig } from "@/config/router.config"
 import LoginSection from "./login/loginSection"
 import RegisterSection from "./registration/registerSection"
-
+import { useCity } from "@/lib/use-city"
 
 export default function AuthDialog() {
   const router = useRouter()
   const { open, closeDialog, mode, setMode, isRedirect } = useAuthDialogStore()
   const { user } = useAuthStore()
+  const city = useCity() // Get city from hook
 
   useEffect(() => {
     if (user && open) {
       closeDialog()
-      if (isRedirect) router.push(routerConfig.profile)
+      if (isRedirect) router.push(routerConfig.getPath(city, "profile"))
     }
-  }, [user, open, closeDialog, router])
+  }, [user, open, closeDialog, router, isRedirect, city])
 
   return (
     <Dialog open={open} onOpenChange={(val) => (!val ? closeDialog() : undefined)}>
@@ -39,12 +40,11 @@ export default function AuthDialog() {
             <X className="h-5 w-5" />
           </Button>
 
-            {mode === "login" ? (
-              <LoginSection mode={mode} setMode={setMode}  />
-            ) : (
-              <RegisterSection mode={mode} setMode={setMode}/>
-            )}
-
+          {mode === "login" ? (
+            <LoginSection mode={mode} setMode={setMode} />
+          ) : (
+            <RegisterSection mode={mode} setMode={setMode} />
+          )}
         </div>
       </DialogContent>
     </Dialog>

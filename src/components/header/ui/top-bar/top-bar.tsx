@@ -3,10 +3,13 @@ import Link from "next/link"
 import { Phone } from "lucide-react"
 import { useSiteSettings } from "@/entities/siteSettings/SiteSettingsStore"
 import { useMobileStore } from "@/entities/mobileMenu/mobileMenuStore"
+import { useCity } from "@/lib/use-city"
 
 const TopBar = () => {
   const { siteSettings } = useSiteSettings()
   const { setOpened } = useMobileStore()
+  const city = useCity() // Get city from hook
+
   const onLinkClick = () => {
     setOpened(false)
   }
@@ -17,7 +20,11 @@ const TopBar = () => {
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 justify-between text-sm">
           {/* Левая часть - ссылки */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-            <Link onClick={onLinkClick} href="/about" className="text-gray-600 transition-colors hover:text-gray-900">
+            <Link
+              onClick={onLinkClick}
+              href={`/${city}/about`}
+              className="text-gray-600 transition-colors hover:text-gray-900"
+            >
               Главная
             </Link>
           </div>

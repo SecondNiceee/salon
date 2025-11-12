@@ -23,6 +23,7 @@ import { HeaderBlock } from "./lib/payload-blocks/HeaderBlock"
 import { ImageGalleryBlock } from "./lib/payload-blocks/ImageGalleryBlock"
 import { ContactsBlock } from "./lib/payload-blocks/ContactsBlock"
 import { SiteSettings } from "./globals/SiteSettings"
+import { Cities } from "./globals/Cities"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +34,7 @@ const isDevelopment = process.env.NODE_ENV === "development"
 
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://grandbazarr.ru",
-  serverURL : "http://localhost:3000",
+  serverURL : process.env.BACKEND_URL,
   cors: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   csrf: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   admin: {
@@ -43,7 +44,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Categories, Products, Orders, Reviews, Favorites, Pages],
-  globals: [SiteSettings],
+  globals: [SiteSettings, Cities],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,

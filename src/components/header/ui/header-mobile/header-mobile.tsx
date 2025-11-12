@@ -10,17 +10,20 @@ import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
 import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { useAuthStore } from "@/entities/auth/authStore"
+import { useCity } from "@/lib/use-city"
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
   const router = useRouter()
+  const city = useCity() // Get city from hook
 
   const { user } = useAuthStore()
   const { openDialog } = useAuthDialogStore()
+
   const clickHandler = () => {
     setOpened(false)
     if (user) {
-      router.push(`${routerConfig.profile}`)
+      router.push(routerConfig.getPath(city, "profile"))
     } else {
       openDialog("login")
     }
