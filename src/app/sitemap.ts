@@ -55,14 +55,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     )
   }
 
-  const categoryRoutes: MetadataRoute.Sitemap = []
+  const subcategoryRoutes: MetadataRoute.Sitemap = []
   try {
-    const categoriesResult = await payload.find({
+    const subcategoriesResult = await payload.find({
       collection: "categories",
-      limit: 100,
+      limit: 1000,
       where: {
         parent: {
-          exists: false,
+          exists: true, // Only subcategories (those with a parent)
         },
       },
       select: {
@@ -72,17 +72,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
 
     for (const city of cities) {
-      for (const cat of categoriesResult.docs) {
-        categoryRoutes.push({
-          url: `${siteUrl}/${city.slug}/${cat.value}`,
-          lastModified: safeDate(cat.updatedAt),
+      for (const subcat of subcategoriesResult.docs) {
+        subcategoryRoutes.push({
+          url: `${siteUrl}/${city.slug}/${subcat.value}`,
+          lastModified: safeDate(subcat.updatedAt),
           changeFrequency: "daily" as const,
           priority: 0.8,
         })
       }
     }
   } catch (e) {
-    console.error("Categories sitemap error:", e)
+    console.error("Subcategories sitemap error:", e)
   }
 
   const productRoutes: MetadataRoute.Sitemap = []
@@ -140,5 +140,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Pages sitemap error:", e)
   }
 
-  return [...staticRoutes, ...categoryRoutes, ...productRoutes, ...pageRoutes]
+  return [...staticRoutes, ...subcategoryRoutes, ...productRoutes, ...pageRoutes]
 }

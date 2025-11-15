@@ -1,7 +1,7 @@
 "use client"
 
 import { useCity } from "@/lib/use-city"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -17,6 +17,7 @@ export function CitySelector() {
   const currentCity = useCity()
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [cities, setCities] = useState<City[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -35,9 +36,11 @@ export function CitySelector() {
 
   const handleCityChange = (newCitySlug: string) => {
     // Replace city in current path
+    const params = new URLSearchParams(searchParams.toString())
+    const stringParams = params.toString();
     const pathParts = pathname.split("/").filter(Boolean)
     pathParts[0] = newCitySlug
-    const newPath = "/" + pathParts.join("/")
+    const newPath = "/" + pathParts.join("/") + "?" + stringParams;
     router.push(newPath)
   }
 

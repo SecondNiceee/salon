@@ -34,6 +34,7 @@ export const getCategoriesWithSubs = async (): Promise<CategoryWithSubs[]> => {
           },
           depth: 1,
           limit: 50,
+          sort: "createdAt"
         });
 
         return {

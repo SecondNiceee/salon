@@ -3,14 +3,13 @@
 import type React from "react"
 
 import { useCategoriesStore } from "@/entities/categories/categoriesStore"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useEffect, useRef, useState } from "react"
 import ErrorAlert from "../error-alert/ErrorAlert"
 import type { Media } from "@/payload-types"
 import { Button } from "../ui/button"
 import Link from "next/link"
-import { useParams } from "next/navigation"
-import { routerConfig } from "@/config/router.config"
+import { useParams } from 'next/navigation'
 import { useCity } from "@/lib/use-city"
 
 export function Categories() {
@@ -21,9 +20,13 @@ export function Categories() {
   const [canScrollRight, setCanScrollRight] = useState(false)
 
   const params = useParams()
-  const slug = params?.slug ? (Array.isArray(params.slug) ? params.slug[0] : params.slug) : "";
-  
-  const city = useCity();
+  const subcategorySlug = params?.subcategorySlug
+    ? Array.isArray(params.subcategorySlug)
+      ? params.subcategorySlug[0]
+      : params.subcategorySlug
+    : ""
+
+  const city = useCity()
 
   useEffect(() => {
     if (!categories.length && !isCategoriesFetched.current) {
@@ -32,7 +35,6 @@ export function Categories() {
     }
   }, [categories])
 
-  // Проверяем возможность прокрутки
   const checkScrollability = () => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
@@ -41,7 +43,6 @@ export function Categories() {
     }
   }
 
-  // Проверяем при загрузке категорий и изменении размера окна
   useEffect(() => {
     checkScrollability()
     const handleResize = () => checkScrollability()
@@ -49,7 +50,6 @@ export function Categories() {
     return () => window.removeEventListener("resize", handleResize)
   }, [categories])
 
-  // Функции прокрутки
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({
@@ -68,13 +68,10 @@ export function Categories() {
     }
   }
 
-  // Горизонтальная прокрутка колесиком мыши
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (!scrollContainerRef.current) return
-    // Блокируем вертикальную прокрутку страницы при взаимодействии с категориями
     e.preventDefault()
     e.stopPropagation()
-    // Преобразуем вертикальную прокрутку в горизонтальную (или используем горизонтальную, если она есть)
     const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX
     scrollContainerRef.current.scrollBy({ left: delta, behavior: "smooth" })
   }
@@ -87,7 +84,6 @@ export function Categories() {
     )
   }
 
-  // 🔽 Показываем ошибку, если есть
   if (error) {
     console.log(error)
     return (
@@ -100,10 +96,15 @@ export function Categories() {
     )
   }
 
+  const isSubCategoryActive = (categoryValue: string) => {
+    const category = categories.find((cat) => cat.value === categoryValue)
+    if (!category) return false
+    return category.subCategories.some((sub) => sub.value === subcategorySlug)
+  }
+
   return (
     <div className="bg-white md:py-4 pt-2 pb-1">
       <div className="max-w-7xl mx-auto px-4 relative">
-        {/* Кнопка прокрутки влево */}
         {canScrollLeft && (
           <Button
             variant="outline"
@@ -115,7 +116,6 @@ export function Categories() {
           </Button>
         )}
 
-        {/* Кнопка прокрутки вправо */}
         {canScrollRight && (
           <Button
             variant="outline"
@@ -127,7 +127,6 @@ export function Categories() {
           </Button>
         )}
 
-        {/* Контейнер с категориями */}
         <div
           ref={scrollContainerRef}
           className="flex items-start gap-1 sm:gap-3 md:gap-5 overflow-x-scroll hide-scrollbar overflow-y-hidden overscroll-x-contain overscroll-y-none touch-pan-x"
@@ -136,30 +135,29 @@ export function Categories() {
         >
           {categories.map((category, index) => {
             const imageUrl = (category.icon as Media).url ?? ""
-            console.log("[v0] Category icon URL:", imageUrl)
-            console.log("[v0] Full media object:", category.icon)
+            const isActive = isSubCategoryActive(category.value)
+            
+            const firstSubCategory = category.subCategories[0]
+            const href = firstSubCategory 
+              ? `/${city}/${firstSubCategory.value}` 
+              : `/${city}/catalog`
 
             return (
               <Link
-                href={routerConfig.getPath(city, category.value)}
+                href={href}
                 key={index}
                 className={`flex flex-col items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors`}
               >
                 <div
-                  className={`sm:w-12 sm:h-12 w-7 h-7 ${slug === category.value ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
+                  className={`sm:w-12 sm:h-12 w-7 h-7 ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
                   <img
                     alt={"shop"}
                     src={imageUrl || "/placeholder.svg"}
                     className="sm:h-6 sm:w-6 h-4 w-4 text-black"
-                    onError={(e) => {
-                      console.error("[v0] Image failed to load:", imageUrl, e)
-                    }}
                   />
                 </div>
-                <span
-                  className={`text-xs ${slug === category.value ? "text-brand-400 font-semibold" : ""} text-center leading-tight`}
-                >
+                <span className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight`}>
                   {category.title}
                 </span>
               </Link>

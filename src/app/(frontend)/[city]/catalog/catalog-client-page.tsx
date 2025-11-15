@@ -8,11 +8,13 @@ import type { Media } from "@/payload-types"
 import type { CategoryWithSubs } from "@/actions/server/categories/getCategorysWithSubs"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 
 export default function CatalogClientPage() {
   const categories = useCategoriesStore().categories
   const router = useRouter()
+  const params = useParams()
+  const city = params?.city as string
 
   const handleBack = () => {
     router.back()
@@ -39,7 +41,7 @@ export default function CatalogClientPage() {
                   <div className="grid grid-cols-2 gap-3">
                     {category.subCategories.map((subCategory) => (
                       <Link
-                        href={`/${category.value}?sub=${subCategory.value}`}
+                        href={`/${city}/${subCategory.value}`}
                         className="w-full cursor-pointer p-2 relative rounded-xl h-[120px] flex justify-center items-center transition-transform duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
                         key={subCategory.id}
                       >
