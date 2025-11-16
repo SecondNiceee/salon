@@ -209,6 +209,42 @@ export interface Category {
    * Загрузите обложку для подкатегории (видны в каталоге)
    */
   coverImage?: (number | null) | Media;
+  /**
+   * Подробное описание подкатегории с форматированием. Поддерживает переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве)
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Дополнительный контент, который будет отображаться после списка товаров. Поддерживает переменные города: /city, /city/r, /city/p
+   */
+  contentAfter?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -501,6 +537,8 @@ export interface CategoriesSelect<T extends boolean = true> {
   parent?: T;
   icon?: T;
   coverImage?: T;
+  content?: T;
+  contentAfter?: T;
   updatedAt?: T;
   createdAt?: T;
 }

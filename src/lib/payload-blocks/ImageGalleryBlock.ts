@@ -28,6 +28,15 @@ export const ImageGalleryBlock: Block = {
             description: "Выберите изображение для галереи",
           },
         },
+        {
+          name: "description",
+          type: "text",
+          label: "Описание",
+          required: false,
+          admin: {
+            description: "Добавьте описание к изображению (необязательно)",
+          },
+        },
       ],
     },
     {

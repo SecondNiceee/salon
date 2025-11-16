@@ -1,6 +1,18 @@
 // src/collections/Categories.ts
-import { isAccess, isAdmin } from '@/utils/accessUtils';
+import { isAccess } from '@/utils/accessUtils';
 import type { CollectionConfig } from 'payload';
+import { lexicalEditor, HeadingFeature, BlocksFeature } from "@payloadcms/richtext-lexical"
+import { HeaderBlock } from '@/lib/payload-blocks/HeaderBlock';
+import { ImageBlock } from '@/lib/payload-blocks/ImageBlock';
+import { PararaphBlock } from '@/lib/payload-blocks/ParagraphBlock';
+import { TextWithImageBlock } from '@/lib/payload-blocks/TextWithImageBlock';
+import { ImageGalleryBlock } from '@/lib/payload-blocks/ImageGalleryBlock';
+import { ContactsBlock } from '@/lib/payload-blocks/ContactsBlock';
+import { TextBlock } from '@/lib/payload-blocks/TextBlock';
+import { BoxContentBlock } from '@/lib/payload-blocks/BoxContentBlock';
+import { AccordionBlock } from '@/lib/payload-blocks/AccordionBlock';
+import { BookingButtonBlock } from '@/lib/payload-blocks/BookingButtonBlock';
+import { IconCardsBlock } from '@/lib/payload-blocks/IconCardsBlock';
 
 const Categories: CollectionConfig = {
   slug: 'categories',
@@ -68,7 +80,7 @@ const Categories: CollectionConfig = {
       },
     },
 
-    // 🖼️ Иконка — только для родительских категорий
+    // Иконка — только для родительских категорий
     {
       name: 'icon',
       type: 'upload',
@@ -81,7 +93,7 @@ const Categories: CollectionConfig = {
       },
     },
 
-    // 🖼️ Обложка — только для подкатегорий (если есть parent)
+    // Обложка — только для подкатегорий (если есть parent)
     {
       name: 'coverImage',
       type: 'upload',
@@ -92,6 +104,50 @@ const Categories: CollectionConfig = {
         condition: (_, { parent }) => Boolean(parent), // Показывать, только если ЕСТЬ родитель
         description: 'Загрузите обложку для подкатегории (видны в каталоге)',
       },
+    },
+
+    {
+      name: 'content',
+      type: 'richText',
+      label: 'Описание (Rich Text)',
+      required: false,
+      admin: {
+        condition: (_, { parent }) => Boolean(parent),
+        description: 'Подробное описание подкатегории с форматированием. Поддерживает переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве)',
+      },
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock],
+          }),
+          HeadingFeature({
+            enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+          }),
+        ],
+      }),
+    },
+
+    {
+      name: 'contentAfter',
+      type: 'richText',
+      label: 'Дополнительный контент (после товаров)',
+      required: false,
+      admin: {
+        condition: (_, { parent }) => Boolean(parent),
+        description: 'Дополнительный контент, который будет отображаться после списка товаров. Поддерживает переменные города: /city, /city/r, /city/p',
+      },
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock],
+          }),
+          HeadingFeature({
+            enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+          }),
+        ],
+      }),
     },
   ],
 };

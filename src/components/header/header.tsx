@@ -9,7 +9,7 @@ export function Header() {
       <div className="md:block hidden">
         <TopBar />
       </div>
-      <header className="sticky top-0 z-[200]">
+      <header className="z-[200]">
         <div className="relative z-30 px-4 py-4 bg-gray-100 shadow-md lg:py-5">
           <div className="mx-auto max-w-7xl">
             {/* Mobile Layout (< 768px) */}

@@ -12,16 +12,22 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 import SubCategories from "@/components/sub-categories/SubCategories"
 import { getFilteredProducts, type ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 import type { Category } from "@/payload-types"
+import { RichText } from "@payloadcms/richtext-lexical/react"
+import jsxConverters from "@/utils/jsx-converters"
+import "@/styles/richText.scss"
+import { replaceCityInRichText, type CityDeclensions } from "@/utils/replaceCityVariables"
+import { getCityBySlug } from "@/actions/server/cities/getCities"
 
 const SubCategoryPage = () => {
   const params = useParams()
   const router = useRouter()
-  const { subcategorySlug, city } = params as Record<string, string>
+  const { subcategorySlug, city: citySlug } = params as Record<string, string>
 
   const [data, setData] = useState<SubCategoryWithProducts | null>(null)
   const [allSubCategories, setAllSubCategories] = useState<ProductsWithSubCategory[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setLoading] = useState<boolean>(true)
+  const [cityDeclensions, setCityDeclensions] = useState<CityDeclensions | null>(null)
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -29,6 +35,15 @@ const SubCategoryPage = () => {
   const fetchSubCategory = useCallback(async () => {
     setLoading(true)
     setError(null)
+
+    const city = await getCityBySlug(citySlug)
+    if (city) {
+      setCityDeclensions({
+        nominative: city.declensions.nominative,
+        genitive: city.declensions.genitive,
+        prepositional: city.declensions.prepositional,
+      })
+    }
 
     const result = await getSubCategoryWithProducts(subcategorySlug)
 
@@ -49,7 +64,7 @@ const SubCategoryPage = () => {
     }
 
     setLoading(false)
-  }, [subcategorySlug])
+  }, [subcategorySlug, citySlug])
 
   useEffect(() => {
     fetchSubCategory()
@@ -57,12 +72,12 @@ const SubCategoryPage = () => {
 
   const goToNextSubCategory = () => {
     if (data?.nextSubCategory) {
-      router.push(`/${city}/${data.nextSubCategory.value}`)
+      router.push(`/${citySlug}/${data.nextSubCategory.value}`)
     }
   }
 
   const navigateToSubCategory = (value: string) => {
-    router.push(`/${city}/${value}`)
+    router.push(`/${citySlug}/${value}`)
   }
 
   if (error) {
@@ -77,10 +92,18 @@ const SubCategoryPage = () => {
     )
   }
 
+  const processedContent = data.subCategory.content 
+    ? replaceCityInRichText(data.subCategory.content, cityDeclensions) 
+    : null
+
+  const processedContentAfter = data.subCategory.contentAfter 
+    ? replaceCityInRichText(data.subCategory.contentAfter, cityDeclensions) 
+    : null
+
   return (
     <>
       {allSubCategories.length > 0 && (
-        <div className="sticky top-[150px] sm:top-[173px] md:top-[200px] z-20">
+        <div className="z-20">
           <SubCategories
             sortedProducts={allSubCategories}
             activeSubCategory={data.subCategory.value}
@@ -93,16 +116,25 @@ const SubCategoryPage = () => {
 
       <section className="products-sub bg-gray-50 shadow-[0_-6px_12px_-4px_rgba(0,0,0,0.05)]">
         <div className="max-w-7xl px-4 flex flex-col mx-auto pb-16 pt-8">
-          <div className="flex flex-col gap-5">
-            <div className="flex justify-between ml-2 items-start w-full">
-              <h1 className="text-3xl text-black font-bold">{data.subCategory.title}</h1>
-            </div>
+          <div className="flex flex-col">
+            
+            {processedContent && (
+              <div className="rich-container">
+                <RichText converters={jsxConverters} data={processedContent} />
+              </div>
+            )}
 
-            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {data.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
+
+            {processedContentAfter && (
+              <div className="rich-container mt-8">
+                <RichText converters={jsxConverters} data={processedContentAfter} />
+              </div>
+            )}
 
             {data.nextSubCategory && (
               <div className="flex items-center justify-center mt-8">
@@ -111,7 +143,7 @@ const SubCategoryPage = () => {
                   className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                 >
                   <p className="text-white text-sm md:text-base font-semibold">
-                    К подкатегории "{data.nextSubCategory.title}"
+                     "{data.nextSubCategory.title}"
                   </p>
                   <ArrowRight color="white" size={20} />
                 </button>

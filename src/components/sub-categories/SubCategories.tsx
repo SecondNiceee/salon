@@ -54,7 +54,7 @@ const SubCategories = forwardRef<HTMLDivElement, ISubCategories>(
     }
 
     return (
-      <div className="flex z-20 top-[150px] sm:top-[173px] pb-3 pt-0 md:top-[200px] mx-auto bg-gray-50 ">
+      <div className="flex z-20 pb-3 pt-0 mx-auto bg-gray-50 ">
         <div className="max-w-7xl w-full pt-4 px-4 mx-auto">
           <div
             ref={setCombinedRef}

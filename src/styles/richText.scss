@@ -2,6 +2,8 @@
 
 .rich-container{
   @apply max-w-7xl mx-auto px-4 pb-5 pt-5;
+  font-family: var(--font-inter);
+  
   h1 {
     @apply my-3 text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground leading-snug text-balance;
   }
@@ -163,6 +165,8 @@
 
 .paragraph{
   @apply flex flex-col gap-1 md:my-5 my-3;
+  font-family: var(--font-inter);
+  
   p{
     @apply my-0;
   }
@@ -206,6 +210,46 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
+    }
+  }
+}
+
+.text-block-wrapper {
+  @apply font-normal text-foreground;
+  font-family: var(--font-inter);
+  
+  // Base size - stays base on all screens
+  &[data-text-size="base"] {
+    p, li {
+      @apply text-base leading-relaxed;
+    }
+  }
+  
+  // lg size - base on mobile, lg on desktop
+  &[data-text-size="lg"] {
+    p, li {
+      @apply text-base md:text-lg leading-relaxed;
+    }
+  }
+  
+  // xl size - base → lg → xl
+  &[data-text-size="xl"] {
+    p, li {
+      @apply text-base md:text-lg lg:text-xl leading-relaxed;
+    }
+  }
+  
+  // 2xl size - lg → xl → 2xl
+  &[data-text-size="2xl"] {
+    p, li {
+      @apply text-lg md:text-xl lg:text-2xl leading-relaxed;
+    }
+  }
+  
+  // 3xl size - xl → 2xl → 3xl
+  &[data-text-size="3xl"] {
+    p, li {
+      @apply text-xl md:text-2xl lg:text-3xl leading-relaxed;
     }
   }
 }

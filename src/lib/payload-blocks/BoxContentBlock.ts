@@ -7,27 +7,34 @@ import { ImageGalleryBlock } from "./ImageGalleryBlock"
 import { ContactsBlock } from "./ContactsBlock"
 import { ListBlock } from "./ListBlock"
 import { TextBlock } from "./TextBlock"
-import { BoxContentBlock } from "./BoxContentBlock"
 
-export const PararaphBlock: Block = {
-  slug: "paragraph",
+export const BoxContentBlock: Block = {
+  slug: "boxContent",
   labels: {
-    singular: "Параграф",
-    plural: "Параграфы",
+    singular: "Контент в рамке",
+    plural: "Контент в рамке",
   },
   fields: [
     {
       type: "richText",
-      name: "text",
-      label: "Текст параграфа",
+      name: "content",
+      label: "Контент",
       admin: {
-        description: "Введите текст параграфа с возможностью форматирования",
+        description: "Контент, который будет отображаться в белой области с тенью",
       },
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ImageBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock, ListBlock, TextBlock, BoxContentBlock],
+            blocks: [
+              HeaderBlock,
+              ImageBlock,
+              TextWithImageBlock,
+              ImageGalleryBlock,
+              ContactsBlock,
+              ListBlock,
+              TextBlock,
+            ],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

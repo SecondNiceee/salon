@@ -1,4 +1,4 @@
-/* src/app/globals.css */
+  /* src/app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,6 +103,7 @@
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
+  --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
