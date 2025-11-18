@@ -124,7 +124,7 @@ const SubCategoryPage = () => {
               </div>
             )}
 
-            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {data.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

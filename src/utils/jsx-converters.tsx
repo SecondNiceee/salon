@@ -15,6 +15,7 @@ import { BoxContentBlock } from "@/components/blocks/BoxContentBlock";
 import { AccordionBlock } from "@/components/blocks/AccordionBlock";
 import { BookingButtonBlock } from "@/components/blocks/BookingButtonBlock";
 import { IconCardsBlock } from "@/components/blocks/IconCardsBlock";
+import { ImageSliderBlock } from "@/components/blocks/ImageSliderBlock";
 
 const jsxConverters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
@@ -30,7 +31,8 @@ const jsxConverters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConvert
     boxContent : ({node} : {node : any}) => <BoxContentBlock content={node.fields.content} />,
     accordion : ({node} : {node : any}) => <AccordionBlock title={node.fields.title} content={node.fields.content} />,
     bookingButton : ({node} : {node : any}) => <BookingButtonBlock buttonText={node.fields.buttonText} variant={node.fields.variant} size={node.fields.size} alignment={node.fields.alignment} />,
-    iconCards : ({node} : {node : any}) => <IconCardsBlock columns={node.fields.columns} cards={node.fields.cards} />
+    iconCards : ({node} : {node : any}) => <IconCardsBlock columns={node.fields.columns} cards={node.fields.cards} />,
+    imageSlider : ({node} : {node : any}) => <ImageSliderBlock images={node.fields.images} autoplay={node.fields.autoplay} autoplayDelay={node.fields.autoplayDelay} showArrows={node.fields.showArrows} showDots={node.fields.showDots} />
   } 
 })
 

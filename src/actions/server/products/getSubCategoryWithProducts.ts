@@ -69,6 +69,7 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
         weight: true,
         reviewsCount: true,
         content: true,
+        hasProductPage : true
       },
     })
 

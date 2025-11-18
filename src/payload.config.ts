@@ -21,6 +21,7 @@ import { PararaphBlock } from "./lib/payload-blocks/ParagraphBlock"
 import { TextWithImageBlock } from "./lib/payload-blocks/TextWithImageBlock"
 import { HeaderBlock } from "./lib/payload-blocks/HeaderBlock"
 import { ImageGalleryBlock } from "./lib/payload-blocks/ImageGalleryBlock"
+import { ImageSliderBlock } from "./lib/payload-blocks/ImageSliderBlock"
 import { ContactsBlock } from "./lib/payload-blocks/ContactsBlock"
 import { SiteSettings } from "./globals/SiteSettings"
 import { Cities } from "./globals/Cities"
@@ -49,7 +50,7 @@ export default buildConfig({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,
       BlocksFeature({
-        blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock],
+        blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ImageSliderBlock, ContactsBlock],
       }),
       HeadingFeature({
         enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

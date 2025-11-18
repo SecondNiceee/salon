@@ -13,6 +13,7 @@ import { BoxContentBlock } from '@/lib/payload-blocks/BoxContentBlock';
 import { AccordionBlock } from '@/lib/payload-blocks/AccordionBlock';
 import { BookingButtonBlock } from '@/lib/payload-blocks/BookingButtonBlock';
 import { IconCardsBlock } from '@/lib/payload-blocks/IconCardsBlock';
+import { ImageSliderBlock } from '@/lib/payload-blocks/ImageSliderBlock';
 
 const Categories: CollectionConfig = {
   slug: 'categories',
@@ -119,13 +120,13 @@ const Categories: CollectionConfig = {
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock],
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock, ImageSliderBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
           }),
         ],
-      }),
+    }),
     },
 
     {
@@ -141,7 +142,7 @@ const Categories: CollectionConfig = {
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock],
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock, TextWithImageBlock, ImageGalleryBlock, ContactsBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock, ImageSliderBlock ],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

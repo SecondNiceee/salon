@@ -272,13 +272,20 @@ export interface Product {
    */
   subCategory: number | Category;
   /**
-   * Загрузите основное изображение товара
+   * Загрузите основное изображение товара (необязательно)
    */
-  image: number | Media;
+  image?: (number | null) | Media;
   /**
    * Описание для SEO. Также поддерживает переменные города: /city, /city/r, /city/p - они заменятся на город пользователя в соответствующем падеже.
    */
   description?: string | null;
+  /**
+   * Если включено, товар будет иметь отдельную страницу. Если выключено, при клике на товар сразу откроется форма бронирования.
+   */
+  hasProductPage?: boolean | null;
+  /**
+   * Доступно только когда включена страничка товара
+   */
   content?: {
     root: {
       type: string;
@@ -554,6 +561,7 @@ export interface ProductsSelect<T extends boolean = true> {
   subCategory?: T;
   image?: T;
   description?: T;
+  hasProductPage?: T;
   content?: T;
   averageRating?: T;
   reviewsCount?: T;

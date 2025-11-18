@@ -1,6 +1,7 @@
 import { HeaderBlock } from "@/lib/payload-blocks/HeaderBlock"
 import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
 import { ListBlock } from "@/lib/payload-blocks/ListBlock"
+import { TextBlock } from "@/lib/payload-blocks/TextBlock"
 import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
 import { isAccess } from "@/utils/accessUtils"
 import { lexicalEditor, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
@@ -101,9 +102,9 @@ const Products: CollectionConfig = {
       type: "upload",
       label: "Фотография",
       relationTo: "media",
-      required: true,
+      required: false,
       admin: {
-        description: "Загрузите основное изображение товара",
+        description: "Загрузите основное изображение товара (необязательно)",
       },
     },
     {
@@ -117,15 +118,29 @@ const Products: CollectionConfig = {
       required: false,
     },
     {
+      name: "hasProductPage",
+      type: "checkbox",
+      label: "Страничка товара",
+      defaultValue: true,
+      admin: {
+        description:
+          "Если включено, товар будет иметь отдельную страницу. Если выключено, при клике на товар сразу откроется форма бронирования.",
+      },
+    },
+    {
       name: "content",
       type: "richText",
       label: "Содержание",
       required: false,
+      admin: {
+        condition: (data) => data.hasProductPage === true,
+        description: "Доступно только когда включена страничка товара",
+      },
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ImageBlock, ListBlock, TextWithImageBlock],
+            blocks: [HeaderBlock, ImageBlock, ListBlock, TextWithImageBlock, TextBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

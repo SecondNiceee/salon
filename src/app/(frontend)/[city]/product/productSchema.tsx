@@ -9,41 +9,47 @@ export function ProductSchema({ product }: { product: PayloadProduct }) {
 
   const availability = "https://schema.org/InStock"
 
-
   // Категории
   const category = (product.category as Category[])[0].title || "";
   const subCategory = (product.subCategory as Category).title || "";
+
+  const imageUrl = product.image ? (product.image as Media).url : undefined;
+
+  const schema: Record<string, any> = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.title,
+    "description": product.description,
+    "sku": String(product.id),
+    "brand": {
+      "@type": "Brand",
+      "name": "Академия Спа"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": productUrl,
+      "priceCurrency": "RUB",
+      "price": price,
+      "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0],
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": availability,
+      "seller": {
+        "@type": "Organization",
+        "name": "Академия Спа"
+      }
+    },
+    "category": [category, subCategory].filter(Boolean).join(" > ")
+  };
+
+  if (imageUrl) {
+    schema.image = imageUrl;
+  }
 
   return (
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          "name": product.title,
-          "image" : (product.image as Media).url,
-          "description": product.description,
-          "sku": String(product.id),
-          "brand": {
-            "@type": "Brand",
-            "name": "Академия Спа"
-          },
-          "offers": {
-            "@type": "Offer",
-            "url": productUrl,
-            "priceCurrency": "RUB",
-            "price": price,
-            "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0],
-            "itemCondition": "https://schema.org/NewCondition",
-            "availability": availability,
-            "seller": {
-              "@type": "Organization",
-              "name": "Академия Спа"
-            }
-          },
-          "category": [category, subCategory].filter(Boolean).join(" > ")
-        }, null, 2)
+        __html: JSON.stringify(schema, null, 2)
       }}
     />
   );
