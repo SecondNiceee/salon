@@ -210,6 +210,14 @@ export interface Category {
    */
   coverImage?: (number | null) | Media;
   /**
+   * SEO заголовок для подкатегории. Поддерживает переменные города: /city (именительный), /city/r (родительный), /city/p (предложный)
+   */
+  seoTitle?: string | null;
+  /**
+   * SEO описание для подкатегории. Поддерживает переменные города: /city, /city/r, /city/p
+   */
+  seoDescription?: string | null;
+  /**
    * Подробное описание подкатегории с форматированием. Поддерживает переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве)
    */
   content?: {
@@ -544,6 +552,8 @@ export interface CategoriesSelect<T extends boolean = true> {
   parent?: T;
   icon?: T;
   coverImage?: T;
+  seoTitle?: T;
+  seoDescription?: T;
   content?: T;
   contentAfter?: T;
   updatedAt?: T;

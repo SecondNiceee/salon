@@ -108,6 +108,28 @@ const Categories: CollectionConfig = {
     },
 
     {
+      name: "seoTitle",
+      type: "text",
+      label: "SEO Title",
+      required: false,
+      admin: {
+        condition: (_, { parent }) => Boolean(parent),
+        description:
+          "SEO заголовок для подкатегории. Поддерживает переменные города: /city (именительный), /city/r (родительный), /city/p (предложный)",
+      },
+    },
+    {
+      name: "seoDescription",
+      type: "textarea",
+      label: "SEO Description",
+      required: false,
+      admin: {
+        condition: (_, { parent }) => Boolean(parent),
+        description: "SEO описание для подкатегории. Поддерживает переменные города: /city, /city/r, /city/p",
+      },
+    },
+
+    {
       name: 'content',
       type: 'richText',
       label: 'Описание (Rich Text)',

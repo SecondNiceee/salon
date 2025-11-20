@@ -1,159 +1,67 @@
-"use client"
-
-import { useParams, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState, useRef } from "react"
-import {
-  getSubCategoryWithProducts,
-  type SubCategoryWithProducts,
-} from "@/actions/server/products/getSubCategoryWithProducts"
-import ErrorAlert from "@/components/error-alert/ErrorAlert"
-import { ProductCard } from "@/components/product-card/ProductCard"
-import { ArrowRight, Loader2 } from 'lucide-react'
-import SubCategories from "@/components/sub-categories/SubCategories"
-import { getFilteredProducts, type ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
-import type { Category } from "@/payload-types"
-import { RichText } from "@payloadcms/richtext-lexical/react"
-import jsxConverters from "@/utils/jsx-converters"
-import "@/styles/richText.scss"
-import { replaceCityInRichText, type CityDeclensions } from "@/utils/replaceCityVariables"
+import type { Metadata } from "next"
+import { getSubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 import { getCityBySlug } from "@/actions/server/cities/getCities"
+import { replaceCityVariables } from "@/utils/replaceCityVariables"
+import SubCategoryClientPage from "./client-page"
+import { notFound } from "next/navigation"
 
-const SubCategoryPage = () => {
-  const params = useParams()
-  const router = useRouter()
-  const { subcategorySlug, city: citySlug } = params as Record<string, string>
+type Props = {
+  params: Promise<{ subcategorySlug: string; city: string }>
+}
 
-  const [data, setData] = useState<SubCategoryWithProducts | null>(null)
-  const [allSubCategories, setAllSubCategories] = useState<ProductsWithSubCategory[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setLoading] = useState<boolean>(true)
-  const [cityDeclensions, setCityDeclensions] = useState<CityDeclensions | null>(null)
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { subcategorySlug, city: citySlug } = await params
 
-  const badgesRef = useRef<(HTMLDivElement | null)[]>([])
-  const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
+  const data = await getSubCategoryWithProducts(subcategorySlug)
+  const city = await getCityBySlug(citySlug)
 
-  const fetchSubCategory = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+  if (!data) {
+    return {
+      title: "Подкатегория не найдена",
+      description: "Запрошенная подкатегория не найдена",
+    }
+  }
 
-    const city = await getCityBySlug(citySlug)
-    if (city) {
-      setCityDeclensions({
+  const cityDeclensions = city
+    ? {
         nominative: city.declensions.nominative,
         genitive: city.declensions.genitive,
         prepositional: city.declensions.prepositional,
-      })
-    }
-
-    const result = await getSubCategoryWithProducts(subcategorySlug)
-
-    if (!result) {
-      setError("Подкатегория не найдена")
-      setLoading(false)
-      return
-    }
-
-    setData(result)
-
-    if (result.subCategory.parent && typeof result.subCategory.parent === 'object') {
-      const parentCategory = result.subCategory.parent as Category
-      const allSubs = await getFilteredProducts(parentCategory.value)
-      if (allSubs) {
-        setAllSubCategories(allSubs)
       }
-    }
-
-    setLoading(false)
-  }, [subcategorySlug, citySlug])
-
-  useEffect(() => {
-    fetchSubCategory()
-  }, [fetchSubCategory])
-
-  const goToNextSubCategory = () => {
-    if (data?.nextSubCategory) {
-      router.push(`/${citySlug}/${data.nextSubCategory.value}`)
-    }
-  }
-
-  const navigateToSubCategory = (value: string) => {
-    router.push(`/${citySlug}/${value}`)
-  }
-
-  if (error) {
-    return <ErrorAlert buttonAction={fetchSubCategory} errorMessage={error} />
-  }
-
-  if (isLoading || !data) {
-    return (
-      <div className="flex justify-center py-8">
-        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-      </div>
-    )
-  }
-
-  const processedContent = data.subCategory.content 
-    ? replaceCityInRichText(data.subCategory.content, cityDeclensions) 
     : null
 
-  const processedContentAfter = data.subCategory.contentAfter 
-    ? replaceCityInRichText(data.subCategory.contentAfter, cityDeclensions) 
-    : null
+  // Используем SEO поля с заменой переменных города
+  const title = data.subCategory.seoTitle
+    ? replaceCityVariables(data.subCategory.seoTitle, cityDeclensions)
+    : data.subCategory.title
 
-  return (
-    <>
-      {allSubCategories.length > 0 && (
-        <div className="z-20">
-          <SubCategories
-            sortedProducts={allSubCategories}
-            activeSubCategory={data.subCategory.value}
-            badgesRef={badgesRef}
-            sectionsRef={sectionsRef}
-            onSubCategoryClick={navigateToSubCategory}
-          />
-        </div>
-      )}
+  const description = data.subCategory.seoDescription
+    ? replaceCityVariables(data.subCategory.seoDescription, cityDeclensions)
+    : `Каталог товаров в категории ${data.subCategory.title}`
 
-      <section className="products-sub bg-gray-50 shadow-[0_-6px_12px_-4px_rgba(0,0,0,0.05)]">
-        <div className="max-w-7xl px-4 flex flex-col mx-auto pb-16 pt-8">
-          <div className="flex flex-col">
-            
-            {processedContent && (
-              <div className="rich-container">
-                <RichText converters={jsxConverters} data={processedContent} />
-              </div>
-            )}
-
-            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-              {data.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-
-            {processedContentAfter && (
-              <div className="rich-container mt-8">
-                <RichText converters={jsxConverters} data={processedContentAfter} />
-              </div>
-            )}
-
-            {data.nextSubCategory && (
-              <div className="flex items-center justify-center mt-8">
-                <button
-                  onClick={goToNextSubCategory}
-                  className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                >
-                  <p className="text-white text-sm md:text-base font-semibold">
-                     "{data.nextSubCategory.title}"
-                  </p>
-                  <ArrowRight color="white" size={20} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    </>
-  )
+  return {
+    title,
+    description,
+  }
 }
 
-export default SubCategoryPage
+export default async function SubCategoryPage({ params }: Props) {
+  const { subcategorySlug, city: citySlug } = await params
+
+  const data = await getSubCategoryWithProducts(subcategorySlug)
+
+  if (!data) {
+    notFound()
+  }
+
+  const city = await getCityBySlug(citySlug)
+
+  return (
+    <SubCategoryClientPage
+      initialData={data}
+      subcategorySlug={subcategorySlug}
+      citySlug={citySlug}
+      initialCity={city}
+    />
+  )
+}

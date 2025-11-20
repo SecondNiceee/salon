@@ -68,7 +68,7 @@ export default function GrandBazarClientApp() {
                   <div className="flex items-start justify-between w-full">
                     <h2 className="text-lg font-bold text-black md:text-2xl">{item.category.title}</h2>
                   </div>
-                  <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                  <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3">
                     {item.products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}

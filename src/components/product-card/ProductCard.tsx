@@ -15,6 +15,7 @@ import { routerConfig } from "@/config/router.config"
 import SmartImage from "../smart-image/SmartImage"
 import { useCity, useCityData } from "@/lib/use-city"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
+import { replaceCityVariables } from "@/utils/replaceCityVariables"
 
 interface IProductCard {
   product: Product
@@ -32,6 +33,8 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
   const city = useCity();
   const cityData = useCityData();
   
+  const displayTitle = replaceCityVariables(product.title, cityData?.declensions || null)
+
   const onProductClick = async () => {
     // If product doesn't have a dedicated page, open booking modal
     if (product.hasProductPage === false) {
@@ -142,7 +145,7 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
         {/* Brand/Title */}
         <div className="flex justify-between items-start gap-2">
           <div className="flex-1">
-            <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-2 leading-snug">{product.title}</h3>
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-3 leading-snug">{displayTitle}</h3>
           </div>
           {!hasImage && (
             <button
@@ -160,32 +163,32 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
 
         {cityData && (
           <div className="flex items-center">
-            <span className="text-xs text-gray-500">{cityData.declensions.nominative}</span>
+            <span className="text-sm text-gray-500">{cityData.declensions.nominative}</span>
           </div>
         )}
 
         {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 ? (
           <div className="flex items-center space-x-1.5">
-            <span className="text-sm font-semibold text-orange-500">{product.averageRating.toFixed(1)}</span>
-            <Star className="w-4 h-4 text-orange-400 fill-current" />
-            <span className="text-xs text-gray-500">
+            <span className="text-base font-semibold text-orange-500">{product.averageRating.toFixed(1)}</span>
+            <Star className="w-5 h-5 text-orange-400 fill-current" />
+            <span className="text-sm text-gray-500">
               {product.reviewsCount}{" "}
               {product.reviewsCount === 1 ? "отзыв" : product.reviewsCount < 5 ? "отзыва" : "отзывов"}
             </span>
           </div>
         ) : (
           <div className="flex items-center">
-            <span className="text-xs text-gray-400">Нет отзывов</span>
+            <span className="text-sm text-gray-400">Нет отзывов</span>
           </div>
         )}
 
         {/* Price and Actions */}
         <div className="space-y-2.5 mt-1">
           <div className="flex items-center gap-2">
-            {product.price && <span className="text-base font-semibold text-gray-800">От {product.price} ₽</span>}
+            {product.price && <span className="text-lg font-semibold text-gray-800">От {product.price} ₽</span>}
           </div>
           <Button
-            className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-xl py-2.5 text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+            className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-xl py-2.5 text-base font-semibold shadow-sm hover:shadow-md transition-all duration-200"
             disabled={isSubmitting && product.hasProductPage === false}
           >
             {product.hasProductPage === false 
