@@ -3,6 +3,8 @@ import type { Block } from "payload"
 import { HeaderBlock } from "./HeaderBlock"
 import { PararaphBlock } from "./ParagraphBlock"
 import { BookingButtonBlock } from "./BookingButtonBlock"
+import { TextBlock } from "./TextBlock"
+import { ImageBlock } from "./ImageBlock"
 
 export const AccordionBlock: Block = {
   slug: "accordion",
@@ -44,7 +46,7 @@ export const AccordionBlock: Block = {
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, PararaphBlock, BookingButtonBlock],
+            blocks: [HeaderBlock, PararaphBlock, BookingButtonBlock, TextBlock, ImageBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
