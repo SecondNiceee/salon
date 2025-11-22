@@ -3,7 +3,6 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 export const revalidatePages = async () => {
   try {
     // Перевалидируем все страницы
-    revalidatePath('/about')
     revalidatePath('/contacts')
     revalidatePath('/delivery')
     revalidatePath('/')

@@ -23,7 +23,7 @@ const TopBar = () => {
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
             <Link
               onClick={onLinkClick}
-              href={`/${city}/about`}
+              href={`/`}
               className="text-gray-600 transition-colors hover:text-gray-900"
             >
               Главная

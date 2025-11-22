@@ -149,12 +149,12 @@ export function Categories() {
                 className={`flex flex-col items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors`}
               >
                 <div
-                  className={`sm:w-12 sm:h-12 w-7 h-7 ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
+                  className={`sm:w-12 sm:h-12 w-10 h-10 ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
                   <img
                     alt={"shop"}
                     src={imageUrl || "/placeholder.svg"}
-                    className="sm:h-6 sm:w-6 h-4 w-4 text-black"
+                    className="w-6 h-6 text-black"
                   />
                 </div>
                 <span className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight`}>

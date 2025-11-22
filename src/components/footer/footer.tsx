@@ -66,7 +66,7 @@ export async function Footer() {
             <div>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/about" className="text-sm text-gray-600 hover:text-gray-800">
+                  <Link href="/" className="text-sm text-gray-600 hover:text-gray-800">
                     Главная
                   </Link>
                 </li>

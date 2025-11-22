@@ -4,25 +4,25 @@ import type React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Minus, Plus, Heart, Star, ImageIcon } from 'lucide-react'
+import { Heart, Star } from "lucide-react"
 import type { Media, Product } from "@/payload-types"
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { toast } from "sonner"
 import { useGuestBenefitsStore } from "../auth/guest-benefits-modal"
 import { routerConfig } from "@/config/router.config"
 import SmartImage from "../smart-image/SmartImage"
-import { useCity, useCityData } from "@/lib/use-city"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
-import { replaceCityVariables } from "@/utils/replaceCityVariables"
+import { replaceCityVariables } from "@/utils/replaceCityVariables";
 
 interface IProductCard {
   product: Product
-  clickHandler?: () => void
+  clickHandler?: () => void,
+  city : any
 }
 
-export function ProductCard({ product, clickHandler }: IProductCard) {
+export function ProductCard({ product, clickHandler, city }: IProductCard) {
   const router = useRouter()
   const { addToFavorites, removeFromFavorites, favoriteProductIds } = useFavoritesStore()
   const { user } = useAuthStore()
@@ -30,10 +30,8 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
   const { openModal: openBookingModal, setIsSubmitting, isSubmitting } = useBookingModalStore()
 
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
-  const city = useCity();
-  const cityData = useCityData();
-  
-  const displayTitle = replaceCityVariables(product.title, cityData?.declensions || null)
+
+  const displayTitle = replaceCityVariables(product.title, city?.declensions || null)
 
   const onProductClick = async () => {
     // If product doesn't have a dedicated page, open booking modal
@@ -43,7 +41,7 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
     }
 
     // Otherwise navigate to product page as usual
-    router.push(routerConfig.getPath(city, `${routerConfig.product}?id=${product.id}`) )
+    router.push(routerConfig.getPath(city.slug, `${routerConfig.product}?id=${product.id}`))
     if (clickHandler) {
       clickHandler()
     }
@@ -109,7 +107,10 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
     }
   }
 
-  const hasImage = product.image && typeof product.image === 'object' && (product.image as Media).url
+  const hasImage = product.image && typeof product.image === "object" && (product.image as Media).url
+  const imageAlt = hasImage
+    ? `${(product.image as Media).alt || displayTitle}${city.declensions ? ` ${city.declensions.prepositional}` : ""}`
+    : ""
 
   return (
     <Card
@@ -123,8 +124,8 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
             loading="lazy"
             width={400}
             height={300}
-            src={(product.image as Media).url}
-            alt={(product.image as Media).alt || "Изображение товара"}
+            src={(product.image as Media).url || ""}
+            alt={imageAlt}
             className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
           />
           <button
@@ -145,7 +146,9 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
         {/* Brand/Title */}
         <div className="flex justify-between items-start gap-2">
           <div className="flex-1">
-            <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-3 leading-snug">{displayTitle}</h3>
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-3 leading-snug">
+              {displayTitle}
+            </h3>
           </div>
           {!hasImage && (
             <button
@@ -161,9 +164,9 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
           )}
         </div>
 
-        {cityData && (
+        {city && (
           <div className="flex items-center">
-            <span className="text-sm text-gray-500">{cityData.declensions.nominative}</span>
+            <span className="text-sm text-gray-500">{city.declensions.nominative}</span>
           </div>
         )}
 
@@ -191,10 +194,7 @@ export function ProductCard({ product, clickHandler }: IProductCard) {
             className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-xl py-2.5 text-base font-semibold shadow-sm hover:shadow-md transition-all duration-200"
             disabled={isSubmitting && product.hasProductPage === false}
           >
-            {product.hasProductPage === false 
-              ? (isSubmitting ? "Загрузка..." : "Записаться") 
-              : "Подробнее"
-            }
+            {product.hasProductPage === false ? (isSubmitting ? "Загрузка..." : "Записаться") : "Подробнее"}
           </Button>
         </div>
       </div>

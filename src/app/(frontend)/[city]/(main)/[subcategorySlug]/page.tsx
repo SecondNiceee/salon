@@ -39,9 +39,57 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? replaceCityVariables(data.subCategory.seoDescription, cityDeclensions)
     : `Каталог товаров в категории ${data.subCategory.title}`
 
+  const currentUrl = `${process.env.NEXT_PUBLIC_URL}/${citySlug}/${subcategorySlug}`
+
   return {
     title,
     description,
+    keywords: [
+      data.subCategory.title,
+      `${data.subCategory.title} ${city?.declensions.nominative || ""}`,
+      "салон красоты",
+      "Академия Спа",
+      city?.declensions.nominative || "",
+    ],
+    authors: [{ name: "Академия Спа" }],
+    creator: "Академия Спа",
+    publisher: "Академия Спа",
+    alternates: {
+      canonical: currentUrl,
+    },
+    openGraph: {
+      type: "website",
+      locale: "ru_RU",
+      url: currentUrl,
+      siteName: "Академия Спа",
+      title: title as string,
+      description: description,
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`,
+          width: 630,
+          height: 630,
+          alt: `Академия Спа ${cityDeclensions?.nominative}. Записаться на массаж, спа и косметологию ${cityDeclensions?.prepositional}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title as string,
+      description: description,
+      images: [`${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   }
 }
 
@@ -54,7 +102,7 @@ export default async function SubCategoryPage({ params }: Props) {
     notFound()
   }
 
-  const city = await getCityBySlug(citySlug)
+  const city = await getCityBySlug(citySlug);
 
   return (
     <SubCategoryClientPage

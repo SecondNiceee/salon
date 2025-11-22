@@ -12,6 +12,7 @@ import { Poppins, Inter } from "next/font/google"
 import type { Metadata } from "next"
 import { getCityBySlug } from "@/actions/server/cities/getCities"
 import { notFound } from "next/navigation"
+import Script from "next/script"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -41,15 +42,15 @@ export async function generateMetadata({
   }
 
   const cityName = city.declensions.nominative
-  const cityGenitive = city.declensions.genitive
   const cityPrepositional = city.declensions.prepositional
   const citySuffix = city.seoTitle ? ` — ${city.seoTitle}` : ` — ${cityName}`
+  const currentUrl = `${process.env.NEXT_PUBLIC_URL}/${citySlug}`
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
     title: {
-      default: `Массаж, спа, косметология, татуировки, курсы в ${cityPrepositional}`,
-      template: `%s | Академия Спа`,
+      default: `Академия Спа — Салон красоты | Массаж, спа, косметология, татуировки, курсы ${cityPrepositional}`,
+      template: `%s | Академия Спа ${cityName}`,
     },
     description:
       city.metaDescription ||
@@ -66,10 +67,17 @@ export async function generateMetadata({
       "спа-услуги",
       "Академия Спа",
       cityName,
+      `салон красоты ${cityName}`,
+      `массаж ${cityName}`,
+      `спа ${cityName}`,
+      `косметология ${cityName}`,
     ],
     authors: [{ name: "Академия Спа" }],
     creator: "Академия Спа",
     publisher: "Академия Спа",
+    alternates: {
+      canonical: currentUrl,
+    },
     formatDetection: {
       email: false,
       address: false,
@@ -78,15 +86,24 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       locale: "ru_RU",
-      url: `${process.env.NEXT_PUBLIC_URL}/${citySlug}`,
+      url: currentUrl,
       siteName: "Академия Спа",
       title: `Академия Спа — Салон красоты | Массаж, спа и косметология${citySuffix}`,
       description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`,
+          width: 630,
+          height: 630,
+          alt: `Академия Спа ${cityName}. Записаться на массаж, спа и косметологию ${cityPrepositional}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `Академия Спа — Салон красоты${citySuffix}`,
       description: `Массаж, спа-услуги, косметология и курсы ${cityPrepositional}. Запись онлайн!`,
+      images: [`${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`],
     },
     robots: {
       index: true,
@@ -110,15 +127,58 @@ export default async function CityLayout({
   params: Promise<{ city: string }>
 }) {
   const { city: citySlug } = await params
-  const city = await getCityBySlug(citySlug);
+  const city = await getCityBySlug(citySlug)
 
   if (!city) {
     notFound()
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_URL
+  const cityName = city.declensions.nominative
+
   return (
     <html lang="ru" className={`${poppins.variable} ${inter.variable}`}>
-      <head></head>
+      <head>
+        <Script id="city-json-ld" type="application/ld+json">
+          {JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Академия Спа",
+              url: siteUrl,
+              description: "Салон красоты с услугами массажа, спа, косметологии и татуировок.",
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Академия Спа",
+              url: siteUrl,
+              logo: `${siteUrl}/logo-icon.png`,
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "customer support",
+                availableLanguage: "Russian",
+              },
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "BeautySalon",
+              name: `Академия Спа - ${cityName}`,
+              description: `Салон красоты в г. ${cityName} с услугами массажа, спа, косметологии и онлайн-курсами.`,
+              url: `${siteUrl}/${citySlug}`,
+              areaServed: {
+                "@type": "City",
+                name: cityName,
+              },
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: cityName,
+                addressCountry: "RU",
+              },
+            },
+          ])}
+        </Script>
+      </head>
       <body className="min-h-screen bg-background">
         <PopupProvider>
           <AppInit />

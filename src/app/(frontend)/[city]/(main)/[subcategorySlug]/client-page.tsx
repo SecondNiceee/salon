@@ -15,8 +15,7 @@ import type { Category, City } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
-import { replaceCityInRichText, type CityDeclensions } from "@/utils/replaceCityVariables"
-import { getCityBySlug } from "@/actions/server/cities/getCities"
+import { replaceCityInRichText } from "@/utils/replaceCityVariables"
 
 type Props = {
   initialData: SubCategoryWithProducts
@@ -28,35 +27,20 @@ type Props = {
 const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initialCity }: Props) => {
   const router = useRouter()
 
+  console.log(initialCity);
+
   const [data, setData] = useState<SubCategoryWithProducts>(initialData)
   const [allSubCategories, setAllSubCategories] = useState<ProductsWithSubCategory[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setLoading] = useState<boolean>(false)
-  const [cityDeclensions, setCityDeclensions] = useState<CityDeclensions | null>(
-    initialCity
-      ? {
-          nominative: initialCity.declensions.nominative,
-          genitive: initialCity.declensions.genitive,
-          prepositional: initialCity.declensions.prepositional,
-        }
-      : null,
-  )
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
 
+
   const fetchSubCategory = useCallback(async () => {
     setLoading(true)
     setError(null)
-
-    const city = await getCityBySlug(citySlug)
-    if (city) {
-      setCityDeclensions({
-        nominative: city.declensions.nominative,
-        genitive: city.declensions.genitive,
-        prepositional: city.declensions.prepositional,
-      })
-    }
 
     const result = await getSubCategoryWithProducts(subcategorySlug)
 
@@ -77,10 +61,9 @@ const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initial
     }
 
     setLoading(false)
-  }, [subcategorySlug, citySlug])
+  }, [subcategorySlug])
 
   useEffect(() => {
-    // Загружаем allSubCategories при монтировании
     if (initialData.subCategory.parent && typeof initialData.subCategory.parent === "object") {
       const parentCategory = initialData.subCategory.parent as Category
       getFilteredProducts(parentCategory.value).then((allSubs) => {
@@ -114,11 +97,11 @@ const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initial
   }
 
   const processedContent = data.subCategory.content
-    ? replaceCityInRichText(data.subCategory.content, cityDeclensions)
+    ? replaceCityInRichText(data.subCategory.content, initialCity.declensions)
     : null
 
   const processedContentAfter = data.subCategory.contentAfter
-    ? replaceCityInRichText(data.subCategory.contentAfter, cityDeclensions)
+    ? replaceCityInRichText(data.subCategory.contentAfter, initialCity.declensions)
     : null
 
   return (
@@ -144,9 +127,9 @@ const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initial
               </div>
             )}
 
-            <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+            <div className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {data.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard city={initialCity} key={product.id} product={product} />
               ))}
             </div>
 

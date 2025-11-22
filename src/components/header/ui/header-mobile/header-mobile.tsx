@@ -11,6 +11,7 @@ import { routerConfig } from "@/config/router.config"
 import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useCity } from "@/lib/use-city"
+import { CitySelector } from "@/components/city-selector/city-selector"
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
@@ -44,15 +45,19 @@ const HeaderMobile = () => {
           </SheetTrigger>
           <SheetContent side="right" className="w-80 bg-white">
             <SheetTitle className="sr-only">Меню</SheetTitle>
-            <div className="space-y-3 mt-6">
+            <div className="space-y-3 mt-6 flex flex-col">
+              <div className="w-full">
+                <CitySelector className="w-full" />
+              </div>
               <CatalogButton />
-
               <Button
                 variant="outline"
-                className="w-full h-[53.6px] justify-start gap-3 p-4 bg-transparent"
+                className="w-full justify-start gap-3 p-4 bg-transparent items-center h-auto"
                 onClick={clickHandler}
               >
-                <UserLink />
+                <div className="shrink-0 flex items-center justify-center">
+                  <UserLink />
+                </div>
                 <p className="">Аккаунт</p>
               </Button>
             </div>

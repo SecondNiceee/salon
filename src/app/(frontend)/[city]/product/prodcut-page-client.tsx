@@ -40,7 +40,6 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   useEffect(() => {
     if (descriptionRef.current) {
       const height = descriptionRef.current.offsetHeight
-      // Если высота меньше ~240px (примерно 8 строк текста), то это короткое описание
       setIsShortDescription(height < 240)
     }
   }, [product])
@@ -62,7 +61,6 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   }
 
   const handleBooking = async () => {
-    // Check if user is authenticated and has both name and phone
     if (user && user.name && user.phone) {
       try {
         setIsSubmitting(true)
@@ -93,7 +91,6 @@ export default function ProductPageClient({ product, productId, city }: ProductP
         setIsSubmitting(false)
       }
     } else {
-      // If user doesn't have complete data, show the booking modal
       openBookingModal(user, product.id)
     }
   }
@@ -104,10 +101,11 @@ export default function ProductPageClient({ product, productId, city }: ProductP
         genitive: city.declensions.genitive,
         prepositional: city.declensions.prepositional,
       }
-    : null;
+    : null
 
-  const processedTitle = replaceCityVariables(product.pageTitle, cityDeclensions)
+  const processedTitle = replaceCityVariables(String(product.pageTitle), cityDeclensions)
   const processedContent = product.content ? replaceCityInRichText(product.content, cityDeclensions) : null
+
 
   return (
     <section className="min-h-screen mx-auto bg-white max-w-7xl">
@@ -145,7 +143,6 @@ export default function ProductPageClient({ product, productId, city }: ProductP
       <div className="px-3 py-4 sm:px-6 sm:py-10">
         <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6">
           <div className="flex">
-            {/* Description - on the left, centered */}
             <div className="flex flex-col items-center justify-center w-full">
               {processedContent && (
                 <div

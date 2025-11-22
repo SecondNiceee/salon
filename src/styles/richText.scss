@@ -5,11 +5,11 @@
   font-family: var(--font-inter);
   
   h1 {
-    @apply my-3 text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground leading-snug text-balance;
+    @apply my-3 text-2xl md:text-3xl font-semibold text-foreground leading-snug text-balance;
   }
   
   h2 {
-    @apply my-2 text-xl md:text-2xl lg:text-3xl font-semibold text-foreground leading-snug text-balance;
+    @apply my-2 text-xl md:text-2xl font-semibold text-foreground leading-snug text-balance;
   }
   
   h3 {

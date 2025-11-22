@@ -15,7 +15,7 @@ type City = {
   }
 }
 
-export function CitySelector() {
+export function CitySelector({ className }: { className?: string }) {
   const currentCity = useCity()
   const pathname = usePathname()
   const router = useRouter()
@@ -109,7 +109,11 @@ export function CitySelector() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <Button variant="outline" onClick={() => setIsOpen(!isOpen)} className="w-[180px] bg-white justify-between">
+      <Button
+        variant="outline"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`justify-between bg-white ${className || "w-[180px]"}`}
+      >
         <span className="truncate">{currentCityName}</span>
         <ChevronDown className="h-4 w-4 opacity-50 ml-2 shrink-0" />
       </Button>
