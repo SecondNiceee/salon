@@ -49,7 +49,7 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
     title: {
-      default: `Академия Спа — Салон красоты | Массаж, спа, косметология, татуировки, курсы ${cityPrepositional}`,
+      default: `Записаться на массаж, спа, косметология, татуировки, курсы косметологии, массажа ${cityPrepositional}`,
       template: `%s | Академия Спа ${cityName}`,
     },
     description:
@@ -88,7 +88,7 @@ export async function generateMetadata({
       locale: "ru_RU",
       url: currentUrl,
       siteName: "Академия Спа",
-      title: `Академия Спа — Салон красоты | Массаж, спа и косметология${citySuffix}`,
+      title: `Записаться на Массаж, спа и косметология ${cityPrepositional}`,
       description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
       images: [
         {

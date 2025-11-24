@@ -26,7 +26,6 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
       depth: 2,
     })
 
-    console.log(subCategoryResult)
     if (!subCategoryResult.docs.length) {
       return null
     }

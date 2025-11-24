@@ -11,7 +11,6 @@ async function fetchCitiesFromPayload(): Promise<any> {
     const citiesGlobal = await payload.findGlobal({
       slug: "cities",
     })
-    console.log(citiesGlobal);
     return citiesGlobal.cities;
   } catch (error) {
     console.error("[v0] Error fetching cities from Payload:", error)

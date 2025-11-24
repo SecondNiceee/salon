@@ -4,6 +4,7 @@ import { getCityBySlug } from "@/actions/server/cities/getCities"
 import { replaceCityVariables } from "@/utils/replaceCityVariables"
 import SubCategoryClientPage from "./client-page"
 import { notFound } from "next/navigation"
+import { getCachedSubCategoryContent } from "@/actions/server/getHomeContent"
 
 type Props = {
   params: Promise<{ subcategorySlug: string; city: string }>
@@ -28,7 +29,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         genitive: city.declensions.genitive,
         prepositional: city.declensions.prepositional,
       }
-    : null
+    : {
+        nominative: "Москва",
+        genitive: "Москвы",
+        prepositional: "Москве",
+      }
 
   // Используем SEO поля с заменой переменных города
   const title = data.subCategory.seoTitle
@@ -102,7 +107,9 @@ export default async function SubCategoryPage({ params }: Props) {
     notFound()
   }
 
-  const city = await getCityBySlug(citySlug);
+  const city = await getCityBySlug(citySlug)
+
+  const { processedContent, processedContentAfter } = await getCachedSubCategoryContent(subcategorySlug, city)
 
   return (
     <SubCategoryClientPage
@@ -110,6 +117,8 @@ export default async function SubCategoryPage({ params }: Props) {
       subcategorySlug={subcategorySlug}
       citySlug={citySlug}
       initialCity={city}
+      processedContent={processedContent}
+      processedContentAfter={processedContentAfter}
     />
   )
 }

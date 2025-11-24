@@ -13,7 +13,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Logo and Social Icons */}
           <div className="md:col-span-1">
-            <h2 className="mb-4 text-2xl font-bold text-pink-600">Академия Спа</h2>
+            <h3 className="mb-4 text-2xl font-bold text-pink-600">Академия Спа</h3>
             <div className="flex mb-4 space-x-3">
               {/* VK Icon */}
               <Link

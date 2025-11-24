@@ -42,9 +42,9 @@ const ProductInfo = ({ product }: { product: Product }) => {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
           {product.title.toUpperCase()}
-        </h1>
+        </h3>
       </div>
 
       <div className="space-y-4">

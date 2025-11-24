@@ -15,19 +15,26 @@ import type { Category, City } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
-import { replaceCityInRichText } from "@/utils/replaceCityVariables"
 
 type Props = {
   initialData: SubCategoryWithProducts
   subcategorySlug: string
   citySlug: string
   initialCity: City | null
+  processedContent: any
+  processedContentAfter: any
 }
 
-const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initialCity }: Props) => {
+const SubCategoryClientPage = ({
+  initialData,
+  subcategorySlug,
+  citySlug,
+  initialCity,
+  processedContent,
+  processedContentAfter,
+}: Props) => {
   const router = useRouter()
 
-  console.log(initialCity);
 
   const [data, setData] = useState<SubCategoryWithProducts>(initialData)
   const [allSubCategories, setAllSubCategories] = useState<ProductsWithSubCategory[]>([])
@@ -36,7 +43,6 @@ const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initial
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
-
 
   const fetchSubCategory = useCallback(async () => {
     setLoading(true)
@@ -95,14 +101,6 @@ const SubCategoryClientPage = ({ initialData, subcategorySlug, citySlug, initial
       </div>
     )
   }
-
-  const processedContent = data.subCategory.content
-    ? replaceCityInRichText(data.subCategory.content, initialCity.declensions)
-    : null
-
-  const processedContentAfter = data.subCategory.contentAfter
-    ? replaceCityInRichText(data.subCategory.contentAfter, initialCity.declensions)
-    : null
 
   return (
     <>

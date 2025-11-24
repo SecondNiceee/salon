@@ -669,6 +669,24 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface SiteSetting {
   id: number;
   /**
+   * Описание для главной страницы. Поддерживает переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
+   */
+  homeContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
    * Изображения для слайдера на главной странице
    */
   slider?: {
@@ -836,6 +854,7 @@ export interface City {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  homeContent?: T;
   slider?:
     | T
     | {

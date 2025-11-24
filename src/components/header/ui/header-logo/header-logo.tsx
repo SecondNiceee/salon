@@ -22,7 +22,7 @@ const HeaderLogo = () => {
         />
       </div>
       <div className="ml-2 lg:ml-3 flex flex-col">
-        <h1 className="text-lg lg:text-2xl font-bold text-gray-900 leading-tight">Академия Спа</h1>
+        <h4 className="text-lg lg:text-2xl font-bold text-gray-900 leading-tight">Академия Спа</h4>
         <p className="text-xs lg:text-sm text-pink-600 font-medium">Красота и релаксация</p>
       </div>
     </Link>

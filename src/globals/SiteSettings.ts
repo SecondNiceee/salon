@@ -1,3 +1,15 @@
+import { AccordionBlock } from "@/lib/payload-blocks/AccordionBlock"
+import { BookingButtonBlock } from "@/lib/payload-blocks/BookingButtonBlock"
+import { BoxContentBlock } from "@/lib/payload-blocks/BoxContentBlock"
+import { HeaderBlock } from "@/lib/payload-blocks/HeaderBlock"
+import { IconCardsBlock } from "@/lib/payload-blocks/IconCardsBlock"
+import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
+import { ImageGalleryBlock } from "@/lib/payload-blocks/ImageGalleryBlock"
+import { ImageSliderBlock } from "@/lib/payload-blocks/ImageSliderBlock"
+import { PararaphBlock } from "@/lib/payload-blocks/ParagraphBlock"
+import { TextBlock } from "@/lib/payload-blocks/TextBlock"
+import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
+import { BlocksFeature, HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
 import { revalidateTag } from "next/cache"
 import type { GlobalConfig } from "payload"
 
@@ -20,6 +32,28 @@ export const SiteSettings: GlobalConfig = {
     ],
   },
   fields: [
+    {
+      name: "homeContent",
+      type: "richText",
+      label: "Контент главной страницы",
+      required: false,
+      admin: {
+        description:
+          "Описание для главной страницы. Поддерживает переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.",
+      },
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          BlocksFeature({
+            blocks: [HeaderBlock, ImageBlock, PararaphBlock , TextWithImageBlock, ImageGalleryBlock, TextBlock, BoxContentBlock, AccordionBlock, BookingButtonBlock, IconCardsBlock, ImageSliderBlock],
+          }),
+          HeadingFeature({
+            enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+          }),
+        ],
+    }),
+      
+    },
     {
       name: "slider",
       type: "group",

@@ -4,6 +4,26 @@ export interface CityDeclensions {
   prepositional: string // предложный - в Москве
 }
 
+export function getCityDeclensions(city: string): CityDeclensions {
+  // Простая логика склонения (можно расширить при необходимости)
+  // Здесь мы предполагаем, что city уже приходит в нужном формате или просто дублируем его,
+  // так как полноценное склонение на русском языке требует сложной библиотеки или словаря.
+  // В текущей реализации, если city - это просто строка, мы используем её как есть,
+  // а предложный падеж формируем добавлением предлога "в ".
+
+  // TODO: Интегрировать библиотеку склонения или словарь городов, если требуется точность.
+  // Пока используем упрощенную логику или заглушку, так как ранее логика склонения была на клиенте или в другом месте.
+
+  // Если city уже содержит предлоги (что вряд ли), очищаем
+  const cleanCity = city.replace(/^в\s+/i, "")
+
+  return {
+    nominative: cleanCity,
+    genitive: cleanCity, // Временное упрощение, так как нет словаря
+    prepositional: `в ${cleanCity}`,
+  }
+}
+
 /**
  * Заменяет переменные города в тексте
  * /city - именительный падеж (Москва)
@@ -43,7 +63,7 @@ export function replaceCityInRichText(content: any, city: CityDeclensions | null
         if (typeof field === "string") {
           node.fields[key] = replaceCityVariables(field, city)
         } else if (Array.isArray(field)) {
-          node.fields[key] = field.map(item => processNode(item))
+          node.fields[key] = field.map((item) => processNode(item))
         } else if (field && typeof field === "object") {
           processNode(field)
         }
@@ -51,7 +71,7 @@ export function replaceCityInRichText(content: any, city: CityDeclensions | null
     }
 
     Object.keys(node).forEach((key) => {
-      if (key === 'text' || key === 'fields' || key === 'children' || key === 'root') {
+      if (key === "text" || key === "fields" || key === "children" || key === "root") {
         return // Уже обработаны выше
       }
 

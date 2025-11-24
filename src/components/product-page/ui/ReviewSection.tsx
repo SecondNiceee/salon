@@ -163,7 +163,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
     <div className="px-3 py-4 sm:px-6 sm:py-8 border-t border-gray-50">
       <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-4 sm:mb-6">
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-          <h2 className="text-lg sm:text-2xl font-semibold text-gray-900">Отзывы покупателей</h2>
+          <h3 className="text-lg sm:text-2xl font-semibold text-gray-900">Отзывы покупателей</h3>
           {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 ? (
             <div className="flex items-center space-x-2 bg-orange-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg self-start">
               <span className="text-lg sm:text-xl font-bold text-orange-600">{product.averageRating.toFixed(1)}</span>

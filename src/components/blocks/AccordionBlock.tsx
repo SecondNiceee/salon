@@ -16,13 +16,16 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ title, content }
   return (
     <div className="accordion-block border border-gray-200 rounded-lg overflow-hidden my-4">
       {/* На sm и выше — flex row (кнопка справа), на xs — flex-col (кнопка снизу) */}
-      <div className="accordion-header flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 gap-3">
-        <div className="accordion-title flex-1">
+      <div className="accordion-header relative flex flex-col sm:flex-row sm:items-center sm:justify-end justify-between p-4 bg-gray-50 gap-3 min-h-[72px]">
+        <div className="hidden sm:block invisible pointer-events-none select-none px-20 flex-1" aria-hidden="true">
+          <RichText converters={jsxConverters} data={title} />
+        </div>
+        <div className="accordion-title flex-1 sm:flex-none sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 text-center w-full sm:w-auto sm:max-w-[60%]">
           <RichText converters={jsxConverters} data={title} />
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="accordion-button px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap w-full sm:w-auto"
+          className="accordion-button relative z-10 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap w-full sm:w-auto"
         >
           {isOpen ? "Скрыть" : "Читать"}
         </button>
