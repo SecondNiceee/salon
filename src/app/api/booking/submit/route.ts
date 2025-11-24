@@ -7,7 +7,8 @@ import { cookies } from "next/headers"
 interface BookingData {
   name: string
   phone: string
-  productId: string | number // Changed from serviceName to productId
+  productId: string | number
+  city?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -16,13 +17,19 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!data.name || !data.phone || !data.productId) {
+      console.log(data);
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 })
+    }
+
+    if (!data.city) {
+      return NextResponse.json({ message: "Не удалось определить город" }, { status: 400 })
     }
 
     const payload = await getPayload({ config })
 
+    let product
     try {
-      await payload.findByID({
+      product = await payload.findByID({
         collection: "products",
         id: data.productId,
       })
@@ -43,18 +50,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const orderData: any = {
+      orderNumber: `BOOK-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+      product: Number(data.productId),
+      customerName: data.name,
+      customerPhone: data.phone,
+      status: "waiting_call",
+      user: currentUser?.id || undefined,
+      notes: `Город: ${data.city}`,
+    }
+
     const order = await payload.create({
       collection: "orders",
-      data: {
-        orderNumber: `BOOK-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        product: Number(data.productId),
-        customerName: data.name,
-        customerPhone: data.phone,
-        status: "waiting_call",
-        user: currentUser?.id || undefined,
-      },
+      data: orderData,
       overrideAccess: true,
-      
     })
 
     console.log("Booking order created:", order.id)

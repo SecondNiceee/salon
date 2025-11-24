@@ -75,7 +75,7 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 lg:w-5 lg:h-5" />
         <Input
           type="text"
-          placeholder="Поиск по услугам"
+          placeholder="Поиск по сайту"
           className="pl-10 pr-10 h-10 lg:h-11 w-full"
           value={query}
           onChange={handleInputChange}

@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react"
 import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
+import { useCityStore } from "@/entities/city/cityStore"
 
 type TCategoryWithProducts = {
   category: Category
@@ -24,6 +25,13 @@ export default function GrandBazarClientApp({ city, homeContent }: Props) {
   const [productsAndCategories, setProductsWithCategories] = useState<TCategoryWithProducts[] | null>()
   const [error, setError] = useState<Error | null>(null)
   const [isLoading, setLoading] = useState<boolean>(false)
+  const { setCity } = useCityStore()
+
+  useEffect(() => {
+    if (city) {
+      setCity(city)
+    }
+  }, [city, setCity])
 
   const getProductsWithCategories = useCallback(async () => {
     setLoading(true)

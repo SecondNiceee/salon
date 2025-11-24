@@ -7,6 +7,7 @@ interface BookingData {
   serviceName?: string
   hasAccount: boolean
   adminOrderUrl: string
+  city?: string
 }
 
 const escapeHtml = (text: string | null | undefined): string => {
@@ -30,7 +31,7 @@ export function formatBookingMessage(data: BookingData): string {
 <b>📋 Номер заказа:</b> ${escapeHtml(data.orderNumber)}
 <b>👤 Имя клиента:</b> ${escapeHtml(data.customerName)}
 <b>📞 Телефон:</b> ${escapeHtml(data.customerPhone)}
-<b>💆 Услуга:</b> ${escapeHtml(data.serviceName)}
+<b>💆 Услуга:</b> ${escapeHtml(data.serviceName)}${data.city ? `\n<b>🏙️ Город:</b> ${escapeHtml(data.city)}` : ""}
 
 <b>🕐 Время бронирования:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}
 
@@ -261,6 +262,15 @@ export function generateBookingEmailHTML(data: BookingData): string {
               <span class="info-label">💆 Услуга:</span>
               <span class="info-value">${data.serviceName || "Не указана"}</span>
             </div>
+            
+            ${
+              data.city
+                ? `<div class="info-row">
+              <span class="info-label">🏙️ Город:</span>
+              <span class="info-value">${data.city}</span>
+            </div>`
+                : ""
+            }
           </div>
           
           ${accountStatusHtml}

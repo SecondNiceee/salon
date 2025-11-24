@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import ThankYouModal from "@/components/product-page/ui/ThankYouModal"
 import { toast } from "sonner"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
+import { useCityStore } from "@/entities/city/cityStore"
 
 interface ProductPageClientProps {
   product: Product
@@ -36,6 +37,13 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   const descriptionRef = useRef<HTMLDivElement>(null)
 
   const { setIsSubmitting, isSubmitting } = useBookingModalStore.getState()
+  const { city: storedCity, setCity } = useCityStore()
+
+  useEffect(() => {
+    if (city) {
+      setCity(city)
+    }
+  }, [city, setCity])
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -65,6 +73,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
       try {
         setIsSubmitting(true)
 
+        const currentCity = storedCity || city
         const response = await fetch("/api/booking/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -72,6 +81,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
             name: user.name,
             phone: user.phone,
             productId: product.id,
+            city: currentCity?.declensions?.nominative || currentCity?.title,
           }),
         })
 
@@ -105,7 +115,6 @@ export default function ProductPageClient({ product, productId, city }: ProductP
 
   const processedTitle = replaceCityVariables(String(product.pageTitle), cityDeclensions)
   const processedContent = product.content ? replaceCityInRichText(product.content, cityDeclensions) : null
-
 
   return (
     <section className="min-h-screen mx-auto bg-white max-w-7xl">

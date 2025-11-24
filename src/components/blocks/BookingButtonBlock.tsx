@@ -2,6 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
+import { useAuthStore } from "@/entities/auth/authStore"
+import { useCityStore } from "@/entities/city/cityStore"
+import { toast } from "sonner"
 
 interface BookingButtonBlockProps {
   buttonText?: string
@@ -16,10 +19,43 @@ export function BookingButtonBlock({
   size = "default",
   alignment = "left",
 }: BookingButtonBlockProps) {
-  const { openModal } = useBookingModalStore()
+  const { openModal, setIsSubmitting, isSubmitting } = useBookingModalStore()
+  const { user } = useAuthStore()
+  const { city } = useCityStore()
 
-  const handleClick = () => {
-    openModal(null, null as any)
+  const handleClick = async () => {
+    if (user && user.name && user.phone) {
+      try {
+        setIsSubmitting(true)
+
+        const response = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: user.name,
+            phone: user.phone,
+            city: city?.declensions?.nominative || city?.title,
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          toast.error(result.message || "Ошибка при отправке заявки")
+          setIsSubmitting(false)
+          return
+        }
+
+        setIsSubmitting(false)
+        toast.success("Заявка успешно отправлена! Мы скоро свяжемся с вами.")
+      } catch (error) {
+        console.error("Error submitting feedback:", error)
+        toast.error("Ошибка при отправке заявки. Попробуйте еще раз.")
+        setIsSubmitting(false)
+      }
+    } else {
+      openModal(user, null as any)
+    }
   }
 
   const alignmentClasses = {
@@ -44,9 +80,10 @@ export function BookingButtonBlock({
     <div className={`flex w-full ${alignmentClasses[alignment]}`}>
       <Button
         onClick={handleClick}
+        disabled={isSubmitting}
         className={`${variantClasses[variant]} ${sizeClasses[size]} shadow-md hover:shadow-lg transition-all duration-200`}
       >
-        {buttonText}
+        {isSubmitting ? "Загрузка..." : buttonText}
       </Button>
     </div>
   )

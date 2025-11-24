@@ -1,6 +1,5 @@
 import { isAccess, isLoggedIn, isOwn } from "@/utils/accessUtils"
 import { formatBookingMessage, generateBookingEmailHTML } from "@/utils/bookingNotification"
-import { sendEmail } from "@/utils/sendEmail"
 import type { CollectionConfig } from "payload"
 
 const Orders: CollectionConfig = {
@@ -38,6 +37,14 @@ const Orders: CollectionConfig = {
             const orderId = (doc as any).id
             const adminOrderUrl = `${backendUrl}/admin/collections/orders/${orderId}`
 
+            let city: string | undefined
+            if (doc.notes && typeof doc.notes === "string") {
+              const cityMatch = doc.notes.match(/Город:\s*(.+?)(?:\n|$)/i)
+              if (cityMatch) {
+                city = cityMatch[1].trim()
+              }
+            }
+
             const message = formatBookingMessage({
               orderNumber: doc.orderNumber,
               customerName: doc.customerName,
@@ -45,6 +52,7 @@ const Orders: CollectionConfig = {
               serviceName,
               hasAccount: !!doc.user,
               adminOrderUrl,
+              city,
             })
 
             const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
@@ -90,6 +98,14 @@ const Orders: CollectionConfig = {
                 const product = typeof doc.product === "object" ? doc.product : null
                 const serviceName = product?.title || "Услуга"
 
+                let city: string | undefined
+                if (doc.notes && typeof doc.notes === "string") {
+                  const cityMatch = doc.notes.match(/Город:\s*(.+?)(?:\n|$)/i)
+                  if (cityMatch) {
+                    city = cityMatch[1].trim()
+                  }
+                }
+
                 const emailHtml = generateBookingEmailHTML({
                   orderNumber: doc.orderNumber,
                   customerName: doc.customerName,
@@ -97,11 +113,12 @@ const Orders: CollectionConfig = {
                   serviceName,
                   hasAccount: !!doc.user,
                   adminOrderUrl,
+                  city,
                 })
                 const subject = `Новое бронирование: ${doc.orderNumber || ""}`
-                
-                console.log(adminEmail);
-                
+
+                console.log(adminEmail)
+
                 await req.payload.sendEmail({
                   to: adminEmail,
                   subject,

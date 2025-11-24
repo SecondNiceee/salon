@@ -9,6 +9,7 @@ import { formatPhoneNumber, validatePhone } from "@/utils/phone"
 import { toast } from "sonner"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
+import { useCityStore } from "@/entities/city/cityStore"
 
 export default function BookingModal() {
   const [formData, setFormData] = useState({ name: "", phone: "" })
@@ -16,6 +17,7 @@ export default function BookingModal() {
   const [saveToAccount, setSaveToAccount] = useState(true)
   const { updateProfile } = useAuthStore()
   const { isOpen, closeModal, mode, setMode, isSubmitting, setIsSubmitting, user, productId } = useBookingModalStore()
+  const { city } = useCityStore()
 
   useEffect(() => {
     if (isOpen && user) {
@@ -83,6 +85,7 @@ export default function BookingModal() {
             name: formData.name,
             phone: formData.phone,
             productId: productId,
+            city: city?.declensions?.nominative || city?.title,
           }),
         })
 
@@ -94,13 +97,13 @@ export default function BookingModal() {
           return
         }
       } else {
-        // Send to feedback API for call requests
         const response = await fetch("/api/feedback", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: formData.name,
             phone: formData.phone,
+            city: city?.declensions?.nominative || city?.title,
           }),
         })
 
@@ -122,6 +125,9 @@ export default function BookingModal() {
       setIsSubmitting(false)
     }
   }
+
+  const hasIncompleteData = user && (!user.name || !user.phone)
+  const showSaveCheckbox = user && hasIncompleteData
 
   if (!isOpen) return null
 
@@ -187,7 +193,7 @@ export default function BookingModal() {
                   {errors.phone && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.phone}</p>}
                 </div>
 
-                {user && (
+                {showSaveCheckbox && (
                   <div className="flex items-center gap-2">
                     <input
                       id="saveToAccount"
@@ -197,7 +203,7 @@ export default function BookingModal() {
                       className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
                     />
                     <label htmlFor="saveToAccount" className="text-sm text-gray-700 cursor-pointer">
-                      Сохранить для этого аккаунта
+                      Запомнить для этого пользователя
                     </label>
                   </div>
                 )}

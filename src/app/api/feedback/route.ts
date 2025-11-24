@@ -6,6 +6,7 @@ import { getSiteSettings } from "@/actions/server/globals/getSiteSettings"
 interface FeedbackData {
   name: string
   phone: string
+  city?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -87,7 +88,7 @@ function formatTelegramMessage(data: FeedbackData): string {
   return `<b>📞 Новый запрос на звонок!</b>
 
 <b>👤 Имя:</b> ${escapeHtml(data.name)}
-<b>📞 Телефон:</b> ${escapeHtml(data.phone)}
+<b>📞 Телефон:</b> ${escapeHtml(data.phone)}${data.city ? `\n<b>🏙️ Город:</b> ${escapeHtml(data.city)}` : ""}
 
 <b>🕐 Время запроса:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}`
 }
@@ -242,6 +243,15 @@ function generateFeedbackEmailHTML(data: FeedbackData): string {
               <span class="info-label">📞 Телефон:</span>
               <span class="info-value">${data.phone}</span>
             </div>
+            
+            ${
+              data.city
+                ? `<div class="info-row">
+              <span class="info-label">🏙️ Город:</span>
+              <span class="info-value">${data.city}</span>
+            </div>`
+                : ""
+            }
           </div>
         </div>
         

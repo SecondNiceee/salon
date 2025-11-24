@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "../../../ui/button"
-import { Menu } from "lucide-react"
+import { Menu, Home } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../../ui/sheet"
 import ProductSearch from "../../../product-search/ProductSearch"
 import CatalogButton from "../../../catalog-button/CatalogButton"
@@ -12,6 +12,7 @@ import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
 import { useAuthStore } from "@/entities/auth/authStore"
 import { useCity } from "@/lib/use-city"
 import { CitySelector } from "@/components/city-selector/city-selector"
+import Link from "next/link"
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
@@ -32,7 +33,20 @@ const HeaderMobile = () => {
 
   return (
     <div className="md:hidden">
-      <div className="flex items-center gap-2">
+      <div className="text-center space-y-1 pb-3 pt-1">
+        <h2 className="text-sm font-semibold text-gray-800 leading-tight">
+          Московский институт Профессионального Образования
+        </h2>
+        <p className="text-xs text-gray-600">Лицензия: Л033-00114-77/00061219</p>
+      </div>
+
+      <div className="flex items-center gap-2 mb-3">
+        <Link href={routerConfig.home} className="shrink-0">
+          <Button variant="outline" size="sm" className="p-2 bg-transparent shrink-0">
+            <Home className="h-5 w-5" />
+            <span className="sr-only">На главную</span>
+          </Button>
+        </Link>
         <div className="flex-1 min-w-0">
           <ProductSearch onProductSelect={() => {}} />
         </div>

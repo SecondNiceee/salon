@@ -21,13 +21,12 @@ const TopBar = () => {
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 justify-between text-sm">
           {/* Левая часть - ссылки */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-            <Link
-              onClick={onLinkClick}
-              href={`/`}
-              className="text-gray-600 transition-colors hover:text-gray-900"
-            >
+            <Link onClick={onLinkClick} href={`/`} className="text-gray-600 transition-colors hover:text-gray-900">
               Главная
             </Link>
+            <div className="text-gray-600 text-xs md:text-sm">
+              Московский институт Профессионального Образования | Лицензия: Л033-00114-77/00061219
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
