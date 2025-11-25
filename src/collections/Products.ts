@@ -5,6 +5,7 @@ import { TextBlock } from "@/lib/payload-blocks/TextBlock"
 import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
 import { isAccess } from "@/utils/accessUtils"
 import { lexicalEditor, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
+import { revalidateTag } from "next/cache"
 import type { CollectionConfig } from "payload"
 
 const Products: CollectionConfig = {
@@ -20,7 +21,13 @@ const Products: CollectionConfig = {
     delete: isAccess("products"),
   },
 
-  hooks: {},
+  hooks: {
+    afterChange: [
+      ({}) => {
+        revalidateTag("categories_and_products")
+      },
+    ],
+  },
   fields: [
     {
       name: "title",

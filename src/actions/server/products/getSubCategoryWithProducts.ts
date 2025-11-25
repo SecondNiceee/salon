@@ -1,8 +1,10 @@
+// src/actions/server/categories/getSubCategoryWithProducts.ts
 "use server"
 
 import { getPayload } from "payload"
 import config from "../../../payload.config"
 import type { Category, Product } from "@/payload-types"
+import { unstable_cache } from "next/cache"
 
 export type SubCategoryWithProducts = {
   subCategory: Category
@@ -11,7 +13,9 @@ export type SubCategoryWithProducts = {
   prevSubCategory: Category | null
 }
 
-export const getSubCategoryWithProducts = async (subcategorySlug: string): Promise<SubCategoryWithProducts | null> => {
+const _getSubCategoryWithProducts = async (
+  subcategorySlug: string,
+): Promise<SubCategoryWithProducts | null> => {
   try {
     const payload = await getPayload({ config })
 
@@ -30,7 +34,6 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
       return null
     }
 
-
     const subCategory = subCategoryResult.docs[0]
 
     // 2. Получить все подкатегории с тем же parent (для навигации)
@@ -40,8 +43,8 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
         parent: { equals: (subCategory.parent as Category).id },
       },
       sort: "createdAt",
-    });
-
+      depth: 1,
+    })
 
     // 3. Найти текущий индекс и определить следующую/предыдущую подкатегорию
     const currentIndex = allSubCategories.docs.findIndex((cat) => cat.id === subCategory.id)
@@ -58,7 +61,7 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
         subCategory: { equals: subCategory.id },
       },
       depth: 1,
-      limit: 0,
+      limit: 0, // все продукты
       sort: "createdAt",
       select: {
         averageRating: true,
@@ -68,7 +71,7 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
         weight: true,
         reviewsCount: true,
         content: true,
-        hasProductPage : true
+        hasProductPage: true,
       },
     })
 
@@ -82,4 +85,16 @@ export const getSubCategoryWithProducts = async (subcategorySlug: string): Promi
     console.error("Ошибка при получении подкатегории и товаров:", error)
     return null
   }
+}
+
+// Кэшируем на 1 день (86400 секунд) с тегом
+export const getSubCategoryWithProducts = async (subcategorySlug: string) => {
+  return unstable_cache(
+    () => _getSubCategoryWithProducts(subcategorySlug),
+    ["categories_and_products", subcategorySlug], // ✅ уникальный ключ для каждого слага
+    {
+      tags: ["categories_and_products"], // общий тег для массовой инвалидации
+      revalidate: 60 * 60 * 24,
+    },
+  )()
 }

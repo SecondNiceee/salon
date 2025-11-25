@@ -20,7 +20,7 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ title, content }
         <div className="hidden sm:block invisible pointer-events-none select-none px-20 flex-1" aria-hidden="true">
           <RichText converters={jsxConverters} data={title} />
         </div>
-        <div className="accordion-title flex-1 sm:flex-none sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 text-center w-full sm:w-auto sm:max-w-[60%]">
+        <div className="accordion-title flex-1 sm:flex-none sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 text-center w-full sm:max-w-[90%]">
           <RichText converters={jsxConverters} data={title} />
         </div>
         <button

@@ -3,18 +3,21 @@
 import type React from "react"
 
 import { useCategoriesStore } from "@/entities/categories/categoriesStore"
-import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import ErrorAlert from "../error-alert/ErrorAlert"
 import type { Media } from "@/payload-types"
 import { Button } from "../ui/button"
 import Link from "next/link"
-import { useParams } from 'next/navigation'
+import { useParams } from "next/navigation"
 import { useCity } from "@/lib/use-city"
+import type { CategoryWithSubs } from "@/actions/server/categories/getCategorysWithSubs"
 
-export function Categories() {
-  const { categories, getCategories, error, isLoading } = useCategoriesStore()
-  const isCategoriesFetched = useRef<boolean>(false)
+interface CategoriesProps {
+  initialCategories?: CategoryWithSubs[]
+}
+
+export function Categories({ initialCategories = [] }: CategoriesProps) {
+  const { setCategories } = useCategoriesStore()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -29,11 +32,8 @@ export function Categories() {
   const city = useCity()
 
   useEffect(() => {
-    if (!categories.length && !isCategoriesFetched.current) {
-      getCategories()
-      isCategoriesFetched.current = true
-    }
-  }, [categories])
+      setCategories(initialCategories)
+  }, [initialCategories, setCategories])
 
   const checkScrollability = () => {
     if (scrollContainerRef.current) {
@@ -42,13 +42,6 @@ export function Categories() {
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth)
     }
   }
-
-  useEffect(() => {
-    checkScrollability()
-    const handleResize = () => checkScrollability()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [categories])
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -76,28 +69,16 @@ export function Categories() {
     scrollContainerRef.current.scrollBy({ left: delta, behavior: "smooth" })
   }
 
-  if (isLoading && !categories.length) {
+  if (!initialCategories.length) {
     return (
-      <div className="flex justify-center py-8">
+      <div className="flex justify-center py-8 h-[120px]">
         <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
       </div>
     )
   }
 
-  if (error) {
-    console.log(error)
-    return (
-      <ErrorAlert
-        buttonAction={() => {
-          getCategories()
-        }}
-        errorMessage="Не удалось загрузить категории. Проверьте подключение к интернету."
-      />
-    )
-  }
-
   const isSubCategoryActive = (categoryValue: string) => {
-    const category = categories.find((cat) => cat.value === categoryValue)
+    const category = initialCategories.find((cat) => cat.value === categoryValue)
     if (!category) return false
     return category.subCategories.some((sub) => sub.value === subcategorySlug)
   }
@@ -133,14 +114,12 @@ export function Categories() {
           onScroll={checkScrollability}
           onWheelCapture={handleWheel}
         >
-          {categories.map((category, index) => {
+          {initialCategories.map((category, index) => {
             const imageUrl = (category.icon as Media).url ?? ""
             const isActive = isSubCategoryActive(category.value)
-            
-            const firstSubCategory = category.subCategories[0]
-            const href = firstSubCategory 
-              ? `/${city}/${firstSubCategory.value}` 
-              : `/${city}/catalog`
+
+            const firstSubCategory = category.subCategories[category.subCategories.length-1]
+            const href = firstSubCategory ? `/${city}/${firstSubCategory.value}` : `/${city}/catalog`
 
             return (
               <Link
@@ -151,11 +130,7 @@ export function Categories() {
                 <div
                   className={`sm:w-12 sm:h-12 w-10 h-10 ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
-                  <img
-                    alt={"shop"}
-                    src={imageUrl || "/placeholder.svg"}
-                    className="w-6 h-6 text-black"
-                  />
+                  <img alt={"shop"} src={imageUrl || "/placeholder.svg"} className="w-6 h-6 text-black" />
                 </div>
                 <span className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight`}>
                   {category.title}

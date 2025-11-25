@@ -1,33 +1,31 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState, useRef } from "react"
+import { useRef } from "react"
 import {
-  getSubCategoryWithProducts,
   type SubCategoryWithProducts,
 } from "@/actions/server/products/getSubCategoryWithProducts"
-import ErrorAlert from "@/components/error-alert/ErrorAlert"
 import { ProductCard } from "@/components/product-card/ProductCard"
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import SubCategories from "@/components/sub-categories/SubCategories"
-import { getFilteredProducts, type ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
-import type { Category, City } from "@/payload-types"
+import type { City } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
+import { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 
 type Props = {
   initialData: SubCategoryWithProducts
-  subcategorySlug: string
   citySlug: string
   initialCity: City | null
   processedContent: any
   processedContentAfter: any
+  allSubCategories : ProductsWithSubCategory[]
 }
 
 const SubCategoryClientPage = ({
   initialData,
-  subcategorySlug,
+  allSubCategories, // 👈 получаем напрямую
   citySlug,
   initialCity,
   processedContent,
@@ -36,70 +34,17 @@ const SubCategoryClientPage = ({
   const router = useRouter()
 
 
-  const [data, setData] = useState<SubCategoryWithProducts>(initialData)
-  const [allSubCategories, setAllSubCategories] = useState<ProductsWithSubCategory[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setLoading] = useState<boolean>(false)
-
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  const fetchSubCategory = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-
-    const result = await getSubCategoryWithProducts(subcategorySlug)
-
-    if (!result) {
-      setError("Подкатегория не найдена")
-      setLoading(false)
-      return
-    }
-
-    setData(result)
-
-    if (result.subCategory.parent && typeof result.subCategory.parent === "object") {
-      const parentCategory = result.subCategory.parent as Category
-      const allSubs = await getFilteredProducts(parentCategory.value)
-      if (allSubs) {
-        setAllSubCategories(allSubs)
-      }
-    }
-
-    setLoading(false)
-  }, [subcategorySlug])
-
-  useEffect(() => {
-    if (initialData.subCategory.parent && typeof initialData.subCategory.parent === "object") {
-      const parentCategory = initialData.subCategory.parent as Category
-      getFilteredProducts(parentCategory.value).then((allSubs) => {
-        if (allSubs) {
-          setAllSubCategories(allSubs)
-        }
-      })
-    }
-  }, [initialData])
-
   const goToNextSubCategory = () => {
-    if (data?.nextSubCategory) {
-      router.push(`/${citySlug}/${data.nextSubCategory.value}`)
+    if (initialData?.nextSubCategory) {
+      router.push(`/${citySlug}/${initialData.nextSubCategory.value}`)
     }
   }
 
   const navigateToSubCategory = (value: string) => {
     router.push(`/${citySlug}/${value}`)
-  }
-
-  if (error) {
-    return <ErrorAlert buttonAction={fetchSubCategory} errorMessage={error} />
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-      </div>
-    )
   }
 
   return (
@@ -108,7 +53,7 @@ const SubCategoryClientPage = ({
         <div className="z-20">
           <SubCategories
             sortedProducts={allSubCategories}
-            activeSubCategory={data.subCategory.value}
+            activeSubCategory={initialData.subCategory.value}
             badgesRef={badgesRef}
             sectionsRef={sectionsRef}
             onSubCategoryClick={navigateToSubCategory}
@@ -126,7 +71,7 @@ const SubCategoryClientPage = ({
             )}
 
             <div className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {data.products.map((product) => (
+              {initialData.products.map((product) => (
                 <ProductCard city={initialCity} key={product.id} product={product} />
               ))}
             </div>
@@ -137,13 +82,13 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
-            {data.nextSubCategory && (
+            {initialData.nextSubCategory && (
               <div className="flex items-center justify-center mt-8">
                 <button
                   onClick={goToNextSubCategory}
                   className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                 >
-                  <p className="text-white text-sm md:text-base font-semibold">"{data.nextSubCategory.title}"</p>
+                  <p className="text-white text-sm md:text-base font-semibold">"{initialData.nextSubCategory.title}"</p>
                   <ArrowRight color="white" size={20} />
                 </button>
               </div>

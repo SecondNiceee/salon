@@ -21,7 +21,7 @@ const Categories: CollectionConfig = {
   admin: {
     useAsTitle: "title",
     group: "Категории, подкатегории, товары",
-    defaultColumns: ["title", "parent", "value"],
+    defaultColumns: ["title", "parent", "value", "order"],
   },
   access: {
     create: isAccess("categories"),
@@ -33,6 +33,7 @@ const Categories: CollectionConfig = {
     afterChange: [
       ({}) => {
         revalidateTag("categories")
+        revalidateTag("categories_and_products");
       },
     ],
   },
@@ -72,6 +73,17 @@ const Categories: CollectionConfig = {
       type: "text",
       label: "Название",
       required: true,
+    },
+    {
+      name: "order",
+      type: "number",
+      label: "Порядок сортировки",
+      required: false,
+      defaultValue: 0,
+      admin: {
+        description: "Чем меньше число, тем выше в списке. По умолчанию 0. Можно использовать отрицательные числа.",
+        position: "sidebar",
+      },
     },
     {
       name: "parent",

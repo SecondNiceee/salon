@@ -3,13 +3,11 @@ import Link from "next/link"
 import { Phone } from "lucide-react"
 import { useSiteSettings } from "@/entities/siteSettings/SiteSettingsStore"
 import { useMobileStore } from "@/entities/mobileMenu/mobileMenuStore"
-import { useCity } from "@/lib/use-city"
 import { CitySelector } from "@/components/city-selector/city-selector"
 
 const TopBar = () => {
   const { siteSettings } = useSiteSettings()
   const { setOpened } = useMobileStore()
-  const city = useCity() // Get city from hook
 
   const onLinkClick = () => {
     setOpened(false)

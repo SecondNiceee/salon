@@ -198,6 +198,10 @@ export interface Category {
   value: string;
   title: string;
   /**
+   * Чем меньше число, тем выше в списке. По умолчанию 0. Можно использовать отрицательные числа.
+   */
+  order?: number | null;
+  /**
    * Если не выбрано — это основная категория
    */
   parent?: (number | null) | Category;
@@ -549,6 +553,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface CategoriesSelect<T extends boolean = true> {
   value?: T;
   title?: T;
+  order?: T;
   parent?: T;
   icon?: T;
   coverImage?: T;

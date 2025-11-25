@@ -5,6 +5,8 @@ import { replaceCityVariables } from "@/utils/replaceCityVariables"
 import SubCategoryClientPage from "./client-page"
 import { notFound } from "next/navigation"
 import { getCachedSubCategoryContent } from "@/actions/server/getHomeContent"
+import { Category } from "@/payload-types"
+import { getFilteredProducts } from "@/actions/server/products/getFilterProducts"
 
 type Props = {
   params: Promise<{ subcategorySlug: string; city: string }>
@@ -98,23 +100,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// SubCategoryPage (server component)
 export default async function SubCategoryPage({ params }: Props) {
   const { subcategorySlug, city: citySlug } = await params
 
   const data = await getSubCategoryWithProducts(subcategorySlug)
+  if (!data) notFound()
 
-  if (!data) {
-    notFound()
-  }
+  // 👇 Получаем ВСЕ подкатегории родителя
+  const parentSlug = (data.subCategory.parent as Category)?.value
+  const allSubCategories = parentSlug ? await getFilteredProducts(parentSlug) : []
 
   const city = await getCityBySlug(citySlug)
-
   const { processedContent, processedContentAfter } = await getCachedSubCategoryContent(subcategorySlug, city)
 
   return (
     <SubCategoryClientPage
       initialData={data}
-      subcategorySlug={subcategorySlug}
+      allSubCategories={allSubCategories || []} // 👈 передаём напрямую
       citySlug={citySlug}
       initialCity={city}
       processedContent={processedContent}

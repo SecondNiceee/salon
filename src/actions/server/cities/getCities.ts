@@ -18,7 +18,7 @@ async function fetchCitiesFromPayload(): Promise<any> {
   }
 }
 
-// Кешируем города на 1 час
+// Кешируем города на день
 export const getCities = unstable_cache(
   async () => {
     return await fetchCitiesFromPayload()
@@ -27,7 +27,7 @@ export const getCities = unstable_cache(
   {
     revalidate: 3600 * 24, // Можно и на день кэшироваь, потому что при изменении городов мы ревалидируем всё
     tags: ["cities"],
-  },
+  },              
 )
 
 export async function getDefaultCity(): Promise<any> {
