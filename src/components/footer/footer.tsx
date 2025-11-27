@@ -8,7 +8,7 @@ export const revalidate = 31536000 // 1 год
 export async function Footer() {
   const siteSettings = await getSiteSettings()
   return (
-    <footer className="px-4 md:pt-8 md:pb-8 pt-5 pb-[90px] bg-white border-t border-gray-200">
+    <footer className="px-4 md:pt-8 md:pb-8 pt-5 pb-[160px] bg-white border-t border-gray-200">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Logo and Social Icons */}

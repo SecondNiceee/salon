@@ -13,6 +13,7 @@ import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
+import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
 type Props = {
   initialData: SubCategoryWithProducts
@@ -66,7 +67,7 @@ const SubCategoryClientPage = ({
           <div className="flex flex-col">
             {processedContent && (
               <div className="rich-container">
-                <RichText converters={jsxConverters} data={processedContent} />
+                <MemoRichText data={processedContent} />
               </div>
             )}
 
@@ -78,7 +79,7 @@ const SubCategoryClientPage = ({
 
             {processedContentAfter && (
               <div className="rich-container mt-8">
-                <RichText converters={jsxConverters} data={processedContentAfter} />
+                <MemoRichText data={processedContentAfter} />
               </div>
             )}
 

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import { getContacts } from "@/actions/server/pages/getContacts"
+import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
 // ✅ Умеренное кэширование: 1 день
 export const revalidate = 86400
@@ -64,7 +65,7 @@ export default async function ContactsPage() {
       <>
         <ContactsSchema title={title} description={description} />
         <div className="rich-container">
-          <RichText converters={jsxConverters} data={contacts.content} />
+          <MemoRichText data={contacts.content} />
         </div>
       </>
     )

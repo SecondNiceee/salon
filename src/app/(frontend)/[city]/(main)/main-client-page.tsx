@@ -9,6 +9,7 @@ import { RichText } from "@payloadcms/richtext-lexical/react"
 import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import { useCityStore } from "@/entities/city/cityStore"
+import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
 type TCategoryWithProducts = {
   category: Category
@@ -59,7 +60,7 @@ export default function GrandBazarClientApp({ city, homeContent }: Props) {
         <div className="flex flex-col gap-3 px-4 mx-auto mt-1 mb-4 rounded-md bg-gray-50 max-w-7xl">
           {homeContent && (
             <div className="rich-container pt-4">
-              <RichText converters={jsxConverters} data={homeContent} />
+              <MemoRichText data={homeContent} />
             </div>
           )}
 

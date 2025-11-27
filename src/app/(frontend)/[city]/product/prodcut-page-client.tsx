@@ -18,6 +18,7 @@ import ThankYouModal from "@/components/product-page/ui/ThankYouModal"
 import { toast } from "sonner"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 import { useCityStore } from "@/entities/city/cityStore"
+import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
 interface ProductPageClientProps {
   product: Product
@@ -160,7 +161,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
                     isShortDescription ? "text-center pt-6 pb-3 px-4 border-t-2 border-b-2 border-gray-300" : ""
                   }`}
                 >
-                  <RichText converters={jsxConverters} data={processedContent} />
+                  <MemoRichText data={processedContent} />
                 </div>
               )}
             </div>
