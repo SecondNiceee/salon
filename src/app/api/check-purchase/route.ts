@@ -18,11 +18,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "ID товара не указан" }, { status: 400 })
     }
 
-    // Ищем заказы пользователя, которые содержат данный товар
+    // так как в схеме Orders поле product - это обычный relationship, а не массив items
     const orders = await payload.find({
       collection: "orders",
       where: {
-        and: [{ user: { equals: user.id } }, { "items.product": { equals: productId } }],
+        and: [{ user: { equals: user.id } }, { product: { equals: productId } }],
       },
       limit: 1,
       overrideAccess: true,

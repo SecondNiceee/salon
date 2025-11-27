@@ -21,8 +21,8 @@ export default function CatalogClientPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
+    <div className="min-h-screen bg-gray-50 pb-20 relative z-0">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={handleBack} className="h-9 w-9 p-0">
             <ArrowLeft className="h-5 w-5" />
@@ -42,18 +42,18 @@ export default function CatalogClientPage() {
                     {category.subCategories.map((subCategory) => (
                       <Link
                         href={`/${city}/${subCategory.value}`}
-                        className="w-full cursor-pointer p-2 relative rounded-xl h-[120px] flex justify-center items-center transition-transform duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
+                        className="w-full cursor-pointer p-2 relative rounded-xl h-[120px] flex justify-center items-center transition-transform duration-200 hover:scale-105 hover:shadow-lg active:scale-95 isolate"
                         key={subCategory.id}
                       >
                         <Image
-                          className="absolute left-0 rounded-xl z-[20] top-0 w-full h-full object-cover"
+                          className="absolute left-0 rounded-xl z-0 top-0 w-full h-full object-cover"
                           width={500}
                           height={500}
                           alt={(subCategory.coverImage as Media)?.alt ?? ""}
                           src={(subCategory.coverImage as Media)?.url ?? ""}
                         />
-                        <div className="bg-black rounded-xl absolute z-[30] w-full h-full opacity-50 transition-opacity duration-200 hover:opacity-60" />
-                        <p className="text-white text-center text-sm font-medium relative z-[40] px-3 leading-tight">
+                        <div className="bg-black rounded-xl absolute z-[1] w-full h-full opacity-50 transition-opacity duration-200 hover:opacity-60" />
+                        <p className="text-white text-center text-sm font-medium relative z-[2] px-3 leading-tight">
                           {subCategory.title}
                         </p>
                       </Link>

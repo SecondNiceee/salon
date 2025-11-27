@@ -22,6 +22,8 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
   const [reviewsLoading, setReviewsLoading] = useState(false)
   const [editingReview, setEditingReview] = useState<number | null>(null)
   const [editReviewData, setEditReviewData] = useState({ rating: 4, comment: "" })
+  const [hasPurchased, setHasPurchased] = useState<boolean | null>(null)
+  const [showPurchaseWarning, setShowPurchaseWarning] = useState(false)
   const { user } = useAuthStore()
 
   const loadReviews = async (productId: number) => {
@@ -38,9 +40,33 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
     }
   }
 
+  const checkPurchase = async () => {
+    if (!user || !product) return
+    try {
+      const response = await fetch("/api/check-purchase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      })
+      const data = await response.json()
+      setHasPurchased(data.hasPurchased)
+    } catch (error) {
+      console.error("Error checking purchase:", error)
+      setHasPurchased(false)
+    }
+  }
+
   useEffect(() => {
     loadReviews(Number(id))
   }, [id, user])
+
+  useEffect(() => {
+    if (user && product) {
+      checkPurchase()
+    } else {
+      setHasPurchased(null)
+    }
+  }, [user, product])
 
   const handleReviewSubmit = async () => {
     if (!product) {
@@ -95,12 +121,22 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
     }
   }
 
-  const handleShowReviewForm = () => {
+  const handleShowReviewForm = async () => {
     if (!user) {
       toast("Нужно быть зарегестрированным, чтобы оставить отзыв")
       return
     }
 
+    if (hasPurchased === null) {
+      await checkPurchase()
+    }
+
+    if (hasPurchased === false) {
+      setShowPurchaseWarning(true)
+      return
+    }
+
+    setShowPurchaseWarning(false)
     setShowReviewForm(!showReviewForm)
   }
 
@@ -178,7 +214,7 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
           )}
         </div>
 
-        {user && !userReview && !reviewsLoading && (
+        {!userReview && !reviewsLoading && (
           <Button
             onClick={handleShowReviewForm}
             className="bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]"
@@ -188,6 +224,14 @@ const ReviewSection: FC<IReviewSection> = ({ product, id }) => {
           </Button>
         )}
       </div>
+
+      {showPurchaseWarning && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 sm:mb-6 animate-in slide-in-from-top-2 duration-300">
+          <p className="text-amber-800 text-sm sm:text-base text-center font-medium">
+            Вам нужно приобрести эту услугу, чтобы оставить отзыв
+          </p>
+        </div>
+      )}
 
       {Boolean(showReviewForm && user && !userReview && !reviewsLoading) && (
         <div className="bg-gray-50 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6 animate-in slide-in-from-bottom-2 duration-300">

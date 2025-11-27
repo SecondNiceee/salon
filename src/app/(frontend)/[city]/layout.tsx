@@ -88,7 +88,7 @@ export async function generateMetadata({
       locale: "ru_RU",
       url: currentUrl,
       siteName: "Академия Спа",
-      title: `Записаться на Массаж, спа и косметология ${cityPrepositional}`,
+      title: `Записаться на массаж, спа и косметологию ${cityPrepositional}`,
       description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
       images: [
         {

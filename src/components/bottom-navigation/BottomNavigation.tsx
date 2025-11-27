@@ -1,29 +1,12 @@
 "use client"
-
-import { Home, Search, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-const navigationItems = [
-  {
-    name: "Главная",
-    href: "/",
-    icon: Home,
-  },
-  {
-    name: "Каталог",
-    href: "/catalog",
-    icon: Search,
-  },
-  {
-    name: "Войти",
-    href: "/login",
-    icon: User,
-  },
-]
+import useGetNavigation from "./hooks/useGetNavItems"
 
 export function BottomNavigation() {
   const pathname = usePathname()
+  const navigationItems = useGetNavigation()
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">

@@ -26,7 +26,8 @@ export default async function AccountLayout({
   children: React.ReactNode
 }) {
   const cookieStore = await cookies()
-  const payloadToken = cookieStore.get("payload-token")
+  const payloadToken = cookieStore.get("payload-token");
+  console.log(payloadToken );
 
   try {
     const response = await fetch(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/me`, {
@@ -43,7 +44,8 @@ export default async function AccountLayout({
       redirect(routerConfig.home)
     }
 
-    const data = await response.json()
+    const data = await response.json();
+    console.log(data);
 
     if (!data.user) {
       console.log("[v0] Auth check failed: no user in response")

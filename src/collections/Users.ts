@@ -2,6 +2,8 @@ import { isAdmin } from "@/utils/accessUtils"
 import { createEmail } from "@/utils/createEmail"
 import type { CollectionConfig, PayloadRequest } from "payload"
 
+const DEFAULT_CITY = "moskva"
+
 export const Users: CollectionConfig = {
   slug: "users",
   admin: {
@@ -39,14 +41,14 @@ export const Users: CollectionConfig = {
           user?: any
         }
         const { token, user } = typedArgs
-        const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/forgotPassword?token=${token}`
+        const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${DEFAULT_CITY}/forgotPassword?token=${token}`
         return createEmail({ mode: "forgetPassword", url, userEmail: user.email }).html
       },
     },
     tokenExpiration: Number(process.env.AUTH_TOKEN_EXPIRATION) || 60 * 60 * 24 * 7, // 7 дней в секундах
     verify: {
       generateEmailHTML: ({ token, user }) => {
-        const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/verify?token=${token}`
+        const url = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${DEFAULT_CITY}/verify?token=${token}`
         return createEmail({ mode: "verify", url: url, userEmail: user?.email }).html
       },
     },
