@@ -11,7 +11,6 @@ const GrandBazarApp = async ({ params }: Props) => {
 
   const processedHomeContent = await getCachedHomeContent(city);
 
-
   return <GrandBazarClientApp city={city} homeContent={processedHomeContent} />
 }
 

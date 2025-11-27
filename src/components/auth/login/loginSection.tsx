@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { request } from "@/utils/request"
 import type { RequestError } from "@/utils/request"
-import { ArrowLeft, Mail, CheckCircle } from "lucide-react"
+import { ArrowLeft, Mail, CheckCircle, Eye, EyeOff } from "lucide-react"
 import cl from "../auth.module.css"
 import { useAuthStore } from "@/entities/auth/authStore"
 import AuthPicker from "../ui/login-or-registrate-picker"
@@ -25,6 +25,7 @@ type LoginInputs = {
 type ForgotPasswordInputs = {
   email: string
 }
+
 interface ILoginSection {
   mode: "login" | "register"
   setMode: (prev: "login" | "register") => void
@@ -39,6 +40,7 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
   const [error, setError] = useState<RequestError | null>(null)
   const [loginMode, setLoginMode] = useState<"login" | "forgot-password" | "success">("login")
   const { login } = useAuthStore()
+  const [showPassword, setShowPassword] = useState(false)
 
   const loginForm = useForm<LoginInputs>({
     mode: "onChange",
@@ -227,13 +229,22 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
                 <FormItem>
                   <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="Введите пароль"
-                      className={cl.input}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        placeholder="Введите пароль"
+                        className={cl.input}
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-500 text-sm" />
                 </FormItem>

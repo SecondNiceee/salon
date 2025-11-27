@@ -12,6 +12,7 @@ import type { Media } from "@/payload-types"
 import { toast } from "sonner"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { formatDate } from "@/utils/formatData"
+import { useCityStore } from "@/entities/city/cityStore"
 
 const statusConfig = {
   pending: { label: "Подтвержден", color: "bg-green-500", icon: CheckCircle },
@@ -24,7 +25,8 @@ export default function OrdersClientPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { orders, loading, error, loadOrders, clearOrders, refreshOrder, refreshingOrderId } = useOrdersStore()
-  const [hideCancel, setHideCancel] = useState(true)
+  const [hideCancel, setHideCancel] = useState(true);
+  const {city} = useCityStore();
 
   useEffect(() => {
     loadOrders()
@@ -87,7 +89,7 @@ export default function OrdersClientPage() {
               Когда вы сделаете первый заказ, он появится здесь
             </p>
             <Button
-              onClick={() => router.push("/")}
+              onClick={() => router.push(`/${city}`)}
               className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm sm:text-base"
             >
               Перейти к покупкам
@@ -149,7 +151,7 @@ export default function OrdersClientPage() {
                           {product?.title || "Услуга"}
                         </h3>
                         <Button
-                          onClick={() => router.push(`/product/${product?.id}?id=${product?.id}`)}
+                          onClick={() => router.push(`${city}/product/${product?.id}?id=${product?.id}`)}
                           variant="outline"
                           size="sm"
                           className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"

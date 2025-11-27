@@ -4,11 +4,14 @@ import { Clock, UserIcon, Heart } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import useAuth from "@/hooks/useAuth"
 import { routerConfig } from "@/config/router.config"
+import { useCity } from "@/lib/use-city"
 
 export default function AccountSidebar() {
   const { logout } = useAuth()
   const router = useRouter()
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const city = useCity();
+  console.log(city);
 
   const menuItems = [
     {
@@ -39,7 +42,7 @@ export default function AccountSidebar() {
           return (
             <li key={item.path}>
               <button
-                onClick={() => router.push(item.path)}
+                onClick={() => router.push(routerConfig.withCity(city, item.path))}
                 className={`w-full text-left text-sm md:text-base font-medium flex items-center gap-3 p-2 rounded-xl transition-colors duration-200 ${
                   item.isActive
                     ? "font-bold text-pink-600 bg-pink-50"

@@ -8,15 +8,17 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import { routerConfig } from "@/config/router.config"
 import LoginSection from "@/components/auth/login/loginSection"
 import RegisterSection from "@/components/auth/registration/registerSection"
+import { useCity } from "@/lib/use-city"
 
 export default function LoginPageClient() {
   const router = useRouter()
   const { user } = useAuthStore()
-  const [mode, setMode] = useState<"login" | "register">("login")
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const city = useCity()
 
   useEffect(() => {
     if (user) {
-      router.push(routerConfig.profile)
+      router.push(routerConfig.withCity(city, routerConfig.profile))
     }
   }, [user, router])
 

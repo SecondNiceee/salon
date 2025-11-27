@@ -1,11 +1,21 @@
 "use client"
 
 import { create } from "zustand"
-import type { City } from "@/payload-types"
+
+type TCity = {
+  id : string,
+  name : string,
+  slug : string,
+  declensions : {
+    genitive : string,
+    nominative : string,
+    prepositional : string
+  }
+}
 
 type CityState = {
-  city: City | null
-  setCity: (city: City | null) => void
+  city: TCity | null
+  setCity: (city: any | null) => void
 }
 
 export const useCityStore = create<CityState>((set) => ({

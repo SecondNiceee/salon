@@ -1,6 +1,5 @@
 import type React from "react"
 import "../globals.css"
-import AppInit from "@/components/app-init/app-init"
 import { Header } from "@/components/header/header"
 import { PopupProvider } from "@/components/popup/PopupProvider"
 import "leaflet/dist/leaflet.css"
@@ -13,6 +12,7 @@ import type { Metadata } from "next"
 import { getCityBySlug } from "@/actions/server/cities/getCities"
 import { notFound } from "next/navigation"
 import Script from "next/script"
+import { CityInit } from "@/components/city-init/CityInit"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -181,8 +181,8 @@ export default async function CityLayout({
       </head>
       <body className="min-h-screen bg-background">
         <PopupProvider>
-          <AppInit />
           <Header />
+          <CityInit city={city} />
           <main className="mx-auto min-h-[60vh]">{children}</main>
           <BottomNavigation />
           <Footer />

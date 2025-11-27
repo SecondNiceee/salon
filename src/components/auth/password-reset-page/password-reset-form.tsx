@@ -15,6 +15,7 @@ import cl from "../auth.module.css"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { resetPasswordSchema } from "../validation/schemas"
 import { routerConfig } from "@/config/router.config"
+import { useCity } from "@/lib/use-city"
 
 type ResetPasswordInputs = {
   password: string
@@ -31,7 +32,9 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<RequestError | null>(null)
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  const city = useCity();
 
   const form = useForm<ResetPasswordInputs>({
     mode: "onBlur",
@@ -58,7 +61,7 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
       setSuccess(true)
       // Перенаправляем на главную через 3 секунды
       setTimeout(() => {
-        router.replace(routerConfig.home)
+        router.replace(routerConfig.withCity(city, routerConfig.home))
       }, 3000)
     } catch (e) {
       setError(e as RequestError)

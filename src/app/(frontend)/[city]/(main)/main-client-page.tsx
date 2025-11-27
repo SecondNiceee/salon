@@ -26,13 +26,7 @@ export default function GrandBazarClientApp({ city, homeContent }: Props) {
   const [productsAndCategories, setProductsWithCategories] = useState<TCategoryWithProducts[] | null>()
   const [error, setError] = useState<Error | null>(null)
   const [isLoading, setLoading] = useState<boolean>(false)
-  const { setCity } = useCityStore()
 
-  useEffect(() => {
-    if (city) {
-      setCity(city)
-    }
-  }, [city, setCity])
 
   const getProductsWithCategories = useCallback(async () => {
     setLoading(true)

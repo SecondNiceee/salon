@@ -41,7 +41,7 @@ const HeaderMobile = () => {
       </div>
 
       <div className="flex items-center gap-2 mb-3">
-        <Link href={routerConfig.home} className="shrink-0">
+        <Link href={routerConfig.getPath(city, routerConfig.home)} className="shrink-0">
           <Button variant="outline" size="sm" className="p-2 bg-transparent shrink-0">
             <Home className="h-5 w-5" />
             <span className="sr-only">На главную</span>

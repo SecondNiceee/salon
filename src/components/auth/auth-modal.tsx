@@ -20,7 +20,7 @@ export default function AuthDialog() {
   useEffect(() => {
     if (user && open) {
       closeDialog()
-      if (isRedirect) router.push(routerConfig.getPath(city, "profile"))
+      if (isRedirect) router.push(routerConfig.withCity(city, routerConfig.profile))
     }
   }, [user, open, closeDialog, router, isRedirect, city])
 

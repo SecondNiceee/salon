@@ -113,7 +113,7 @@ export default async function ProductPage({
 
   if (!id) {
     return (
-      <ErrorAlert buttonAction={() => (window.location.href = routerConfig.home)} errorMessage="Услуга не найдена" />
+      <ErrorAlert buttonAction={() => (window.location.href = `/${citySlug}/${routerConfig.home}`)} errorMessage="Услуга не найдена" />
     )
   }
 
@@ -123,7 +123,7 @@ export default async function ProductPage({
     if (!product?.product) {
       return (
         <ErrorAlert
-          buttonAction={() => (window.location.href = routerConfig.home)}
+          buttonAction={() => (window.location.href = `${citySlug}/${routerConfig.home}`)}
           errorMessage="Услуга не найдена или была удалена"
         />
       )

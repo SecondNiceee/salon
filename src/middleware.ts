@@ -2,7 +2,8 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
+  
 
   // Skip admin, API, и static files
   if (
@@ -16,10 +17,8 @@ export async function middleware(request: NextRequest) {
   }
   console.log(pathname);
   const pathSegments = pathname.split("/").filter(Boolean)
-  console.log(pathSegments);
   const firstSegment = pathSegments[0]
 
-  console.log(firstSegment);
 
   console.log("[v0] Middleware: pathname:", pathname)
   console.log("[v0] Middleware: firstSegment:", firstSegment)
@@ -86,6 +85,7 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+// middleware.ts
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.).*)"],
+  matcher: ['/((?!api|_next|static|favicon.ico|robots.txt|sitemap.xml|.*\\.).*)'],
 }

@@ -11,11 +11,11 @@ import cl from "../auth.module.css"
 import { request, type RequestError } from "@/utils/request"
 import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
-import { Mail } from "lucide-react"
+import { Mail, Eye, EyeOff } from "lucide-react"
 import AuthPicker from "../ui/login-or-registrate-picker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registrationSchema } from "../validation/schemas"
-import { useCity } from "@/lib/use-city" // Import useCity hook to get city for router navigation
+import { useCity } from "@/lib/use-city"
 
 type RegisterInputs = {
   email: string
@@ -30,14 +30,14 @@ interface IRegisterSection {
 export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   const { register: registerUser, login } = useAuthStore()
   const router = useRouter()
-  const city = useCity() // Get city from hook
+  const city = useCity()
 
-  // Состояния для информаирования пользователя
   const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<RequestError | null>(null)
   const [email, setEmail] = useState<string | null>(null)
   const [password, setPassword] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<RegisterInputs>({
     mode: "onChange",
@@ -45,7 +45,6 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
     resolver: zodResolver(registrationSchema),
   })
 
-  // Хэндлер для входа
   const onSubmit: SubmitHandler<RegisterInputs> = async (values) => {
     setSuccess(null)
     setError(null)
@@ -78,21 +77,20 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
         console.log("[v0] tryLogin: isVerified passed, calling login")
         await login(email, password)
         console.log("[v0] tryLogin: login successful, redirecting to profile")
-        router.push(routerConfig.getPath(city, "profile"))
+        router.push( routerConfig.withCity(city, routerConfig.profile))
       } catch (e) {
         console.log("[v0] tryLogin error:", e)
         // ingnoring
       }
     }
-  }, [email, city, password, login, router]) // Added missing dependencies
+  }, [email, city, password, login, router])
 
-  // Проверка верификации каждые 12 секунд
   useEffect(() => {
     if (!email || !password) return
     const interval = setInterval(async () => {
       tryLogin()
-    }, 12_000) // Каждые 12 секунд
-    return () => clearInterval(interval) // Очистка при размонтировании
+    }, 12_000)
+    return () => clearInterval(interval)
   }, [email, tryLogin, password])
 
   if (email) {
@@ -183,13 +181,22 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
                 <FormItem>
                   <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      autoComplete="new-password"
-                      placeholder="Минимум 8 символов"
-                      className={cl.input}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        placeholder="Минимум 8 символов"
+                        className={cl.input}
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage className={cl.formError} />
                 </FormItem>
