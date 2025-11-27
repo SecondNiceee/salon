@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     cities = citiesGlobal.cities || []
   } catch (e) {
     console.error("Cities sitemap error:", e)
-    cities = [{ slug: "moscow", name: "Москва" }] // Fallback
+    cities = [{ slug: "moskva", name: "Москва" }] // Fallback
   }
 
   const staticRoutes: MetadataRoute.Sitemap = []

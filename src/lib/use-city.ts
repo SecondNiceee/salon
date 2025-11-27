@@ -16,7 +16,7 @@ export type City = {
 
 export function useCity(): string {
   const params = useParams()
-  return (params?.city as string) || "moscow"
+  return (params?.city as string) || "moskva"
 }
 
 export function useCityData(): City | null {

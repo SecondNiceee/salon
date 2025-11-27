@@ -41,13 +41,13 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
   const { login } = useAuthStore()
 
   const loginForm = useForm<LoginInputs>({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: { email: "", password: "" },
     resolver: zodResolver(loginSchema),
   })
 
   const forgotForm = useForm<ForgotPasswordInputs>({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: { email: "" },
     resolver: zodResolver(forgotSchema),
   })

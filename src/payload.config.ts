@@ -37,7 +37,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://grandbazarr.ru",
-  serverURL : isDev ? undefined : process.env.BACKEND_URL,
+  serverURL : process.env.BACKEND_URL,
   cors: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   csrf: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   admin: {

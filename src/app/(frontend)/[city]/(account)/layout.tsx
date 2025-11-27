@@ -1,4 +1,4 @@
-// src/app/account/layout.tsx
+// src/app/(frontend)/[city]/(account)/layout.tsx
 import type React from "react"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
@@ -12,48 +12,46 @@ export const metadata: Metadata = {
   description:
     "Ваш личный кабинет в салоне красоты Академия Спа: история покупок, подписки на курсы, забронированные услуги",
   robots: {
-    index: false, // ← не индексировать
-    follow: false, // ← не переходить по ссылкам
+    index: false,
+    follow: false,
   },
-  // Убираем OG и Twitter — не нужно для приватной страницы
   openGraph: undefined,
   twitter: undefined,
 }
 
 export default async function AccountLayout({
   children,
+  params,
 }: {
   children: React.ReactNode
+  params: Promise<{ city: string }>
 }) {
+  const { city } = await params
   const cookieStore = await cookies()
-  const payloadToken = cookieStore.get("payload-token");
-  console.log(payloadToken );
+  const payloadToken = cookieStore.get("payload-token")
 
   try {
-    const response = await fetch(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/me`, {
+    const apiUrl = `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/me`
+
+    const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
         Cookie: payloadToken ? `payload-token=${payloadToken.value}` : "",
       },
-      // ⚠️ Важно: не кэшировать этот запрос
       cache: "no-store",
     })
 
     if (!response.ok) {
-      console.log("[v0] Auth check failed: response not ok", response.status)
-      redirect(routerConfig.home)
+      redirect(routerConfig.getPath(city, "home"))
     }
 
-    const data = await response.json();
-    console.log(data);
+    const data = await response.json()
 
     if (!data.user) {
-      console.log("[v0] Auth check failed: no user in response")
-      redirect(routerConfig.home)
+      redirect(routerConfig.getPath(city, "home"))
     }
   } catch (e) {
-    console.log("[v0] Auth check error:", e)
-    redirect(routerConfig.home)
+    redirect(routerConfig.getPath(city, "home"))
   }
 
   return <AccountLayoutClient>{children}</AccountLayoutClient>

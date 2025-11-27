@@ -34,7 +34,12 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}) {
+  const { city } = await params
   const cookieStore = await cookies()
   const payloadToken = cookieStore.get("payload-token")
 
@@ -53,11 +58,10 @@ export default async function LoginPage() {
         const data = await response.json()
         // Если пользователь авторизован - редиректим на главную
         if (data.user) {
-          redirect(routerConfig.home)
+          redirect(routerConfig.getPath(city, "home"))
         }
       }
     } catch (e) {
-      // Ошибка - продолжаем показывать страницу логина
       console.log("[v0] Login page auth check error:", e)
     }
   }

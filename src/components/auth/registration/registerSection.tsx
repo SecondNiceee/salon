@@ -40,7 +40,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   const [password, setPassword] = useState<string | null>(null)
 
   const form = useForm<RegisterInputs>({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: { email: "", password: "" },
     resolver: zodResolver(registrationSchema),
   })
@@ -66,6 +66,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
   const tryLogin = useCallback(async () => {
     if (password && email) {
       try {
+        console.log("[v0] tryLogin: checking isVerified for email:", email)
         await request({
           url: "/api/auth/isVerified",
           method: "POST",
@@ -74,14 +75,16 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
           },
           credentials: true,
         })
+        console.log("[v0] tryLogin: isVerified passed, calling login")
         await login(email, password)
+        console.log("[v0] tryLogin: login successful, redirecting to profile")
         router.push(routerConfig.getPath(city, "profile"))
       } catch (e) {
-        console.log(e)
+        console.log("[v0] tryLogin error:", e)
         // ingnoring
       }
     }
-  }, [email, city]) // Added city to dependencies
+  }, [email, city, password, login, router]) // Added missing dependencies
 
   // Проверка верификации каждые 12 секунд
   useEffect(() => {

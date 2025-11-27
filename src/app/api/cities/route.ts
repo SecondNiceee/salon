@@ -1,6 +1,6 @@
 // src/app/api/cities/route.ts
 import { getCities } from "@/actions/server/cities/getCities"
-import { NextRequest } from "next/server"
+import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url)
     const searchParam = url.searchParams.get("search")?.trim()
     const limitParam = url.searchParams.get("limit")
-    const limit = limitParam ? parseInt(limitParam, 10) : 10
+    const limit = limitParam ? Number.parseInt(limitParam, 10) : 10
 
     // Получаем все города
     const cities = await getCities()
@@ -17,17 +17,19 @@ export async function GET(request: NextRequest) {
 
     if (searchParam) {
       const term = searchParam.toLowerCase()
-      filteredCities = cities.filter((city:any) => {
-        return (
-          (city.name && city.name.toLowerCase().includes(term)) ||
-          (city.slug && city.slug.toLowerCase().includes(term)) ||
-          (city.declensions?.nominative && city.declensions.nominative.toLowerCase().includes(term))
-        )
-      }).slice(0, limit)
+      filteredCities = cities
+        .filter((city: any) => {
+          return (
+            (city.name && city.name.toLowerCase().includes(term)) ||
+            (city.slug && city.slug.toLowerCase().includes(term)) ||
+            (city.declensions?.nominative && city.declensions.nominative.toLowerCase().includes(term))
+          )
+        })
+        .slice(0, limit)
     }
 
     // Получаем город по умолчанию (только если не ищем)
-    const defaultCity = !searchParam ? (await getDefaultCity())?.slug || "moscow" : undefined
+    const defaultCity = !searchParam ? (await getDefaultCity())?.slug || "moskva" : undefined
 
     return NextResponse.json({
       cities: filteredCities,

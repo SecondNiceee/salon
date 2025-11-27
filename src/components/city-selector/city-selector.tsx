@@ -95,8 +95,18 @@ export function CitySelector({ className }: { className?: string }) {
     const params = new URLSearchParams(searchParams.toString())
     const stringParams = params.toString()
     const pathParts = pathname.split("/").filter(Boolean)
+
+    console.log("[v0] CitySelector.handleCityChange:")
+    console.log("[v0] - current pathname:", pathname)
+    console.log("[v0] - pathParts before:", pathParts)
+    console.log("[v0] - newCitySlug:", newCitySlug)
+
     pathParts[0] = newCitySlug
     const newPath = "/" + pathParts.join("/") + (stringParams ? "?" + stringParams : "")
+
+    console.log("[v0] - pathParts after:", pathParts)
+    console.log("[v0] - newPath:", newPath)
+
     router.push(newPath)
     setIsOpen(false)
     setSearchQuery("")

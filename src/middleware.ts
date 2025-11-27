@@ -14,9 +14,15 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.next()
   }
-
+  console.log(pathname);
   const pathSegments = pathname.split("/").filter(Boolean)
+  console.log(pathSegments);
   const firstSegment = pathSegments[0]
+
+  console.log(firstSegment);
+
+  console.log("[v0] Middleware: pathname:", pathname)
+  console.log("[v0] Middleware: firstSegment:", firstSegment)
 
   try {
     const citiesResponse = await fetch(new URL("/api/cities", request.url).toString())
@@ -27,6 +33,8 @@ export async function middleware(request: NextRequest) {
     }
 
     const { cities, defaultCity } = await citiesResponse.json()
+
+    console.log("[v0] Middleware: defaultCity:", defaultCity)
 
     if (!cities || cities.length === 0) {
       console.error("[v0] Middleware: No cities found")
@@ -47,6 +55,8 @@ export async function middleware(request: NextRequest) {
       }
     })
 
+    console.log("[v0] Middleware: firstSegment in supportedCities?", supportedCities.includes(firstSegment))
+
     // Если первый сегмент - это поддерживаемый город
     if (firstSegment && supportedCities.includes(firstSegment)) {
       // Проверяем алиасы - редирект на canonical city
@@ -55,18 +65,23 @@ export async function middleware(request: NextRequest) {
         const newPathname = pathname.replace(`/${firstSegment}`, `/${canonicalCity}`)
         return NextResponse.redirect(new URL(newPathname, request.url))
       }
+      console.log("[v0] Middleware: City found, proceeding without redirect")
       return NextResponse.next()
     }
 
-    if (defaultCity) {
-      const newUrl = new URL(`/${defaultCity}${pathname}`, request.url)
-      return NextResponse.redirect(newUrl)
-    }
+    const targetCity = defaultCity || "moskva"
 
-    return NextResponse.next()
+    console.log("[v0] Middleware: City NOT found, redirecting to:", targetCity)
+
+    // If pathname is just "/" or empty, redirect to city root
+    // Otherwise prepend city to the path
+    const newPath = pathname === "/" || pathname === "" ? `/${targetCity}` : `/${targetCity}${pathname}`
+
+    const newUrl = new URL(newPath, request.url)
+    console.log("[v0] Middleware: Redirecting to:", newUrl.toString())
+    return NextResponse.redirect(newUrl)
   } catch (error) {
     console.error("[v0] Middleware: Error processing cities", error)
-    // В случае ошибки просто пропускаем дальше
     return NextResponse.next()
   }
 }

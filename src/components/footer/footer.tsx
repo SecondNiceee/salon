@@ -41,7 +41,6 @@ export async function Footer() {
                 />
               </Link>
 
-
               {/* Instagram Icon */}
               <Link
                 rel="noopener norreferrer"
@@ -58,6 +57,9 @@ export async function Footer() {
                 />
               </Link>
             </div>
+            <p className="mt-2 text-[10px] text-gray-400 leading-tight">
+              * Instagram принадлежит компании Meta, признанной экстремистской организацией и запрещённой в РФ
+            </p>
           </div>
 
           {/* Navigation Links */}
