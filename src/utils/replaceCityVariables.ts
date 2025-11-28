@@ -49,14 +49,22 @@ export function replaceCityInRichText(content: any, city: CityDeclensions | null
   // Создаем глубокую копию для избежания мутации
   const processedContent = JSON.parse(JSON.stringify(content))
 
+  const processedNodes = new WeakSet()
+
   function processNode(node: any): any {
-    if (!node) return node
+    if (!node || typeof node !== "object") return node
+
+    if (processedNodes.has(node)) {
+      return node
+    }
+    processedNodes.add(node)
 
     // Обрабатываем текстовые узлы
     if (node.text && typeof node.text === "string") {
       node.text = replaceCityVariables(node.text, city)
     }
 
+    // Обрабатываем fields
     if (node.fields) {
       Object.keys(node.fields).forEach((key) => {
         const field = node.fields[key]
@@ -70,9 +78,11 @@ export function replaceCityInRichText(content: any, city: CityDeclensions | null
       })
     }
 
+    const skipKeys = new Set(["text", "fields", "children", "root"])
+
     Object.keys(node).forEach((key) => {
-      if (key === "text" || key === "fields" || key === "children" || key === "root") {
-        return // Уже обработаны выше
+      if (skipKeys.has(key)) {
+        return // Эти ключи обрабатываются отдельно
       }
 
       const value = node[key]
@@ -93,14 +103,14 @@ export function replaceCityInRichText(content: any, city: CityDeclensions | null
       }
     })
 
-    // Рекурсивно обрабатываем дочерние узлы
+    // Рекурсивно обрабатываем дочерние узлы (только один раз)
     if (Array.isArray(node.children)) {
       node.children = node.children.map((child: any) => processNode(child))
     }
 
-    // Обрабатываем root
-    if (node.root && node.root.children) {
-      node.root.children = node.root.children.map((child: any) => processNode(child))
+    // Обрабатываем root (только один раз)
+    if (node.root && typeof node.root === "object" && !processedNodes.has(node.root)) {
+      processNode(node.root)
     }
 
     return node
