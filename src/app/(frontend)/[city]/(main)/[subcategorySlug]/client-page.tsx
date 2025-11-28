@@ -9,8 +9,6 @@ import { ProductCard } from "@/components/product-card/ProductCard"
 import { ArrowRight } from "lucide-react"
 import SubCategories from "@/components/sub-categories/SubCategories"
 import type { City } from "@/payload-types"
-import { RichText } from "@payloadcms/richtext-lexical/react"
-import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
@@ -24,7 +22,7 @@ type Props = {
   allSubCategories : ProductsWithSubCategory[]
 }
 
-const SubCategoryClientPage = ({
+const SubCategoryClientPage = async ({
   initialData,
   allSubCategories, // 👈 получаем напрямую
   citySlug,
@@ -32,7 +30,8 @@ const SubCategoryClientPage = ({
   processedContent,
   processedContentAfter,
 }: Props) => {
-  const router = useRouter()
+  const router = useRouter();
+
 
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])

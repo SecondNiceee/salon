@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { request } from "@/utils/request"
 import type { RequestError } from "@/utils/request"
-import { ArrowLeft, Mail, CheckCircle, Eye, EyeOff } from "lucide-react"
+import { ArrowLeft, Mail, CheckCircle } from "lucide-react"
 import cl from "../auth.module.css"
 import { useAuthStore } from "@/entities/auth/authStore"
 import AuthPicker from "../ui/login-or-registrate-picker"
@@ -229,23 +229,23 @@ export default function LoginSection({ mode, setMode }: ILoginSection) {
                 <FormItem>
                   <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="current-password"
-                        placeholder="Введите пароль"
-                        className={cl.input}
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      placeholder="Введите пароль"
+                      className={cl.input}
+                      {...field}
+                    />
                   </FormControl>
+                  <label className="flex items-center gap-2 cursor-pointer mt-2">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-pink-500 focus:ring-pink-500"
+                    />
+                    <span className="text-sm text-gray-600">Показать пароль</span>
+                  </label>
                   <FormMessage className="text-red-500 text-sm" />
                 </FormItem>
               )}

@@ -11,7 +11,7 @@ import cl from "../auth.module.css"
 import { request, type RequestError } from "@/utils/request"
 import { useRouter } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
-import { Mail, Eye, EyeOff } from "lucide-react"
+import { Mail } from "lucide-react"
 import AuthPicker from "../ui/login-or-registrate-picker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { registrationSchema } from "../validation/schemas"
@@ -77,7 +77,7 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
         console.log("[v0] tryLogin: isVerified passed, calling login")
         await login(email, password)
         console.log("[v0] tryLogin: login successful, redirecting to profile")
-        router.push( routerConfig.withCity(city, routerConfig.profile))
+        router.push(routerConfig.withCity(city, routerConfig.profile))
       } catch (e) {
         console.log("[v0] tryLogin error:", e)
         // ingnoring
@@ -181,23 +181,23 @@ export default function RegisterSection({ mode, setMode }: IRegisterSection) {
                 <FormItem>
                   <FormLabel className="text-sm md:text-base font-medium text-gray-900">Пароль</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        placeholder="Минимум 8 символов"
-                        className={cl.input}
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      placeholder="Минимум 8 символов"
+                      className={cl.input}
+                      {...field}
+                    />
                   </FormControl>
+                  <label className="flex items-center gap-2 cursor-pointer mt-2">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-pink-500 focus:ring-pink-500"
+                    />
+                    <span className="text-sm text-gray-600">Показать пароль</span>
+                  </label>
                   <FormMessage className={cl.formError} />
                 </FormItem>
               )}

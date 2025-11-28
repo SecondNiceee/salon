@@ -16,7 +16,7 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ title, content }
   return (
     <div className="accordion-block border border-gray-200 rounded-lg overflow-hidden my-4">
       {/* На sm и выше — flex row (кнопка справа), на xs — flex-col (кнопка снизу) */}
-      <div className="accordion-header relative flex flex-col sm:flex-row sm:items-center sm:justify-end justify-between p-4 bg-gray-50 gap-3 min-h-[72px]">
+      <div className="accordion-header relative flex flex-col sm:flex-row sm:items-center sm:justify-end justify-between p-4 bg-gray-50 gap-3">
         <div className="hidden sm:block invisible pointer-events-none select-none px-20 flex-1" aria-hidden="true">
           <RichText converters={jsxConverters} data={title} />
         </div>
@@ -32,12 +32,14 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ title, content }
       </div>
 
       <div
-        className={`accordion-content transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-        } overflow-hidden`}
+        className={`accordion-content grid transition-all duration-300 ease-in-out ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
       >
-        <div className="p-4 border-t border-gray-200">
-          <RichText converters={jsxConverters} data={content} />
+        <div className="overflow-hidden">
+          <div className="p-4 border-t border-gray-200">
+            <RichText converters={jsxConverters} data={content} />
+          </div>
         </div>
       </div>
     </div>
