@@ -14,9 +14,9 @@ export type City = {
   seoTitle?: string
 }
 
-export function useCity(): string {
+export function useCity(): string | null {
   const params = useParams()
-  return (params?.city as string) || "moskva"
+  return (params?.city as string) || null
 }
 
 export function useCityData(): City | null {
@@ -39,3 +39,4 @@ export function useCityData(): City | null {
 
   return cityData
 }
+  

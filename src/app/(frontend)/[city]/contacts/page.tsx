@@ -1,23 +1,27 @@
-// app/contacts/page.tsx
-import { RichText } from "@payloadcms/richtext-lexical/react"
+// app/[city]/contacts/page.tsx
 import { notFound } from "next/navigation"
-import jsxConverters from "@/utils/jsx-converters"
-import "@/styles/richText.scss"
 import { getContacts } from "@/actions/server/pages/getContacts"
+import { getCityBySlug } from "@/actions/server/cities/getCities"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
-// ✅ Умеренное кэширование: 1 день
+// ✅ Кэширование: 1 день
 export const revalidate = 86400
 
-// ✅ Schema.org для контактов
-function ContactsSchema({
+// ✅ Schema.org для контактов с учётом города
+async function ContactsSchema({
+  citySlug,
   title,
   description,
 }: {
+  citySlug: string
   title: string
   description: string
 }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  const city = await getCityBySlug(citySlug)
+  if (!city) return null
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://grandbazarr.ru"
+  const cityName = city.declensions.nominative
 
   return (
     <script
@@ -28,7 +32,7 @@ function ContactsSchema({
             "@context": "https://schema.org",
             "@type": "Organization",
             name: title,
-            url: siteUrl,
+            url: `${siteUrl}/${citySlug}/contacts`,
             logo: `${siteUrl}/logo.svg`,
             description: description,
             contactPoint: {
@@ -36,7 +40,7 @@ function ContactsSchema({
               contactType: "Customer Support",
               address: {
                 "@type": "PostalAddress",
-                addressLocality: "Ставрополь", // ← замени на реальный город
+                addressLocality: cityName,
                 addressCountry: "RU",
               },
               availableLanguage: ["Russian"],
@@ -50,81 +54,99 @@ function ContactsSchema({
   )
 }
 
-export default async function ContactsPage() {
-  try {
-    const contacts = await getContacts()
-    if (!contacts) {
-      notFound()
-    }
+export default async function ContactsPage({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}) {
+  const { city: citySlug } = await params
+  const city = await getCityBySlug(citySlug)
+  if (!city) notFound()
 
-    const title = contacts.title || "Контакты | Академия Спа | Салон красоты"
-    const description =
-      contacts.description || "Свяжитесь с салоном красоты Академия Спа: телефон, email, адрес офиса. Мы всегда на связи!"
+  const contacts = await getContacts()
+  if (!contacts) notFound()
 
-    return (
-      <>
-        <ContactsSchema title={title} description={description} />
-        <div className="rich-container">
-          <MemoRichText data={contacts.content} />
-        </div>
-      </>
-    )
-  } catch (error) {
-    console.error("Error loading contacts page:", error)
-    notFound()
-  }
+  const cityName = city.declensions.nominative
+
+  const title = contacts.title
+    ? `${contacts.title} | ГрандБАЗАР | Салон красоты ${cityName}`
+    : `Контакты | ГрандБАЗАР | Салон красоты ${cityName}`
+
+  const description =
+    contacts.description ||
+    `Свяжитесь с салоном красоты ГрандБАЗАР в г. ${cityName}: телефон, email, адрес и форма обратной связи!`
+
+  return (
+    <>
+      <ContactsSchema citySlug={citySlug} title={title} description={description} />
+      <div className="rich-container">
+        <MemoRichText data={contacts.content} />
+      </div>
+    </>
+  )
 }
 
-// ✅ Полные метаданные
-export async function generateMetadata() {
-  try {
-    const contactsData = await getContacts()
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-
-    const title = contactsData?.title
-      ? `${contactsData.title} | ГрандБАЗАР | Салон красоты`
-      : "Контакты | ГрандБАЗАР | Салон красоты"
-
-    const description =
-      contactsData?.description ||
-      "Свяжитесь с салоном красоты ГрандБАЗАР: телефон, email, адрес офиса и форма обратной связи!"
-
+// ✅ Динамические метаданные с учётом города
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}) {
+  const { city: citySlug } = await params
+  const city = await getCityBySlug(citySlug)
+  if (!city) {
     return {
+      title: "Город не найден",
+      robots: { index: false, follow: false },
+    }
+  }
+
+  const contactsData = await getContacts()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://grandbazarr.ru"
+  const cityName = city.declensions.nominative
+  const canonicalUrl = `${siteUrl}/${citySlug}/contacts`
+
+  const title = contactsData?.title
+    ? `${contactsData.title} | ГрандБАЗАР | Салон красоты ${cityName}`
+    : `Контакты | ГрандБАЗАР | Салон красоты ${cityName}`
+
+  const description =
+    contactsData?.description ||
+    `Свяжитесь с салоном красоты ГрандБАЗАР в г. ${cityName}: телефон, email, адрес и форма обратной связи!`
+
+  return {
+    title,
+    description,
+    keywords: [
+      "контакты",
+      "связаться с нами",
+      "телефон",
+      "email",
+      "адрес салона",
+      "ГрандБАЗАР",
+      "поддержка",
+      "обратная связь",
+      cityName,
+      `контакты ${cityName}`,
+      `салон красоты ${cityName}`,
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
       title,
       description,
-      keywords: [
-        "контакты",
-        "связаться с нами",
-        "телефон",
-        "email",
-        "адрес салона",
-        "ГрандБАЗАР",
-        "поддержка",
-        "обратная связь",
-      ],
-      alternates: {
-        canonical: siteUrl ? `${siteUrl}/contacts` : undefined,
-      },
-      openGraph: {
-        title,
-        description,
-        url: siteUrl ? `${siteUrl}/contacts` : undefined,
-        type: "website",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-      },
-    }
-  } catch (error) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-    return {
-      title: "Контакты | ГрандБАЗАР",
-      description: "Свяжитесь с салоном красоты ГрандБАЗАР: телефон, email, адрес и форма обратной связи.",
-      alternates: {
-        canonical: siteUrl ? `${siteUrl}/contacts` : undefined,
-      },
-    }
+      url: canonicalUrl,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   }
 }

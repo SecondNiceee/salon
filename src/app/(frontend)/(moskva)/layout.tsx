@@ -13,6 +13,7 @@ import { getCityBySlug } from "@/actions/server/cities/getCities"
 import { notFound } from "next/navigation"
 import Script from "next/script"
 import { CityInit } from "@/components/city-init/CityInit"
+import { defaultCitySlug } from "@/constants/dynamic-constants"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,13 +27,8 @@ const inter = Inter({
   variable: "--font-inter",
 })
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ city: string }>
-}): Promise<Metadata> {
-  const { city: citySlug } = await params
-  const city = await getCityBySlug(citySlug)
+export async function generateMetadata(): Promise<Metadata> {
+  const city = await getCityBySlug(defaultCitySlug)
 
   if (!city) {
     return {
@@ -44,7 +40,7 @@ export async function generateMetadata({
   const cityName = city.declensions.nominative
   const cityPrepositional = city.declensions.prepositional
   const citySuffix = city.seoTitle ? ` — ${city.seoTitle}` : ` — ${cityName}`
-  const currentUrl = `${process.env.NEXT_PUBLIC_URL}/${citySlug}`
+  const currentUrl = `${process.env.NEXT_PUBLIC_URL}`
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
@@ -165,7 +161,7 @@ export default async function CityLayout({
               "@type": "BeautySalon",
               name: `Академия Спа - ${cityName}`,
               description: `Салон красоты в г. ${cityName} с услугами массажа, спа, косметологии и онлайн-курсами.`,
-              url: `${siteUrl}/${citySlug}`,
+              url: `${siteUrl}`,
               areaServed: {
                 "@type": "City",
                 name: cityName,

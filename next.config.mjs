@@ -12,7 +12,7 @@ const nextConfig = {
   //     {
   //       source: '/(.*)',
   //       headers: [
-  //         {
+  //         {  
   //           key: 'Content-Security-Policy',
   //           value: `
   //             default-src 'self';
@@ -43,6 +43,15 @@ const nextConfig = {
   //     }
   //   ]
   // },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/moskva',
+        permanent: true, // Это 301-редирект
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

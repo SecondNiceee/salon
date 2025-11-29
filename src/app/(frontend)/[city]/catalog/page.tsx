@@ -1,47 +1,74 @@
-// app/catalog/page.tsx
+// app/[city]/catalog/page.tsx
 import type { Metadata } from "next"
 import CatalogClientPage from "./catalog-client-page"
+import { getCityBySlug } from "@/actions/server/cities/getCities"
+import { notFound } from "next/navigation"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
-export const metadata: Metadata = {
-  title: "Каталог услуг | Академия Спа | Салон красоты",
-  description:
-    "Полный каталог услуг салона красоты Академия Спа: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы. Выбирайте и записывайтесь онлайн!",
-  keywords: [
-    "каталог услуг",
-    "услуги красоты",
-    "салон красоты",
-    "массаж",
-    "спа услуги",
-    "косметология",
-    "татуировки",
-    "подарочный сертификат",
-    "курсы массажа",
-    "Академия Спа",
-  ],
-  robots: {
-    index: true, // ← индексировать! Это публичная страница
-    follow: true, // ← переходить по ссылкам (на категории и услуги)
-  },
-  alternates: {
-    canonical: siteUrl ? `${siteUrl}/catalog` : undefined,
-  },
-  openGraph: {
-    title: "Каталог услуг | Академия Спа",
-    description: "Полный каталог услуг салона красоты: массаж, спа, косметология, курсы и подарки.",
-    type: "website",
-    url: siteUrl ? `${siteUrl}/catalog` : undefined,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Каталог услуг | Академия Спа",
-    description: "Полный каталог услуг: выбирайте услуги красоты и записывайтесь онлайн.",
-  },
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}): Promise<Metadata> {
+  const { city: citySlug } = await params
+  const city = await getCityBySlug(citySlug)
+
+  if (!city) {
+    notFound()
+  }
+
+  const cityName = city.declensions.nominative
+  const canonicalUrl = `${siteUrl}/${citySlug}/catalog`
+
+  return {
+    title: `Каталог услуг | Академия Спа | Салон красоты ${cityName}`,
+    description:
+      `Полный каталог услуг салона красоты Академия Спа в г. ${cityName}: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы. Выбирайте и записывайтесь онлайн!`,
+    keywords: [
+      "каталог услуг",
+      "услуги красоты",
+      "салон красоты",
+      "массаж",
+      "спа услуги",
+      "косметология",
+      "татуировки",
+      "подарочный сертификат",
+      "курсы массажа",
+      "Академия Спа",
+      cityName,
+      `салон красоты ${cityName}`,
+      `массаж ${cityName}`,
+    ],
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `Каталог услуг | Академия Спа | ${cityName}`,
+      description: `Полный каталог услуг салона красоты в ${cityName}: массаж, спа, косметология, курсы и подарки.`,
+      type: "website",
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Каталог услуг | Академия Спа | ${cityName}`,
+      description: `Полный каталог услуг в ${cityName}: выбирайте услуги красоты и записывайтесь онлайн.`,
+    },
+  }
 }
 
-// ✅ Structured data: CollectionPage для услуг салона
-function CatalogSchema() {
+// ✅ Structured data: CollectionPage для услуг салона (с учётом города)
+async function CatalogSchema({ citySlug }: { citySlug: string }) {
+  const city = await getCityBySlug(citySlug)
+  if (!city) return null
+
+  const canonicalUrl = `${siteUrl}/${citySlug}/catalog`
+  const cityName = city.declensions.nominative
+
   return (
     <script
       type="application/ld+json"
@@ -49,25 +76,36 @@ function CatalogSchema() {
         __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: "Каталог услуг | Академия Спа",
-          description: "Полный каталог услуг салона красоты Академия Спа",
-          url: `${siteUrl}/catalog`,
+          name: `Каталог услуг | Академия Спа | ${cityName}`,
+          description: `Полный каталог услуг салона красоты Академия Спа в г. ${cityName}`,
+          url: canonicalUrl,
           publisher: {
             "@type": "Organization",
             name: "Академия Спа",
             url: siteUrl,
           },
-          about: "Каталог услуг красоты: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы",
+          about: `Каталог услуг красоты в ${cityName}: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы`,
         }),
       }}
     />
   )
 }
 
-export default function CatalogPage() {
+export default async function CatalogPage({
+  params,
+}: {
+  params: Promise<{ city: string }>
+}) {
+  const { city: citySlug } = await params
+  const city = await getCityBySlug(citySlug)
+
+  if (!city) {
+    notFound()
+  }
+
   return (
     <>
-      <CatalogSchema />
+      <CatalogSchema citySlug={citySlug} />
       <CatalogClientPage />
     </>
   )

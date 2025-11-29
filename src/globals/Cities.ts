@@ -72,7 +72,7 @@ export const Cities: GlobalConfig = {
           type: "group",
           label: "Склонения",
           admin: {
-            description: "Склонения названия города для правильного использования в тексте",
+            description: "Склонения названия города для правильного испо  льзования в тексте",
           },
           fields: [
             {

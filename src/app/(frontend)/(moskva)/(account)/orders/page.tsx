@@ -1,0 +1,21 @@
+import OrdersClientPage from "@/app/(frontend)/[city]/(account)/orders/order-client"
+import type { Metadata } from "next"
+
+// 🔒 Приватная страница — не индексировать!
+export const metadata: Metadata = {
+  title: "Мои услуги — Академия Спа | Салон красоты",
+  description: "Отслеживайте ваши забронированные услуги и курсы в салоне красоты Академия Спа",
+  robots: {
+    index: false, // ← не показывать в поиске
+    follow: false, // ← не переходить по ссылкам с этой страницы
+  },
+  // Соцсетевые метатеги не нужны — это личная информация
+  openGraph: undefined,
+  twitter: undefined,
+}
+
+const Orders = () => {
+  return <OrdersClientPage />
+}
+
+export default Orders

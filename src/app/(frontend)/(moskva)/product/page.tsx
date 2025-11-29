@@ -3,8 +3,8 @@ import { routerConfig } from "@/config/router.config"
 import { getProductById } from "@/actions/server/products/getProductById"
 import type { Metadata } from "next"
 import type { Category, Media } from "@/payload-types"
-import ProductPageClient from "./prodcut-page-client"
 import { ProductSchema } from "./productSchema"
+import ProductPageClient from "../../[city]/product/prodcut-page-client"
 
 export async function generateMetadata({
   searchParams,
@@ -45,7 +45,6 @@ export async function generateMetadata({
     const { getCityBySlug } = await import("@/actions/server/cities/getCities")
     const { replaceCityVariables } = await import("@/utils/replaceCityVariables")
     const city = await getCityBySlug(citySlug)
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
     const cityDeclensions = city
       ? {
@@ -68,9 +67,6 @@ export async function generateMetadata({
       title: processedSeoTitle,
       description: processedDescription,
       keywords: [processedSeoTitle, category[0].title || "", subCategory.title || "", "забронировать", "запись онлайн"],
-      alternates: {
-        canonical: siteUrl ? `${siteUrl}/${citySlug}/product?id=${id}` : undefined,
-      },
       openGraph: {
         title: `${processedSeoTitle} | Академия Спа`,
         description: processedDescription,
