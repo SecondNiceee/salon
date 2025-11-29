@@ -13,6 +13,8 @@ import { toast } from "sonner"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { formatDate } from "@/utils/formatData"
 import { useCityStore } from "@/entities/city/cityStore"
+import { useCity } from "@/lib/use-city"
+import { routerConfig } from "@/config/router.config"
 
 const statusConfig = {
   pending: { label: "Подтвержден", color: "bg-green-500", icon: CheckCircle },
@@ -26,7 +28,7 @@ export default function OrdersClientPage() {
   const { user } = useAuth()
   const { orders, loading, error, loadOrders, clearOrders, refreshOrder, refreshingOrderId } = useOrdersStore()
   const [hideCancel, setHideCancel] = useState(true);
-  const {city} = useCityStore();
+  const city = useCity();
 
   useEffect(() => {
     loadOrders()
@@ -151,7 +153,7 @@ export default function OrdersClientPage() {
                           {product?.title || "Услуга"}
                         </h3>
                         <Button
-                          onClick={() => router.push(`${city}/product/${product?.id}?id=${product?.id}`)}
+                          onClick={() => router.push(routerConfig.withCity(city, "/product/${product?.id}?id=${product?.id}"))}
                           variant="outline"
                           size="sm"
                           className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"
