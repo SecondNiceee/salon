@@ -22,7 +22,7 @@ type Props = {
   allSubCategories : ProductsWithSubCategory[]
 }
 
-const SubCategoryClientPage = async ({
+const SubCategoryClientPage = ({
   initialData,
   allSubCategories, // 👈 получаем напрямую
   citySlug,
@@ -31,8 +31,6 @@ const SubCategoryClientPage = async ({
   processedContentAfter,
 }: Props) => {
   const router = useRouter();
-
-
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])

@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/product-card/ProductCard"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/payload-types"
 
-export default function FavoritesClientPage() {
+export default function FavoritesClientPage({city} : {city:any}) {
   const {
     favorites,
     loading,
@@ -104,7 +104,7 @@ export default function FavoritesClientPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {favorites.map((favorite) => {
           const product = typeof favorite.product === "string" ? null : (favorite.product as Product)
 
@@ -112,7 +112,7 @@ export default function FavoritesClientPage() {
 
           return (
             <div key={favorite.id} className="relative group">
-              <ProductCard product={product} />
+              <ProductCard city={city} product={product} />
             </div>
           )
         })}

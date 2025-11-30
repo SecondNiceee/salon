@@ -1,12 +1,13 @@
 import { getSiteSettings } from "@/actions/server/globals/getSiteSettings"
+import { routerConfig } from "@/config/router.config"
 import type { Media } from "@/payload-types"
 import Image from "next/image"
 import Link from "next/link"
 export const dynamic = "auto"
 
 export const revalidate = 31536000 // 1 год
-export async function Footer() {
-  const siteSettings = await getSiteSettings()
+export async function Footer({city} : {city : any}) {
+  const siteSettings = await getSiteSettings();
   return (
     <footer className="px-4 md:pt-8 md:pb-8 pt-5 pb-[160px] bg-white border-t border-gray-200">
       <div className="mx-auto max-w-7xl">
@@ -68,12 +69,12 @@ export async function Footer() {
             <div>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/" className="text-sm text-gray-600 hover:text-gray-800">
+                  <Link href={routerConfig.withCity(city.slug, routerConfig.home)} className="text-sm text-gray-600 hover:text-gray-800">
                     Главная
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div>  
 
             {/* Column 2 */}
             <div>
@@ -96,7 +97,7 @@ export async function Footer() {
                   )}
                 </li>
                 <li>
-                  <Link href="/contacts" className="text-sm text-gray-600 hover:text-gray-800">
+                  <Link href={routerConfig.withCity(city.slug, routerConfig.contacts)} className="text-sm text-gray-600 hover:text-gray-800">
                     Контакты
                   </Link>
                 </li>

@@ -49,7 +49,7 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
     title: {
-      default: `Записаться на массаж, спа, косметология, татуировки, курсы косметологии, массажа ${cityPrepositional}`,
+      default: `Курсы косметологии и массажа ${cityPrepositional} | Спа и косметология`,
       template: `%s | Академия Спа ${cityName}`,
     },
     description:
@@ -88,7 +88,7 @@ export async function generateMetadata({
       locale: "ru_RU",
       url: currentUrl,
       siteName: "Академия Спа",
-      title: `Спа-  салоны Массаж Обучние массажу и косметологии ${cityPrepositional}`,
+      title: `Курсы косметологии и массажа ${cityPrepositional} | Спа и косметология`,
       description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
       images: [
         {
@@ -101,7 +101,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `Академия Спа — Салон красоты${citySuffix}`,
+      title: `Курсы косметологии и массажа ${cityPrepositional} | Спа и косметология`,
       description: `Массаж, спа-услуги, косметология и курсы ${cityPrepositional}. Запись онлайн!`,
       images: [`${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`],
     },
@@ -139,6 +139,21 @@ export default async function CityLayout({
   return (
     <html lang="ru" className={`${poppins.variable} ${inter.variable}`}>
       <head>
+        
+        <Script id="yandex-metrika" strategy="afterInteractive">
+          {`
+            (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+            ym(49347352, "init", {
+              clickmap:true,
+              trackLinks:true,
+              accurateTrackBounce:true
+            });
+          `}
+        </Script>
         <Script id="city-json-ld" type="application/ld+json">
           {JSON.stringify([
             {
@@ -185,7 +200,7 @@ export default async function CityLayout({
           <CityInit city={city} />
           <main className="mx-auto min-h-[60vh]">{children}</main>
           <BottomNavigation />
-          <Footer />
+          <Footer city={city} />
           <Toaster />
           <ContactWidget />
         </PopupProvider>

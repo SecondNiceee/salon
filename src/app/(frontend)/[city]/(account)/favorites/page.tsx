@@ -1,3 +1,4 @@
+import { getCityBySlug } from "@/actions/server/cities/getCities"
 import FavoritesClientPage from "./favorites-client"
 import type { Metadata } from "next"
 
@@ -14,8 +15,13 @@ export const metadata: Metadata = {
   twitter: undefined,
 }
 
-const Favorites = () => {
-  return <FavoritesClientPage />
+type Props = {
+  params: Promise<{ city: string }>
+}
+const Favorites = async ({ params }: Props) => {
+  const {city : citySlug} = await params;
+  const city = await getCityBySlug(citySlug);
+  return <FavoritesClientPage city={city} />
 }
 
 export default Favorites

@@ -153,7 +153,7 @@ export default function OrdersClientPage() {
                           {product?.title || "Услуга"}
                         </h3>
                         <Button
-                          onClick={() => router.push(routerConfig.withCity(city, "/product/${product?.id}?id=${product?.id}"))}
+                          onClick={() => router.push(routerConfig.withCity(city, `/product?id=${product?.id}`))}
                           variant="outline"
                           size="sm"
                           className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"
