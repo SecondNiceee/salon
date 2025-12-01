@@ -255,6 +255,7 @@ html.large-text a,
 html.large-text input,
 html.large-text select {
   min-height: 44px;
+  min-width: 44px;
 }
 
 /* High contrast mode for colorblind users */
@@ -421,6 +422,27 @@ html.high-contrast [class*="opacity-"] {
 html.high-contrast [class*="blur-xl"],
 html.high-contrast [class*="blur-2xl"],
 html.high-contrast [class*="blur-3xl"] {
+  display: none !important;
+}
+
+/* Exception for category circles - keep them white so black icons are visible */
+html.high-contrast .hc-category-circle {
+  background: #fff !important;
+  background-color: #fff !important;
+  border-color: #fff !important;
+}
+
+html.high-contrast .hc-category-link {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html.high-contrast .hc-category-circle img {
+  filter: none !important;
+}
+
+/* Hide catalog icon in high-contrast mode */
+html.high-contrast .hc-catalog-icon {
   display: none !important;
 }
 

@@ -3,6 +3,7 @@ import { ProductCard } from "@/components/product-card/ProductCard"
 import type { Category, Product, City } from "@/payload-types"
 import "@/styles/richText.scss"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
+import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 
 type TCategoryWithProducts = {
   category: Category
@@ -12,11 +13,12 @@ type TCategoryWithProducts = {
 
 type Props = {
   city: City | null
-  homeContent?: any,
-  productsAndCategories : TCategoryWithProducts[]
+  homeContent?: any
+  productsAndCategories: TCategoryWithProducts[]
 }
 
 export default function GrandBazarClientApp({ city, homeContent, productsAndCategories }: Props) {
+  const { isLargeText } = useAccessibilityStore()
 
   return (
     <>
@@ -28,26 +30,26 @@ export default function GrandBazarClientApp({ city, homeContent, productsAndCate
             </div>
           )}
 
-          { 
-            productsAndCategories.map((item) => (
-              <div key={item.category.id} className="flex flex-col gap-4 pt-3">
-                {item.products.length ? (
-                  <>
-                    <div className="flex items-start justify-between w-full">
-                      <h2 className="text-lg font-bold text-black md:text-2xl">{item.category.title}</h2>
-                    </div>
-                    <div className="grid w-full grid-cols-2 sm:grid-cols-3 gap-4 md:grid-cols-4">
-                      {item.products.map((product) => (
-                        <ProductCard city={city} key={product.id} product={product} />
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
-            ))
-          }
+          {productsAndCategories.map((item) => (
+            <div key={item.category.id} className="flex flex-col gap-4 pt-3">
+              {item.products.length ? (
+                <>
+                  <div className="flex items-start justify-between w-full">
+                    <h2 className="text-xl font-bold text-black md:text-2xl">{item.category.title}</h2>
+                  </div>
+                  <div
+                    className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
+                  >
+                    {item.products.map((product) => (
+                      <ProductCard city={city} key={product.id} product={product} />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          ))}
         </div>
       </section>
     </>

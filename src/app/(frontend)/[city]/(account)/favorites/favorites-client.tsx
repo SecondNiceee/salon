@@ -6,8 +6,10 @@ import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { ProductCard } from "@/components/product-card/ProductCard"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/payload-types"
+import { getCityDeclensions } from "@/utils/replaceCityVariables"
+import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 
-export default function FavoritesClientPage({city} : {city:any}) {
+export default function FavoritesClientPage({ city }: { city: any }) {
   const {
     favorites,
     loading,
@@ -20,6 +22,9 @@ export default function FavoritesClientPage({city} : {city:any}) {
   } = useFavoritesStore()
   const [isLoading, setIsLoading] = useState(true)
   const [loadMoreElement, setLoadMoreElement] = useState<HTMLDivElement | null>(null)
+
+
+  const { isLargeText } = useAccessibilityStore()
 
   useEffect(() => {
     const loadData = async () => {
@@ -49,9 +54,6 @@ export default function FavoritesClientPage({city} : {city:any}) {
     return () => observer.disconnect()
   }, [handleObserver, loadMoreElement])
 
-  const handleRemoveFromFavorites = async (productId: number) => {
-    await removeFromFavorites(productId)
-  }
 
   if (isLoading || loading) {
     return (
@@ -104,7 +106,7 @@ export default function FavoritesClientPage({city} : {city:any}) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 gap-6 ${!isLargeText && "sm:grid-cols-2 lg:grid-cols-3"}`}>
         {favorites.map((favorite) => {
           const product = typeof favorite.product === "string" ? null : (favorite.product as Product)
 

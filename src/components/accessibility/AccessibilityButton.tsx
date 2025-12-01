@@ -1,8 +1,31 @@
 "use client"
-import { Eye, Contrast } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 import { useEffect } from "react"
+
+const ContrastIcon = ({ className, isHighContrast }: { className?: string; isHighContrast: boolean }) => (
+  <div
+    className={`flex items-center justify-center w-5 h-5 rounded text-sm font-bold ${
+      isHighContrast ? "bg-white text-black border border-black" : "bg-black text-white"
+    } ${className}`}
+  >
+    A
+  </div>
+)
+
+const EyeIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
+  </svg>
+)
 
 interface AccessibilityButtonProps {
   className?: string
@@ -24,7 +47,6 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
 
   const isActive = mode === "largeText" ? isLargeText : isHighContrast
   const toggle = mode === "largeText" ? toggleLargeText : toggleHighContrast
-  const Icon = mode === "largeText" ? Eye : Contrast
 
   const labels = {
     largeText: {
@@ -50,7 +72,11 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
         onClick={toggle}
         className={`justify-start gap-3 p-4 bg-transparent items-center h-auto ${className}`}
       >
-        <Icon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+        {mode === "largeText" ? (
+          <EyeIcon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+        ) : (
+          <ContrastIcon isHighContrast={isHighContrast} />
+        )}
         <span>{isActive ? label.active : label.inactive}</span>
       </Button>
     )
@@ -64,7 +90,11 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
       className={`p-2 bg-transparent ${isActive ? "border-blue-600 bg-blue-50" : ""} ${className}`}
       title={isActive ? label.titleActive : label.titleInactive}
     >
-      <Icon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+      {mode === "largeText" ? (
+        <EyeIcon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+      ) : (
+        <ContrastIcon isHighContrast={isHighContrast} />
+      )}
       <span className="sr-only">{isActive ? label.titleActive : label.titleInactive}</span>
     </Button>
   )

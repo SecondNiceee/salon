@@ -10,6 +10,7 @@ import type { City } from "@/payload-types"
 import "@/styles/richText.scss"
 import type { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
+import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 
 type Props = {
   initialData: SubCategoryWithProducts
@@ -29,6 +30,7 @@ const SubCategoryClientPage = ({
   processedContentAfter,
 }: Props) => {
   const router = useRouter()
+  const { isLargeText } = useAccessibilityStore()
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -86,7 +88,9 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
-            <div className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div
+              className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
+            >
               {initialData.products.map((product) => (
                 <ProductCard city={initialCity} key={product.id} product={product} />
               ))}

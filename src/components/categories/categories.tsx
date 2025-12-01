@@ -125,11 +125,10 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
               <Link
                 href={href}
                 key={index}
-                className={`flex flex-col !bg-white items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors`}
-                  >
-                    
+                className={`flex flex-col !bg-white items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors hc-category-link`}
+              >
                 <div
-                  className={`sm:w-12 sm:h-12 w-10 h-10 bg-white ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
+                  className={`sm:w-12 sm:h-12 w-10 h-10 bg-white hc-category-circle ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
                   <img alt={"shop"} src={imageUrl || "/placeholder.svg"} className="w-6 h-6 text-black" />
                 </div>
