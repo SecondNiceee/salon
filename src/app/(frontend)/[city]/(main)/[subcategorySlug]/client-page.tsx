@@ -2,15 +2,13 @@
 
 import { useRouter } from "next/navigation"
 import { useRef } from "react"
-import {
-  type SubCategoryWithProducts,
-} from "@/actions/server/products/getSubCategoryWithProducts"
+import type { SubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 import { ProductCard } from "@/components/product-card/ProductCard"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ArrowLeft } from "lucide-react"
 import SubCategories from "@/components/sub-categories/SubCategories"
 import type { City } from "@/payload-types"
 import "@/styles/richText.scss"
-import { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
+import type { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 
 type Props = {
@@ -19,31 +17,51 @@ type Props = {
   initialCity: City | null
   processedContent: any
   processedContentAfter: any
-  allSubCategories : ProductsWithSubCategory[]
+  allSubCategories: ProductsWithSubCategory[]
 }
 
 const SubCategoryClientPage = ({
   initialData,
-  allSubCategories, // 👈 получаем напрямую
+  allSubCategories,
   citySlug,
   initialCity,
   processedContent,
   processedContentAfter,
 }: Props) => {
-  const router = useRouter();
+  const router = useRouter()
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  const goToNextSubCategory = () => {
+  const goToNext = () => {
     if (initialData?.nextSubCategory) {
       router.push(`/${citySlug}/${initialData.nextSubCategory.value}`)
+    } else if (initialData?.nextCategoryFirstSubCategory) {
+      router.push(`/${citySlug}/${initialData.nextCategoryFirstSubCategory.value}`)
+    }
+  }
+
+  const goToPrev = () => {
+    if (initialData?.prevSubCategory) {
+      router.push(`/${citySlug}/${initialData.prevSubCategory.value}`)
+    } else if (initialData?.prevCategoryLastSubCategory) {
+      router.push(`/${citySlug}/${initialData.prevCategoryLastSubCategory.value}`)
     }
   }
 
   const navigateToSubCategory = (value: string) => {
     router.push(`/${citySlug}/${value}`)
   }
+
+  const hasNextNavigation = initialData?.nextSubCategory || initialData?.nextCategoryFirstSubCategory
+  const nextButtonTitle = initialData?.nextSubCategory
+    ? initialData.nextSubCategory.title
+    : initialData?.nextCategoryFirstSubCategory?.title
+
+  const hasPrevNavigation = initialData?.prevSubCategory || initialData?.prevCategoryLastSubCategory
+  const prevButtonTitle = initialData?.prevSubCategory
+    ? initialData.prevSubCategory.title
+    : initialData?.prevCategoryLastSubCategory?.title
 
   return (
     <>
@@ -80,15 +98,26 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
-            {initialData.nextSubCategory && (
-              <div className="flex items-center justify-center mt-8">
-                <button
-                  onClick={goToNextSubCategory}
-                  className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                >
-                  <p className="text-white text-sm md:text-base font-semibold">"{initialData.nextSubCategory.title}"</p>
-                  <ArrowRight color="white" size={20} />
-                </button>
+            {(hasPrevNavigation || hasNextNavigation) && (
+              <div className="flex items-center justify-center gap-4 mt-8">
+                {hasPrevNavigation && (
+                  <button
+                    onClick={goToPrev}
+                    className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  >
+                    <ArrowLeft color="white" size={20} />
+                    <p className="text-white text-sm md:text-base font-semibold">"{prevButtonTitle}"</p>
+                  </button>
+                )}
+                {hasNextNavigation && (
+                  <button
+                    onClick={goToNext}
+                    className="flex items-center gap-2 bg-pink-500 hover:bg-pink-600 py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  >
+                    <p className="text-white text-sm md:text-base font-semibold">"{nextButtonTitle}"</p>
+                    <ArrowRight color="white" size={20} />
+                  </button>
+                )}
               </div>
             )}
           </div>

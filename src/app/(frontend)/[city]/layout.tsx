@@ -36,14 +36,13 @@ export async function generateMetadata({
 
   if (!city) {
     return {
-      title: "Город не найден",
+      title: `Курсы косметологии и массажа в Москве | Спа и косметология`,
       robots: { index: false, follow: false },
     }
   }
 
   const cityName = city.declensions.nominative
   const cityPrepositional = city.declensions.prepositional
-  const citySuffix = city.seoTitle ? ` — ${city.seoTitle}` : ` — ${cityName}`
   const currentUrl = `${process.env.NEXT_PUBLIC_URL}/${citySlug}`
 
   return {

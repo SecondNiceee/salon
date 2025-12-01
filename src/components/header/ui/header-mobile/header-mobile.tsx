@@ -13,11 +13,12 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import { useCity } from "@/lib/use-city"
 import { CitySelector } from "@/components/city-selector/city-selector"
 import Link from "next/link"
+import { AccessibilityButton } from "@/components/accessibility/AccessibilityButton"
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
   const router = useRouter()
-  const city = useCity() // Get city from hook
+  const city = useCity()
 
   const { user } = useAuthStore()
   const { openDialog } = useAuthDialogStore()
@@ -74,6 +75,8 @@ const HeaderMobile = () => {
                 </div>
                 <p className="">Аккаунт</p>
               </Button>
+              <AccessibilityButton variant="full" mode="largeText" className="w-full" />
+              <AccessibilityButton variant="full" mode="highContrast" className="w-full" />
             </div>
           </SheetContent>
         </Sheet>

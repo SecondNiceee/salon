@@ -3,6 +3,7 @@ import CatalogButton from "@/components/catalog-button/CatalogButton"
 import ProductSearch from "@/components/product-search/ProductSearch"
 import UserLink from "../user-link/user-link"
 import HeaderLogo from "../header-logo/header-logo"
+import { AccessibilityButton } from "@/components/accessibility/AccessibilityButton"
 
 const HeaderDesktop = () => {
   return (
@@ -19,18 +20,9 @@ const HeaderDesktop = () => {
         </div>
         {/* Catalog and User on the right */}
         <div className="flex items-center gap-3 lg:gap-4 flex-shrink-0">
+          <AccessibilityButton mode="largeText" />
+          <AccessibilityButton mode="highContrast" />
           <CatalogButton />
-
-          {/* <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="lg:hidden w-10 h-10 p-2 bg-transparent">
-              <Menu className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-80 bg-white">
-            <SheetTitle className="text-sm font-semibold mt-6">Меню</SheetTitle>
-          </SheetContent>
-        </Sheet> */}
         </div>
 
         <UserLink />

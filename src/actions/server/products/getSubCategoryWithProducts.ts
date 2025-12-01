@@ -11,11 +11,13 @@ export type SubCategoryWithProducts = {
   products: Product[]
   nextSubCategory: Category | null
   prevSubCategory: Category | null
+  nextCategory: Category | null
+  nextCategoryFirstSubCategory: Category | null
+  prevCategory: Category | null
+  prevCategoryLastSubCategory: Category | null
 }
 
-const _getSubCategoryWithProducts = async (
-  subcategorySlug: string,
-): Promise<SubCategoryWithProducts | null> => {
+const _getSubCategoryWithProducts = async (subcategorySlug: string): Promise<SubCategoryWithProducts | null> => {
   try {
     const payload = await getPayload({ config })
 
@@ -35,12 +37,13 @@ const _getSubCategoryWithProducts = async (
     }
 
     const subCategory = subCategoryResult.docs[0]
+    const parentCategory = subCategory.parent as Category
 
     // 2. Получить все подкатегории с тем же parent (для навигации)
     const allSubCategories = await payload.find({
       collection: "categories",
       where: {
-        parent: { equals: (subCategory.parent as Category).id },
+        parent: { equals: parentCategory.id },
       },
       sort: "createdAt",
       depth: 1,
@@ -54,7 +57,66 @@ const _getSubCategoryWithProducts = async (
 
     const prevSubCategory = currentIndex > 0 ? allSubCategories.docs[currentIndex - 1] : null
 
-    // 4. Получить продукты этой подкатегории
+    let nextCategory: Category | null = null
+    let nextCategoryFirstSubCategory: Category | null = null
+    let prevCategory: Category | null = null
+    let prevCategoryLastSubCategory: Category | null = null
+
+    if (!nextSubCategory || !prevSubCategory) {
+      // Получаем все родительские категории
+      const allParentCategories = await payload.find({
+        collection: "categories",
+        where: {
+          parent: { exists: false },
+        },
+        sort: "createdAt",
+        depth: 1,
+      })
+
+      // Находим индекс текущей родительской категории
+      const parentIndex = allParentCategories.docs.findIndex((cat) => cat.id === parentCategory.id)
+
+      // Если есть следующая категория и нет следующей подкатегории
+      if (!nextSubCategory && parentIndex < allParentCategories.docs.length - 1) {
+        nextCategory = allParentCategories.docs[parentIndex + 1]
+
+        // Получаем первую подкатегорию следующей категории
+        const nextCategorySubCategories = await payload.find({
+          collection: "categories",
+          where: {
+            parent: { equals: nextCategory.id },
+          },
+          sort: "createdAt",
+          limit: 1,
+          depth: 1,
+        })
+
+        if (nextCategorySubCategories.docs.length > 0) {
+          nextCategoryFirstSubCategory = nextCategorySubCategories.docs[0]
+        }
+      }
+
+      if (!prevSubCategory && parentIndex > 0) {
+        prevCategory = allParentCategories.docs[parentIndex - 1]
+
+        // Получаем последнюю подкатегорию предыдущей категории
+        const prevCategorySubCategories = await payload.find({
+          collection: "categories",
+          where: {
+            parent: { equals: prevCategory.id },
+          },
+          sort: "-createdAt", // сортировка в обратном порядке чтобы получить последнюю
+          limit: 1,
+          depth: 1,
+        })
+
+        if (prevCategorySubCategories.docs.length > 0) {
+          prevCategoryLastSubCategory = prevCategorySubCategories.docs[0]
+        }
+      }
+    }
+
+    // 5. Получить продукты этой подкатегории
     const productsResult = await payload.find({
       collection: "products",
       where: {
@@ -80,6 +142,10 @@ const _getSubCategoryWithProducts = async (
       products: productsResult.docs,
       nextSubCategory,
       prevSubCategory,
+      nextCategory,
+      nextCategoryFirstSubCategory,
+      prevCategory,
+      prevCategoryLastSubCategory,
     }
   } catch (error) {
     console.error("Ошибка при получении подкатегории и товаров:", error)
