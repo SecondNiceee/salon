@@ -53,8 +53,8 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
       titleInactive: "Включить режим для слабовидящих",
     },
     highContrast: {
-      active: "Обычные цвета",
-      inactive: "Для дальтоников",
+      active: "Белым по чёрному",
+      inactive: "Чёрным по белому",
       titleActive: "Выключить высококонтрастный режим",
       titleInactive: "Включить высококонтрастный режим",
     },

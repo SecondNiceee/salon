@@ -1,5 +1,7 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import type React from "react"
+
 import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AccessibilityButton } from "./AccessibilityButton"
@@ -24,12 +26,18 @@ export const AccessibilityDropdown = ({ className }: { className?: string }) => 
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setIsOpen(!isOpen)
+  }
+
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div className={`relative ${className}`} ref={dropdownRef} data-speech-control>
       <Button
         variant="outline"
         size="sm"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         className={`p-2 bg-transparent shrink-0 ${isAnyActive ? "border-blue-600 bg-blue-50" : ""}`}
         title="Режимы доступности"
       >
@@ -38,7 +46,7 @@ export const AccessibilityDropdown = ({ className }: { className?: string }) => 
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-lg p-2 z-50 min-w-[200px] space-y-1">
+        <div className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-lg p-2 z-[9999] min-w-[200px] space-y-1">
           <AccessibilityButton variant="full" mode="largeText" className="w-full" />
           <AccessibilityButton variant="full" mode="highContrast" className="w-full" />
           <AccessibilityButton variant="full" mode="speech" className="w-full" />
