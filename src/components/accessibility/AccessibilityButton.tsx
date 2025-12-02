@@ -20,7 +20,7 @@ interface AccessibilityButtonProps {
   mode?: "largeText" | "highContrast" | "speech" // добавлен режим speech
 }
 
-export const  AccessibilityButton = ({ className, variant = "icon", mode = "largeText" }: AccessibilityButtonProps) => {
+export const AccessibilityButton = ({ className, variant = "icon", mode = "largeText" }: AccessibilityButtonProps) => {
   const {
     isLargeText,
     toggleLargeText,
