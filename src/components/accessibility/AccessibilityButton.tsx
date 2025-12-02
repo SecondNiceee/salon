@@ -1,40 +1,34 @@
 "use client"
+import { Eye, Volume2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 import { useEffect } from "react"
 
-const ContrastIcon = ({ className, isHighContrast }: { className?: string; isHighContrast: boolean }) => (
+const ColorblindIcon = ({ isActive }: { isActive: boolean }) => (
   <div
-    className={`flex items-center justify-center w-5 h-5 rounded text-sm font-bold ${
-      isHighContrast ? "bg-white text-black border border-black" : "bg-black text-white"
-    } ${className}`}
+    className={`w-6 h-6 rounded-sm flex items-center justify-center text-sm font-bold leading-none ${
+      isActive ? "bg-white text-black border border-black" : "bg-black text-white"
+    }`}
   >
     A
   </div>
 )
 
-const EyeIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
-  </svg>
-)
-
 interface AccessibilityButtonProps {
   className?: string
   variant?: "icon" | "full"
-  mode?: "largeText" | "highContrast"
+  mode?: "largeText" | "highContrast" | "speech" // добавлен режим speech
 }
 
-export const AccessibilityButton = ({ className, variant = "icon", mode = "largeText" }: AccessibilityButtonProps) => {
-  const { isLargeText, toggleLargeText, isHighContrast, toggleHighContrast } = useAccessibilityStore()
+export const  AccessibilityButton = ({ className, variant = "icon", mode = "largeText" }: AccessibilityButtonProps) => {
+  const {
+    isLargeText,
+    toggleLargeText,
+    isHighContrast,
+    toggleHighContrast,
+    isSpeechEnabled, // получаем состояние озвучки
+    toggleSpeech,
+  } = useAccessibilityStore()
 
   useEffect(() => {
     if (isLargeText) {
@@ -45,8 +39,11 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
     }
   }, [isLargeText, isHighContrast])
 
-  const isActive = mode === "largeText" ? isLargeText : isHighContrast
-  const toggle = mode === "largeText" ? toggleLargeText : toggleHighContrast
+  const isActive = mode === "largeText" ? isLargeText : mode === "highContrast" ? isHighContrast : isSpeechEnabled
+
+  const toggle = mode === "largeText" ? toggleLargeText : mode === "highContrast" ? toggleHighContrast : toggleSpeech
+
+  const Icon = mode === "largeText" ? Eye : mode === "speech" ? Volume2 : null
 
   const labels = {
     largeText: {
@@ -61,6 +58,12 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
       titleActive: "Выключить высококонтрастный режим",
       titleInactive: "Включить высококонтрастный режим",
     },
+    speech: {
+      active: "Выключить озвучку",
+      inactive: "Озвучка страницы",
+      titleActive: "Выключить озвучку страницы",
+      titleInactive: "Включить озвучку страницы",
+    },
   }
 
   const label = labels[mode]
@@ -72,10 +75,10 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
         onClick={toggle}
         className={`justify-start gap-3 p-4 bg-transparent items-center h-auto ${className}`}
       >
-        {mode === "largeText" ? (
-          <EyeIcon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+        {mode === "highContrast" ? (
+          <ColorblindIcon isActive={isActive} />
         ) : (
-          <ContrastIcon isHighContrast={isHighContrast} />
+          Icon && <Icon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
         )}
         <span>{isActive ? label.active : label.inactive}</span>
       </Button>
@@ -90,10 +93,10 @@ export const AccessibilityButton = ({ className, variant = "icon", mode = "large
       className={`p-2 bg-transparent ${isActive ? "border-blue-600 bg-blue-50" : ""} ${className}`}
       title={isActive ? label.titleActive : label.titleInactive}
     >
-      {mode === "largeText" ? (
-        <EyeIcon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
+      {mode === "highContrast" ? (
+        <ColorblindIcon isActive={isActive} />
       ) : (
-        <ContrastIcon isHighContrast={isHighContrast} />
+        Icon && <Icon className={`h-5 w-5 ${isActive ? "text-blue-600" : ""}`} />
       )}
       <span className="sr-only">{isActive ? label.titleActive : label.titleInactive}</span>
     </Button>

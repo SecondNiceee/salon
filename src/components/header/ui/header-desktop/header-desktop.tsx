@@ -22,6 +22,7 @@ const HeaderDesktop = () => {
         <div className="flex items-center gap-3 lg:gap-4 flex-shrink-0">
           <AccessibilityButton mode="largeText" />
           <AccessibilityButton mode="highContrast" />
+          <AccessibilityButton mode="speech" />
           <CatalogButton />
         </div>
 

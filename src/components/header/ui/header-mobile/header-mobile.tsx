@@ -13,7 +13,8 @@ import { useAuthStore } from "@/entities/auth/authStore"
 import { useCity } from "@/lib/use-city"
 import { CitySelector } from "@/components/city-selector/city-selector"
 import Link from "next/link"
-import { AccessibilityButton } from "@/components/accessibility/AccessibilityButton"
+import { AccessibilityDropdown } from "@/components/accessibility/AccessibilityDropdown"
+
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
@@ -52,6 +53,8 @@ const HeaderMobile = () => {
           <ProductSearch onProductSelect={() => {}} />
         </div>
 
+        <AccessibilityDropdown />
+
         <Sheet onOpenChange={setOpened} open={isOpened}>
           <SheetTrigger onClick={() => setOpened(true)} asChild>
             <Button variant="outline" size="sm" className="p-2 bg-transparent shrink-0">
@@ -75,8 +78,6 @@ const HeaderMobile = () => {
                 </div>
                 <p className="">Аккаунт</p>
               </Button>
-              <AccessibilityButton variant="full" mode="largeText" className="w-full" />
-              <AccessibilityButton variant="full" mode="highContrast" className="w-full" />
             </div>
           </SheetContent>
         </Sheet>
