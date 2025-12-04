@@ -18,7 +18,7 @@ export default function AccountLayoutClient({
           <div className="text-center mb-8">
             <div className="flex flex-col items-center">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 bg-clip-text text-transparent leading-tight">
-                Академия спа аккаунт
+                Академия профессионального образования аккаунт
               </h1>
               <div className="mt-3 h-1 w-40 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-full"></div>
             </div>
@@ -41,7 +41,7 @@ export default function AccountLayoutClient({
         <div className="text-center mb-8">
           <div className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 bg-clip-text text-transparent leading-tight">
-              Академия спа аккаунт
+              Академия профессионального образования аккаунт
             </h1>
             <div className="mt-3 h-1 w-40 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-full"></div>
           </div>

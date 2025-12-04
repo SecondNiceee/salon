@@ -15,7 +15,6 @@ import { CitySelector } from "@/components/city-selector/city-selector"
 import Link from "next/link"
 import { AccessibilityDropdown } from "@/components/accessibility/AccessibilityDropdown"
 
-
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
   const router = useRouter()
@@ -39,7 +38,7 @@ const HeaderMobile = () => {
         <h2 className="text-sm font-semibold text-gray-800 leading-tight">
           Московский институт Профессионального Образования
         </h2>
-        <p className="text-xs text-gray-600">Лицензия: Л033-00114-77/00061219</p>
+        <p className="text-xs text-gray-600">Лицензия: Л035-01298-77/01010677</p>
       </div>
 
       <div className="flex items-center gap-2 mb-3">

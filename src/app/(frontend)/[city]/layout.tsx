@@ -49,11 +49,11 @@ export async function generateMetadata({
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://grandbazarr.ru"),
     title: {
       default: `Курсы косметологии и массажа ${cityPrepositional} | Спа и косметология`,
-      template: `%s | Академия Спа ${cityName}`,
+      template: `%s | Академия профессионального образования ${cityName}`,
     },
     description:
       city.metaDescription ||
-      `Салон красоты Академия Спа ${cityPrepositional}: профессиональный массаж, спа-услуги, косметология, татуировки. Онлайн-курсы по массажу и косметологии. Подарочные сертификаты. Запись онлайн!`,
+      `Салон красоты Академия профессионального образования ${cityPrepositional}: профессиональный массаж, спа-услуги, косметология, татуировки. Онлайн-курсы по массажу и косметологии. Подарочные сертификаты. Запись онлайн!`,
     keywords: [
       "салон красоты",
       "массаж",
@@ -64,16 +64,16 @@ export async function generateMetadata({
       "обучение косметологии",
       "подарочный сертификат",
       "спа-услуги",
-      "Академия Спа",
+      "Академия профессионального образования",
       cityName,
       `салон красоты ${cityName}`,
       `массаж ${cityName}`,
       `спа ${cityName}`,
       `косметология ${cityName}`,
     ],
-    authors: [{ name: "Академия Спа" }],
-    creator: "Академия Спа",
-    publisher: "Академия Спа",
+    authors: [{ name: "Академия профессионального образования" }],
+    creator: "Академия профессионального образования",
+    publisher: "Академия профессионального образования",
     alternates: {
       canonical: currentUrl,
     },
@@ -86,7 +86,7 @@ export async function generateMetadata({
       type: "website",
       locale: "ru_RU",
       url: currentUrl,
-      siteName: "Академия Спа",
+      siteName: "Академия профессионального образования",
       title: `Курсы косметологии и массажа ${cityPrepositional} | Спа и косметология`,
       description: `Профессиональный салон красоты ${cityPrepositional} с услугами массажа, спа, косметологии и онлайн-курсами. Запись онлайн!`,
       images: [
@@ -94,7 +94,7 @@ export async function generateMetadata({
           url: `${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`,
           width: 630,
           height: 630,
-          alt: `Академия Спа ${cityName}. Записаться на массаж, спа и косметологию ${cityPrepositional}`,
+          alt: `Академия профессионального образования ${cityName}. Записаться на массаж, спа и косметологию ${cityPrepositional}`,
         },
       ],
     },
@@ -158,14 +158,14 @@ export default async function CityLayout({
             {
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "Академия Спа",
+              name: "Академия профессионального образования",
               url: siteUrl,
               description: "Салон красоты с услугами массажа, спа, косметологии и татуировок.",
             },
             {
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Академия Спа",
+              name: "Академия профессионального образования",
               url: siteUrl,
               logo: `${siteUrl}/logo-icon.png`,
               contactPoint: {
@@ -177,7 +177,7 @@ export default async function CityLayout({
             {
               "@context": "https://schema.org",
               "@type": "BeautySalon",
-              name: `Академия Спа - ${cityName}`,
+              name: `Академия профессионального образования - ${cityName}`,
               description: `Салон красоты в г. ${cityName} с услугами массажа, спа, косметологии и онлайн-курсами.`,
               url: `${siteUrl}/${citySlug}`,
               areaServed: {

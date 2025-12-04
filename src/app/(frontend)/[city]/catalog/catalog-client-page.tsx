@@ -47,8 +47,10 @@ export default function CatalogClientPage() {
                       >
                         <Image
                           className="absolute left-0 rounded-xl z-0 top-0 w-full h-full object-cover"
-                          width={500}
-                          height={500}
+                          width={200}
+                          height={120}
+                          quality={50}
+                          loading="eager"
                           alt={(subCategory.coverImage as Media)?.alt ?? ""}
                           src={(subCategory.coverImage as Media)?.url ?? ""}
                         />

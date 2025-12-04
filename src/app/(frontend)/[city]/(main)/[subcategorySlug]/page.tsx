@@ -5,8 +5,7 @@ import { replaceCityVariables } from "@/utils/replaceCityVariables"
 import SubCategoryClientPage from "./client-page"
 import { notFound } from "next/navigation"
 import { getCachedSubCategoryContent } from "@/actions/server/getHomeContent"
-import { Category } from "@/payload-types"
-import { getFilteredProducts } from "@/actions/server/products/getFilterProducts"
+import { getSubCategoryBySlug } from "@/actions/server/products/getSubCategoryBySlug"
 
 type Props = {
   params: Promise<{ subcategorySlug: string; city: string }>
@@ -55,12 +54,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       data.subCategory.title,
       `${data.subCategory.title} ${city?.declensions.nominative || ""}`,
       "салон красоты",
-      "Академия Спа",
+      "Академия профессионального образования",
       city?.declensions.nominative || "",
     ],
-    authors: [{ name: "Академия Спа" }],
-    creator: "Академия Спа",
-    publisher: "Академия Спа",
+    authors: [{ name: "Академия профессионального образования" }],
+    creator: "Академия профессионального образования",
+    publisher: "Академия профессионального образования",
     alternates: {
       canonical: currentUrl,
     },
@@ -68,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "website",
       locale: "ru_RU",
       url: currentUrl,
-      siteName: "Академия Спа",
+      siteName: "Академия профессионального образования",
       title: title as string,
       description: description,
       images: [
@@ -76,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: `${process.env.NEXT_PUBLIC_URL}/api/media/file/face-massage.png`,
           width: 630,
           height: 630,
-          alt: `Академия Спа ${cityDeclensions?.nominative}. Записаться на массаж, спа и косметологию ${cityDeclensions?.prepositional}`,
+          alt: `Академия профессионального образования ${cityDeclensions?.nominative}. Записаться на массаж, спа и косметологию ${cityDeclensions?.prepositional}`,
         },
       ],
     },
@@ -104,20 +103,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SubCategoryPage({ params }: Props) {
   const { subcategorySlug, city: citySlug } = await params
 
-  const data = await getSubCategoryWithProducts(subcategorySlug)
-  if (!data) notFound()
+  // Только базовая проверка существования подкатегории (легкий запрос)
+  const subCategory = await getSubCategoryBySlug(subcategorySlug)
+  if (!subCategory) notFound()
 
-  // 👇 Получаем ВСЕ подкатегории родителя
-  const parentSlug = (data.subCategory.parent as Category)?.value
-  const allSubCategories = parentSlug ? await getFilteredProducts(parentSlug) : []
-
+  // Эти запросы быстрые - только city и richText контент
   const city = await getCityBySlug(citySlug)
   const { processedContent, processedContentAfter } = await getCachedSubCategoryContent(subcategorySlug, city)
 
   return (
     <SubCategoryClientPage
-      initialData={data}
-      allSubCategories={allSubCategories || []} // 👈 передаём напрямую
+      subcategorySlug={subcategorySlug}
       citySlug={citySlug}
       initialCity={city}
       processedContent={processedContent}

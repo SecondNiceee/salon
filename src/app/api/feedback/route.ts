@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     try {
       await payload.sendEmail({
         to: adminEmail,
-        from: "Академия Спа <kolya.titov.05@inbox.ru>",
+        from: "Академия профессионального образования <kolya.titov.05@inbox.ru>",
         subject: `📞 Новый запрос на звонок от ${data.name}`,
         html: generateFeedbackEmailHTML(data),
       })

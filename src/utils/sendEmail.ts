@@ -10,7 +10,7 @@ export const sendEmail = async ({ message, to }: sendEmailProps) => {
   const payload = await getPayload({ config })
   await payload.sendEmail({
     to,
-    from : "Академия Спа <kolya.titov.05@inbox.ru>",
+    from : "Академия профессионального образования <kolya.titov.05@inbox.ru>",
     subject: "Подтвердите ваш email",
     html: message,
   })

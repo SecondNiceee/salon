@@ -28,13 +28,8 @@ import { Cities } from "./globals/Cities"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-const MAIL_NAME = process.env.MAIL_NAME || ""
 const MAIL_USER = process.env.MAIL_USER || ""
 const MAIL_PASSWORD = process.env.MAIL_PASSWORD || ""
-const isDevelopment = process.env.NODE_ENV === "development";
-
-const isDev = process.env.NODE_ENV === 'development'
-
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://grandbazarr.ru",
   serverURL : process.env.BACKEND_URL,
@@ -76,7 +71,7 @@ export default buildConfig({
   endpoints: [],
   email: nodemailerAdapter({
     defaultFromAddress: "kolya.titov.05@inbox.ru",
-    defaultFromName: "Академия Спа",
+    defaultFromName: "Академия профессионального образования",
     transport: nodemailer.createTransport({
       service: "Mail.ru",
       host: "smtp.mail.ru",

@@ -23,7 +23,7 @@ export function ProductSchema({ product }: { product: PayloadProduct }) {
     "sku": String(product.id),
     "brand": {
       "@type": "Brand",
-      "name": "Академия Спа"
+      "name": "Академия профессионального образования"
     },
     "offers": {
       "@type": "Offer",
@@ -35,7 +35,7 @@ export function ProductSchema({ product }: { product: PayloadProduct }) {
       "availability": availability,
       "seller": {
         "@type": "Organization",
-        "name": "Академия Спа"
+        "name": "Академия профессионального образования"
       }
     },
     "category": [category, subCategory].filter(Boolean).join(" > ")

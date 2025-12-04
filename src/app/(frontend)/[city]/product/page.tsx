@@ -62,7 +62,7 @@ export async function generateMetadata({
     const processedSeoTitle = replaceCityVariables(product.pageTitle || product.title, cityDeclensions)
     const processedDescription = product.description
       ? replaceCityVariables(product.description, cityDeclensions)
-      : `Забронировать ${processedSeoTitle} в салоне красоты Академия Спа. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`
+      : `Забронировать ${processedSeoTitle} в салоне красоты Академия профессионального образования. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`
 
     return {
       title: processedSeoTitle,
@@ -72,7 +72,7 @@ export async function generateMetadata({
         canonical: siteUrl ? `${siteUrl}/${citySlug}/product?id=${id}` : undefined,
       },
       openGraph: {
-        title: `${processedSeoTitle} | Академия Спа`,
+        title: `${processedSeoTitle} | Академия профессионального образования`,
         description: processedDescription,
         images: media?.url
           ? [

@@ -160,10 +160,13 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**", // Для production домена, если нужно
+        hostname: "**",
       },
     ],
-    unoptimized: true,
+    formats: ['image/avif', 'image/webp'], // Современные форматы
+    minimumCacheTTL: 60 * 60 * 24 * 30, // Кэш на 30 дней
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
@@ -174,6 +177,7 @@ const nextConfig = {
 
     return webpackConfig
   },
+
   eslint: {
     ignoreDuringBuilds: true, // Added eslint ignoreDuringBuilds setting
   },

@@ -21,9 +21,10 @@ interface IProductCard {
   product: Product
   clickHandler?: () => void
   city: any
+  priority?: boolean // Добавил проп для приоритетной загрузки первых карточек
 }
 
-export function ProductCard({ product, clickHandler, city }: IProductCard) {
+export function ProductCard({ product, clickHandler, city, priority = false }: IProductCard) {
   const router = useRouter()
   const { addToFavorites, removeFromFavorites, favoriteProductIds } = useFavoritesStore()
   const { user } = useAuthStore()
@@ -113,47 +114,26 @@ export function ProductCard({ product, clickHandler, city }: IProductCard) {
     : ""
 
   return (
-<Card
-  onClick={onProductClick}
-  className="p-0 cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden 
-             flex flex-col h-full" // 👈 ВАЖНО: добавили flex-col + h-full
->
-  {hasImage && (
-    <div className="aspect-[4/3] relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-orange-50 to-orange-100">
-      <SmartImage
-        loading="lazy"
-        width={400}
-        height={300}
-        src={(product.image as Media).url || ""}
-        alt={imageAlt}
-        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-      />
-      <button
-        onClick={handleFavoriteClick}
-        className="absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-md"
-      >
-        <Heart
-          className={`w-4 h-4 transition-colors ${
-            isFavorite ? "text-red-500 fill-red-500" : "text-gray-600 hover:text-red-500"
-          }`}
-        />
-      </button>
-    </div>
-  )}
-
-  <div className="p-5 flex flex-col flex-grow gap-3 pt-4"> {/* 👈 flex-grow здесь — ключевой момент */}
-
-    <div className="flex flex-col flex-grow"> {/* 👈 этот блок растягивается */}
-      <div className="flex justify-between items-start gap-2">
-        <div className="flex-1">
-          <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-3 leading-snug">
-            {displayTitle}
-          </h3>
-        </div>
-        {!hasImage && (
+    <Card
+      onClick={onProductClick}
+      className="p-0 cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden 
+                 flex flex-col h-full" // 👈 ВАЖНО: добавили flex-col + h-full
+    >
+      {hasImage && (
+        <div className="aspect-[4/3] relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-orange-50 to-orange-100">
+          <SmartImage
+            loading={priority ? undefined : "eager"}
+            priority={priority}
+            quality={60}
+            width={400}
+            height={300}
+            src={(product.image as Media).url || ""}
+            alt={imageAlt}
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+          />
           <button
             onClick={handleFavoriteClick}
-            className="ml-2 w-9 h-9 flex items-center justify-center hover:bg-orange-50 rounded-full transition-all duration-200 flex-shrink-0"
+            className="absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-md"
           >
             <Heart
               className={`w-4 h-4 transition-colors ${
@@ -161,43 +141,66 @@ export function ProductCard({ product, clickHandler, city }: IProductCard) {
               }`}
             />
           </button>
-        )}
-      </div>
-
-      {city && (
-        <div className="flex items-center">
-          <span className="text-sm text-gray-500">{city.declensions.nominative}</span>
         </div>
       )}
 
-      {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 ? (
-        <div className="flex items-center space-x-1.5">
-          <span className="text-base font-semibold text-orange-500">{product.averageRating.toFixed(1)}</span>
-          <Star className="w-5 h-5 text-orange-400 fill-current" />
-          <span className="text-sm text-gray-500">
-            {product.reviewsCount}{" "}
-            {product.reviewsCount === 1 ? "отзыв" : product.reviewsCount < 5 ? "отзыва" : "отзывов"}
-          </span>
+      <div className="p-5 flex flex-col flex-grow gap-3 pt-4">
+        {" "}
+        {/* 👈 flex-grow здесь — ключевой момент */}
+        <div className="flex flex-col flex-grow">
+          {" "}
+          {/* 👈 этот блок растягивается */}
+          <div className="flex justify-between items-start gap-2">
+            <div className="flex-1">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-3 leading-snug">
+                {displayTitle}
+              </h3>
+            </div>
+            {!hasImage && (
+              <button
+                onClick={handleFavoriteClick}
+                className="ml-2 w-9 h-9 flex items-center justify-center hover:bg-orange-50 rounded-full transition-all duration-200 flex-shrink-0"
+              >
+                <Heart
+                  className={`w-4 h-4 transition-colors ${
+                    isFavorite ? "text-red-500 fill-red-500" : "text-gray-600 hover:text-red-500"
+                  }`}
+                />
+              </button>
+            )}
+          </div>
+          {city && (
+            <div className="flex items-center">
+              <span className="text-sm text-gray-500">{city.declensions.nominative}</span>
+            </div>
+          )}
+          {product.averageRating && product.averageRating > 0 && product.reviewsCount && product.reviewsCount > 0 ? (
+            <div className="flex items-center space-x-1.5">
+              <span className="text-base font-semibold text-orange-500">{product.averageRating.toFixed(1)}</span>
+              <Star className="w-5 h-5 text-orange-400 fill-current" />
+              <span className="text-sm text-gray-500">
+                {product.reviewsCount}{" "}
+                {product.reviewsCount === 1 ? "отзыв" : product.reviewsCount < 5 ? "отзыва" : "отзывов"}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <span className="text-sm text-gray-400">Нет отзывов</span>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="flex items-center">
-          <span className="text-sm text-gray-400">Нет отзывов</span>
+        <div className="space-y-2.5 flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {product.price && <span className="text-lg font-semibold text-gray-800">От {product.price} ₽</span>}
+          </div>
+          <Button
+            className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-xl py-2.5 text-base font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+            disabled={isSubmitting && product.hasProductPage === false}
+          >
+            {product.hasProductPage === false ? "Записаться" : "Подробнее"}
+          </Button>
         </div>
-      )}
-    </div>
-
-    <div className="space-y-2.5 flex flex-col gap-1">
-      <div className="flex items-center gap-2">
-        {product.price && <span className="text-lg font-semibold text-gray-800">От {product.price} ₽</span>}
       </div>
-      <Button
-        className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-xl py-2.5 text-base font-semibold shadow-sm hover:shadow-md transition-all duration-200"
-        disabled={isSubmitting && product.hasProductPage === false}
-      >
-        {product.hasProductPage === false ? ("Записаться") : "Подробнее"}
-      </Button>
-    </div>
-  </div>
-</Card>
+    </Card>
   )
 }

@@ -64,8 +64,10 @@ const CategoryPopup = () => {
                         >
                           <Image
                             className="absolute left-0 rounded-xl z-[20] top-0 w-full h-full object-cover"
-                            width={500}
-                            height={500}
+                            width={200}
+                            height={100}
+                            quality={45}
+                            loading="eager"
                             alt={(subCategory.coverImage as Media)?.alt ?? ""}
                             src={(subCategory.coverImage as Media)?.url ?? ""}
                           />

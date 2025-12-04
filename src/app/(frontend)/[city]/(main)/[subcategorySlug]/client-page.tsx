@@ -2,28 +2,44 @@
 
 import { useRouter } from "next/navigation"
 import { useRef } from "react"
-import type { SubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 import { ProductCard } from "@/components/product-card/ProductCard"
 import { ArrowRight, ArrowLeft } from "lucide-react"
 import SubCategories from "@/components/sub-categories/SubCategories"
-import type { City } from "@/payload-types"
+import type { City, Category } from "@/payload-types"
 import "@/styles/richText.scss"
-import type { ProductsWithSubCategory } from "@/actions/server/products/getFilterProducts"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
+import useSWR from "swr"
+import { getSubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
+import { getFilteredProducts } from "@/actions/server/products/getFilterProducts"
 
 type Props = {
-  initialData: SubCategoryWithProducts
+  subcategorySlug: string
   citySlug: string
   initialCity: City | null
   processedContent: any
   processedContentAfter: any
-  allSubCategories: ProductsWithSubCategory[]
+}
+
+function ProductsSkeleton() {
+  return (
+    <div className="grid w-full gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+          <div className="aspect-square bg-gray-200" />
+          <div className="p-4 space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-3/4" />
+            <div className="h-3 bg-gray-200 rounded w-1/2" />
+            <div className="h-6 bg-gray-200 rounded w-1/3 mt-2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 const SubCategoryClientPage = ({
-  initialData,
-  allSubCategories,
+  subcategorySlug,
   citySlug,
   initialCity,
   processedContent,
@@ -34,6 +50,18 @@ const SubCategoryClientPage = ({
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
+
+  const { data: initialData, isLoading: isLoadingProducts } = useSWR(
+    ["subcategory-products", subcategorySlug],
+    () => getSubCategoryWithProducts(subcategorySlug),
+    { revalidateOnFocus: false },
+  )
+
+  const { data: allSubCategories = [], isLoading: isLoadingSubCategories } = useSWR(
+    initialData ? ["all-subcategories", (initialData.subCategory.parent as Category)?.value] : null,
+    ([, parentSlug]) => (parentSlug ? getFilteredProducts(parentSlug) : Promise.resolve([])),
+    { revalidateOnFocus: false },
+  )
 
   const goToNext = () => {
     if (initialData?.nextSubCategory) {
@@ -67,7 +95,7 @@ const SubCategoryClientPage = ({
 
   return (
     <>
-      {allSubCategories.length > 0 && (
+      {!isLoadingSubCategories && allSubCategories.length > 0 && initialData && (
         <div className="z-20">
           <SubCategories
             sortedProducts={allSubCategories}
@@ -82,19 +110,24 @@ const SubCategoryClientPage = ({
       <section className="products-sub bg-gray-50 shadow-[0_-6px_12px_-4px_rgba(0,0,0,0.05)]">
         <div className="max-w-7xl px-4 flex flex-col mx-auto pb-16 pt-8">
           <div className="flex flex-col">
+            {/* RichText рендерится сразу */}
             {processedContent && (
               <div className="rich-container">
                 <MemoRichText data={processedContent} />
               </div>
             )}
 
-            <div
-              className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
-            >
-              {initialData.products.map((product) => (
-                <ProductCard city={initialCity} key={product.id} product={product} />
-              ))}
-            </div>
+            {isLoadingProducts ? (
+              <ProductsSkeleton />
+            ) : (
+              <div
+                className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
+              >
+                {initialData?.products.map((product) => (
+                  <ProductCard city={initialCity} key={product.id} product={product} />
+                ))}
+              </div>
+            )}
 
             {processedContentAfter && (
               <div className="rich-container mt-8">
@@ -102,7 +135,7 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
-            {(hasPrevNavigation || hasNextNavigation) && (
+            {!isLoadingProducts && (hasPrevNavigation || hasNextNavigation) && (
               <div className="flex items-center justify-center gap-4 mt-8">
                 {hasPrevNavigation && (
                   <button

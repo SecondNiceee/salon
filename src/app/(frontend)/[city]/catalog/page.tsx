@@ -22,9 +22,9 @@ export async function generateMetadata({
   const canonicalUrl = `${siteUrl}/${citySlug}/catalog`
 
   return {
-    title: `Каталог услуг | Академия Спа | Салон красоты ${cityName}`,
+    title: `Каталог услуг | Академия профессионального образования | Салон красоты ${cityName}`,
     description:
-      `Полный каталог услуг салона красоты Академия Спа в г. ${cityName}: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы. Выбирайте и записывайтесь онлайн!`,
+      `Полный каталог услуг салона красоты Академия профессионального образования в г. ${cityName}: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы. Выбирайте и записывайтесь онлайн!`,
     keywords: [
       "каталог услуг",
       "услуги красоты",
@@ -35,7 +35,7 @@ export async function generateMetadata({
       "татуировки",
       "подарочный сертификат",
       "курсы массажа",
-      "Академия Спа",
+      "Академия профессионального образования",
       cityName,
       `салон красоты ${cityName}`,
       `массаж ${cityName}`,
@@ -48,14 +48,14 @@ export async function generateMetadata({
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `Каталог услуг | Академия Спа | ${cityName}`,
+      title: `Каталог услуг | Академия профессионального образования | ${cityName}`,
       description: `Полный каталог услуг салона красоты в ${cityName}: массаж, спа, косметология, курсы и подарки.`,
       type: "website",
       url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
-      title: `Каталог услуг | Академия Спа | ${cityName}`,
+      title: `Каталог услуг | Академия профессионального образования | ${cityName}`,
       description: `Полный каталог услуг в ${cityName}: выбирайте услуги красоты и записывайтесь онлайн.`,
     },
   }
@@ -76,12 +76,12 @@ async function CatalogSchema({ citySlug }: { citySlug: string }) {
         __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: `Каталог услуг | Академия Спа | ${cityName}`,
-          description: `Полный каталог услуг салона красоты Академия Спа в г. ${cityName}`,
+          name: `Каталог услуг | Академия профессионального образования | ${cityName}`,
+          description: `Полный каталог услуг салона красоты Академия профессионального образования в г. ${cityName}`,
           url: canonicalUrl,
           publisher: {
             "@type": "Organization",
-            name: "Академия Спа",
+            name: "Академия профессионального образования",
             url: siteUrl,
           },
           about: `Каталог услуг красоты в ${cityName}: массаж, спа, косметология, татуировки, подарочные сертификаты и курсы`,

@@ -1,55 +1,40 @@
 "use client"
-import { ProductCard } from "@/components/product-card/ProductCard"
-import type { Category, Product, City } from "@/payload-types"
+
+import type { City } from "@/payload-types"
 import "@/styles/richText.scss"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
+import { ProductsSectionSkeleton } from "@/components/products-section/ProductsSkeleton"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
+import dynamic from "next/dynamic"
 
-type TCategoryWithProducts = {
-  category: Category
-  products: Product[]
-  productsCounter: number
+const ProductsSection = dynamic(() => import("@/components/products-section/ProductsSection"), {
+  ssr: false,
+  loading: () => <ProductsSectionSkeletonWrapper />,
+})
+
+function ProductsSectionSkeletonWrapper() {
+  const { isLargeText } = useAccessibilityStore()
+  return <ProductsSectionSkeleton categoriesCount={3} isLargeText={isLargeText} />
 }
 
 type Props = {
   city: City | null
   homeContent?: any
-  productsAndCategories: TCategoryWithProducts[]
 }
 
-export default function GrandBazarClientApp({ city, homeContent, productsAndCategories }: Props) {
-  const { isLargeText } = useAccessibilityStore()
-
+export default function GrandBazarClientApp({ city, homeContent }: Props) {
   return (
     <>
       <section className="products bg-gray-50">
         <div className="flex flex-col gap-3 px-4 mx-auto mt-1 mb-4 rounded-md bg-gray-50 max-w-7xl">
+          {/* RichText грузится сразу */}
           {homeContent && (
             <div className="rich-container pt-4">
               <MemoRichText data={homeContent} />
             </div>
           )}
 
-          {productsAndCategories.map((item) => (
-            <div key={item.category.id} className="flex flex-col gap-4 pt-3">
-              {item.products.length ? (
-                <>
-                  <div className="flex items-start justify-between w-full">
-                    <h2 className="text-xl font-bold text-black md:text-2xl">{item.category.title}</h2>
-                  </div>
-                  <div
-                    className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
-                  >
-                    {item.products.map((product) => (
-                      <ProductCard city={city} key={product.id} product={product} />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          ))}
+          <ProductsSection city={city} />
         </div>
       </section>
     </>
