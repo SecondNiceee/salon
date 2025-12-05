@@ -9,6 +9,7 @@ import type { CategoryWithSubs } from "@/actions/server/categories/getCategorysW
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 export default function CatalogClientPage() {
   const categories = useCategoriesStore().categories
@@ -52,7 +53,7 @@ export default function CatalogClientPage() {
                           quality={50}
                           loading="eager"
                           alt={(subCategory.coverImage as Media)?.alt ?? ""}
-                          src={(subCategory.coverImage as Media)?.url ?? ""}
+                          src={fixPayloadUrl((subCategory.coverImage as Media)?.url) ?? ""}
                         />
                         <div className="bg-black rounded-xl absolute z-[1] w-full h-full opacity-50 transition-opacity duration-200 hover:opacity-60" />
                         <p className="text-white text-center text-sm font-medium relative z-[2] px-3 leading-tight">

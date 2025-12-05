@@ -1,6 +1,5 @@
 import SmartImage from '@/components/smart-image/SmartImage'
 import { Media, Product } from '@/payload-types'
-import Image from 'next/image'
 import React from 'react'
 
 const ProductImage = ({ product }: { product: Product }) => {

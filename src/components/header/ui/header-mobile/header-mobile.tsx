@@ -36,7 +36,7 @@ const HeaderMobile = () => {
     <div className="md:hidden">
       <div className="text-center space-y-1 pb-3 pt-1">
         <h2 className="text-sm font-semibold text-gray-800 leading-tight">
-          Московский институт Профессионального Образования
+          Московский институт профессионального Образования
         </h2>
         <p className="text-xs text-gray-600">Лицензия: Л035-01298-77/01010677</p>
       </div>

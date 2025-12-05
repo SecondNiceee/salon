@@ -1,4 +1,5 @@
 import { Media } from "@/payload-types"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 import Image from "next/image"
 import type React from "react"
 
@@ -22,7 +23,7 @@ export const ContactsBlock: React.FC<ContactsBlockProps> = ({ contacts }) => {
             key={index}
             className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
           >
-            {contact.icon ? <Image className="w-4" src={String(contact.icon.url)} alt={contact.icon.alt} fill /> : <></>}
+            {contact.icon ? <Image className="w-4" src={fixPayloadUrl(String(contact.icon.url))} alt={contact.icon.alt} fill /> : <></>}
 
             <div className="flex-1">
               <div className="font-medium text-gray-700 text-sm mb-1">{contact.key}</div>

@@ -7,6 +7,7 @@ import Image from "next/image"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Media } from "@/payload-types"
 import { Button } from "@/components/ui/button"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 interface ImageSliderBlockProps {
   images: { id: string; image: Media; caption?: string }[]
@@ -72,7 +73,7 @@ export const ImageSliderBlock: React.FC<ImageSliderBlockProps> = ({
             <div key={imgData.id || index} className="flex-[0_0_100%] relative">
               <div className="relative w-full bg-muted h-[600px] max-h-[600px]">
                 <Image
-                  src={imgData.image.url || "/placeholder.svg"}
+                  src={fixPayloadUrl(imgData.image.url) || "/placeholder.svg"}
                   alt={imgData.image.alt || imgData.caption || `Slide ${index + 1}`}
                   fill
                   className="object-contain"

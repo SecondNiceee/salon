@@ -2,6 +2,7 @@ import type React from "react"
 import Image from "next/image"
 import { Media } from "@/payload-types"
 import { RichText } from "@payloadcms/richtext-lexical/react"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 interface TextWithImageBlockProps {
   text: any // Rich text content
@@ -25,7 +26,7 @@ export const TextWithImageBlock: React.FC<TextWithImageBlockProps> = ({ text, im
   <div className="w-full h-auto image-container">
     <div className="relative w-full h-full aspect-video rounded-lg overflow-hidden">
       <Image
-        src={image.url || "/placeholder.svg"}
+        src={fixPayloadUrl(image.url) || "/placeholder.svg"}
         alt={image.alt || ""}
         fill
         className="object-cover h-full"

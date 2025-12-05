@@ -14,7 +14,7 @@ const CatalogButton = () => {
       className="flex p-3 h-auto sm:h-auto md:h-10 lg:h-11 md:min-w-[140px] lg:min-w-[230px] justify-start md:justify-center items-center gap-2 bg-transparent hover:bg-gray-50 transition-colors"
     >
       <div className="min-h-[30px] sm:min-h-[unset] hc-catalog-icon">
-        <Image
+        <img
           alt="Каталог услуг"
           width={30}
           height={30}

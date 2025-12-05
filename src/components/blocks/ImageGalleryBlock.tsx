@@ -1,6 +1,7 @@
 import type React from "react"
 import Image from "next/image"
 import type { Media } from "@/payload-types"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 interface ImageGalleryBlockProps {
   imagesData: {id : string, image : Media, description?: string}[], // Added description to type
@@ -27,7 +28,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({ imagesData
           <div key={index} className="flex flex-col gap-2">
             <div className="relative aspect-square rounded-lg overflow-hidden shadow-md bg-card group">
               <Image
-                src={imgData.image.url || "/placeholder.svg"}
+                src={fixPayloadUrl(imgData.image.url) || "/placeholder.svg"}
                 alt={imgData.image.alt || `Gallery image ${index + 1}`}
                 fill
                 className="object-cover transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"

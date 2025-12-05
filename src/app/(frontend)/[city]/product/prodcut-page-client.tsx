@@ -19,6 +19,7 @@ import { toast } from "sonner"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 import { useCityStore } from "@/entities/city/cityStore"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
+import { routerConfig } from "@/config/router.config"
 
 interface ProductPageClientProps {
   product: Product
@@ -54,7 +55,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   }, [product])
 
   const handleGoBack = () => {
-    router.back()
+    router.replace(routerConfig.withCity(city.slug, routerConfig.home))
   }
 
   const handleFavoriteClick = async () => {

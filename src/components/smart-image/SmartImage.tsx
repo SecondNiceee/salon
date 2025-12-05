@@ -1,3 +1,4 @@
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 import Image from "next/image"
 
 interface SmartImageProps {
@@ -31,7 +32,7 @@ export default function SmartImage({
 
   return (
     <Image
-      src={finalSrc || "/placeholder.svg"}
+      src={fixPayloadUrl(finalSrc) || "/placeholder.svg"}
       alt={alt}
       width={width}
       height={height}

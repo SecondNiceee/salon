@@ -32,7 +32,7 @@ const MAIL_USER = process.env.MAIL_USER || ""
 const MAIL_PASSWORD = process.env.MAIL_PASSWORD || ""
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://grandbazarr.ru",
-  serverURL : process.env.BACKEND_URL,
+  serverURL : "https://alexestetica.ru",
   cors: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   csrf: ['http://localhost:3000', process.env.PAYLOAD_PUBLIC_URL || "https://grandbazarr.ru"],
   admin: {

@@ -23,7 +23,7 @@ export async function Footer({city} : {city : any}) {
                 href={siteSettings?.socialLinks?.vk || "#"}
                 className="text-gray-600 hover:text-gray-800"
               >
-                <Image className="w-6 h-6" alt="Вк ГрнадБАЗАР" src={"/vk-icon.svg"} width={24} height={24} />
+                <img className="w-6 h-6" alt="Вк Академия профессионального образования" src={"/vk-icon.svg"} width={24} height={24} />
               </Link>
 
               {/* Telegram Icon */}
@@ -33,11 +33,11 @@ export async function Footer({city} : {city : any}) {
                 href={siteSettings?.socialLinks?.telegram || "#"}
                 className="text-gray-600 hover:text-gray-800"
               >
-                <Image
+                <img
                   width={24}
                   height={24}
                   className="w-6 h-6"
-                  alt="Telegram ГрандБАЗАР Icon"
+                  alt="Telegram Академия профессионального образования"
                   src={"/telegram-icon.svg"}
                 />
               </Link>
@@ -49,11 +49,11 @@ export async function Footer({city} : {city : any}) {
                 href={siteSettings?.socialLinks?.instagram || "#"}
                 className="text-gray-600 hover:text-gray-800"
               >
-                <Image
+                <img
                   className="w-6 h-6"
                   width={24}
                   height={24}
-                  alt="Instagram ICON ГрандБАЗАР"
+                  alt="Instagram ICON Академия профессионального образования"
                   src={"/instagram-icon.svg"}
                 />
               </Link>

@@ -12,6 +12,7 @@ import { X } from "lucide-react"
 import Link from "next/link"
 import { useMobileStore } from "@/entities/mobileMenu/mobileMenuStore"
 import { useParams } from "next/navigation"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 const CategoryPopup = () => {
   const { isCatalogPopupOpened, setPopupCatalogOpened } = useCatalogStore()
@@ -69,7 +70,7 @@ const CategoryPopup = () => {
                             quality={45}
                             loading="eager"
                             alt={(subCategory.coverImage as Media)?.alt ?? ""}
-                            src={(subCategory.coverImage as Media)?.url ?? ""}
+                            src={fixPayloadUrl((subCategory.coverImage as Media)?.url) ?? ""}
                           />
                           <div className="bg-black rounded-xl absolute z-[30] w-full h-full opacity-50 transition-opacity duration-200 hover:opacity-60" />
                           <p className="text-white text-center text-sm md:text-base font-medium relative z-[40] px-2 leading-tight">

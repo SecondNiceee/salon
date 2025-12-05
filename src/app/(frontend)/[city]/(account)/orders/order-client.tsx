@@ -16,6 +16,7 @@ import { routerConfig } from "@/config/router.config"
 import { replaceCityVariables, getCityDeclensions } from "@/utils/replaceCityVariables"
 import { useCityStore } from "@/entities/city/cityStore"
 import { useCity } from "@/lib/use-city"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 const statusConfig = {
   pending: { label: "Подтвержден", color: "bg-green-500", icon: CheckCircle },
@@ -144,7 +145,7 @@ export default function OrdersClientPage() {
                           <Image
                             width={80}
                             height={80}
-                            src={media.url || "/placeholder.svg"}
+                            src={fixPayloadUrl(media.url) || "/placeholder.svg"}
                             alt={media.alt || product?.title || "Услуга"}
                             className="object-cover w-full h-full"
                           />
