@@ -15,15 +15,19 @@ import Script from "next/script"
 import { CityInit } from "@/components/city-init/CityInit"
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
   variable: "--font-poppins",
+  display: "swap",
+  preload: true,
 })
 
 const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600"],
   variable: "--font-inter",
+  display: "swap",
+  preload: true,
 })
 
 export async function generateMetadata({
@@ -138,7 +142,9 @@ export default async function CityLayout({
   return (
     <html lang="ru" className={`${poppins.variable} ${inter.variable}`}>
       <head>
-        
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
         <Script id="yandex-metrika" strategy="afterInteractive">
           {`
             (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};

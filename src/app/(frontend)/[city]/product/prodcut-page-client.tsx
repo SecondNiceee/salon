@@ -7,8 +7,6 @@ import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
 import type { City } from "@/payload-types"
 import { replaceCityVariables, replaceCityInRichText } from "@/utils/replaceCityVariables"
-import { RichText } from "@payloadcms/richtext-lexical/react"
-import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
 import { useAuthStore } from "@/entities/auth/authStore"
@@ -19,7 +17,7 @@ import { toast } from "sonner"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 import { useCityStore } from "@/entities/city/cityStore"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
-import { routerConfig } from "@/config/router.config"
+import { useHistory } from "@/providers/history-provider"
 
 interface ProductPageClientProps {
   product: Product
@@ -37,9 +35,9 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   const [isThankYouModalOpen, setIsThankYouModalOpen] = useState(false)
   const [isShortDescription, setIsShortDescription] = useState(false)
   const descriptionRef = useRef<HTMLDivElement>(null)
-
   const { setIsSubmitting, isSubmitting } = useBookingModalStore.getState()
   const { city: storedCity, setCity } = useCityStore()
+  const { goBack } = useHistory()
 
   useEffect(() => {
     if (city) {
@@ -55,7 +53,8 @@ export default function ProductPageClient({ product, productId, city }: ProductP
   }, [product])
 
   const handleGoBack = () => {
-    router.replace(routerConfig.withCity(city.slug, routerConfig.home))
+    const url = goBack()
+    router.push(url)
   }
 
   const handleFavoriteClick = async () => {
@@ -132,7 +131,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
 
       <div className="px-3 py-4 sm:px-6">
         <div className="flex items-center justify-center gap-4">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center justify-center w-full">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight text-center">
               {processedTitle.toUpperCase()}
             </h1>
