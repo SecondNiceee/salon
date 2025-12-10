@@ -39,8 +39,8 @@ const translitMap: Record<string, string> = {
   я: "ya",
 }
 
-const generateSlug = (title: string, id: string): string => {
-  const baseSlug = title
+const generateBaseSlug = (title: string): string => {
+  return title
     .toLowerCase()
     .split("")
     .map((char) => translitMap[char] || char)
@@ -48,20 +48,31 @@ const generateSlug = (title: string, id: string): string => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .substring(0, 80)
-
-  return `${baseSlug}-${id.slice(-6)}`
 }
 
-async function fetchAllProductsWithoutSlug(): Promise<any[]> {
+async function generateSlug(title: string): Promise<string> {
+  return generateBaseSlug(title)
+}
+
+async function checkSlugExists(slug: string): Promise<boolean> {
   const url = `${PAYLOAD_API_URL}/products`
   const params = new URLSearchParams({
-    where: JSON.stringify({
-      or: [
-        { slug: { exists: false } },
-        { slug: { equals: "" } },
-        { slug: { equals: null } },
-      ],
-    }),
+    where: JSON.stringify({ slug: { equals: slug } }),
+    limit: "1",
+    depth: "0",
+  })
+
+  const res = await fetch(`${url}?${params}`)
+  if (!res.ok) {
+    throw new Error(`Failed to check slug: ${res.status}`)
+  }
+  const json = await res.json()
+  return (json.docs?.length || 0) > 0
+}
+
+async function fetchAllProducts(): Promise<any[]> {
+  const url = `${PAYLOAD_API_URL}/products`
+  const params = new URLSearchParams({
     limit: "1000",
     depth: "0",
   })
@@ -93,17 +104,25 @@ async function updateProduct(id: string, slug: string): Promise<void> {
 async function migrateProductSlugs() {
   console.log("Starting product slug migration...")
 
-  const products = await fetchAllProductsWithoutSlug()
-  console.log(`Found ${products.length} products without slug`)
+  const products = await fetchAllProducts()
+  console.log(`Found ${products.length} products total`)
 
   let updated = 0
+  let skipped = 0
   let errors = 0
 
   for (const product of products) {
     try {
-      const slug = generateSlug(product.title, product.id)
-      await updateProduct(product.id, slug)
-      console.log(`✓ ${product.title} -> ${slug}`)
+      const newSlug = await generateSlug(product.title)
+
+      if (product.slug === newSlug) {
+        console.log(`⏭ ${product.title} -> slug already correct`)
+        skipped++
+        continue
+      }
+
+      await updateProduct(product.id, newSlug)
+      console.log(`✓ ${product.title} -> ${newSlug} (was: ${product.slug || "empty"})`)
       updated++
     } catch (error) {
       console.error(`✗ Failed to update ${product.title} (${product.id}):`, error)
@@ -111,7 +130,7 @@ async function migrateProductSlugs() {
     }
   }
 
-  console.log(`\nMigration complete: ${updated} updated, ${errors} errors`)
+  console.log(`\nMigration complete: ${updated} updated, ${skipped} skipped, ${errors} errors`)
   process.exit(0)
 }
 

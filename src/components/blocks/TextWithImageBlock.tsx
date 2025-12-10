@@ -18,27 +18,24 @@ export const TextWithImageBlock: React.FC<TextWithImageBlockProps> = ({ text, im
   const layoutClasses = imagePosition === "right" ? "lg:flex-row-reverse" : "lg:flex-row"
 
   return (
-    <div className={`rich-imageWithTextBlok flex flex-col gap-6 ${layoutClasses}`}>
-      {/* Изображение */}
-      <div className="w-full aspect-video rounded-lg overflow-hidden bg-muted">
+    <div className={`rich-imageWithTextBlok flex flex-col gap-6 items-stretch ${layoutClasses}`}>
+      {/* Изображение - теперь растягивается по высоте текста */}
+      <div className="w-full lg:w-1/2 rounded-lg overflow-hidden bg-muted relative min-h-[250px]">
         {imageUrl ? (
           <Image
-            src={imageUrl}
+            src={imageUrl || "/placeholder.svg"}
             alt={image.alt || ""}
-            width={800}        // обязательно при fill={false}
-            height={450}       // обязательно при fill={false}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
             quality={90}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            Нет изображения
-          </div>
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground">Нет изображения</div>
         )}
       </div>
 
       {/* Текст */}
-      <div className="w-full shadow-lg rounded-lg p-1 md:p-4">
+      <div className="w-full lg:w-1/2 shadow-lg rounded-lg p-1 md:p-4">
         <RichText data={text} />
       </div>
     </div>

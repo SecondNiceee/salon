@@ -57,9 +57,12 @@ export async function generateMetadata({
     const subCategory = product.subCategory as Category
 
     const processedSeoTitle = replaceCityVariables(product.pageTitle || product.title, cityDeclensions)
-    const processedDescription = product.description
-      ? replaceCityVariables(product.description, cityDeclensions)
-      : `Забронировать ${processedSeoTitle} в салоне красоты Академия профессионального образования. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`
+
+    const processedDescription = product.seoDescription
+      ? replaceCityVariables(product.seoDescription, cityDeclensions)
+      : product.description
+        ? replaceCityVariables(product.description, cityDeclensions)
+        : `Забронировать ${processedSeoTitle} в салоне красоты Академия профессионального образования. ${(category[0] as Category).title || ""} ${subCategory.title || ""}`
 
     return {
       title: processedSeoTitle,

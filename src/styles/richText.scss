@@ -21,7 +21,7 @@
   }
   
   p {
-    @apply my-2 text-base md:text-lg leading-relaxed text-foreground text-pretty;
+    @apply my-4 text-base md:text-lg leading-relaxed text-foreground text-pretty;
   }
   
   /* Enhanced list styling - prettier and better structured */
@@ -168,14 +168,17 @@
   font-family: var(--font-inter);
   
   p{
-    @apply my-0;
+    @apply my-2;
   }
+  
   h1,h2,h3{
     @apply my-2;
   }
+  
   h4{
     @apply my-1;
   }
+  
   ol {
     @apply my-1;
   }

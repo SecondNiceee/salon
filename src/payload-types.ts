@@ -296,6 +296,10 @@ export interface Product {
    */
   description?: string | null;
   /**
+   * Мета-описание для поисковых систем (150-160 символов). Поддерживает переменные города: /city (Москва), /city/r (Москвы), /city/p (в Москве).
+   */
+  seoDescription?: string | null;
+  /**
    * Если включено, товар будет иметь отдельную страницу. Если выключено, при клике на товар сразу откроется форма бронирования.
    */
   hasProductPage?: boolean | null;
@@ -581,6 +585,7 @@ export interface ProductsSelect<T extends boolean = true> {
   subCategory?: T;
   image?: T;
   description?: T;
+  seoDescription?: T;
   hasProductPage?: T;
   content?: T;
   averageRating?: T;

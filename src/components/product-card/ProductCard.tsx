@@ -35,9 +35,10 @@ export function ProductCard({ product, clickHandler, city, priority = false }: I
 
   const isFavorite = [...favoriteProductIds].find((id) => id === product.id)
 
-  const displayTitle = replaceCityVariables(product.title, city?.declensions || null)
+  const displayTitle = replaceCityVariables(product.title, city?.declensions || null);
 
   const onProductClick = async () => {
+    console.warn(product);
     if (product.hasProductPage === false) {
       handleBooking()
       return
@@ -45,11 +46,20 @@ export function ProductCard({ product, clickHandler, city, priority = false }: I
 
     const urlData = await getProductUrlData(product.id)
 
+    console.log("[v0] ProductCard onProductClick:", {
+      productId: product.id,
+      productTitle: product.title,
+      productSlug: product.slug,
+      hasProductPage: product.hasProductPage,
+      urlData,
+    })
+
     if (urlData) {
       router.push(routerConfig.getPath(city?.slug, routerConfig.product(urlData.subcategorySlug, urlData.productSlug)))
     } else {
       console.warn(`[ProductCard] Could not get URL data for product ${product.id}`)
-      handleBooking()
+      toast.error(`Не удалось получить данные для перехода (product ${product.id})`)
+      // handleBooking() - временно отключено для отладки
     }
 
     if (clickHandler) {

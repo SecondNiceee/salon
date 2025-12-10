@@ -67,10 +67,10 @@ const Products: CollectionConfig = {
   //   update: isAccess("products"),
   //   delete: isAccess("products"),
   // },
-  access : {
-    read : () => true,
-    create : () => true,
-    update : () => true,
+  access: {
+    read: () => true,
+    create: () => true,
+    update: () => true,
   },
 
   hooks: {
@@ -195,6 +195,16 @@ const Products: CollectionConfig = {
       admin: {
         description:
           "Описание для SEO. Также поддерживает переменные города: /city, /city/r, /city/p - они заменятся на город пользователя в соответствующем падеже.",
+      },
+      required: false,
+    },
+    {
+      name: "seoDescription",
+      type: "textarea",
+      label: "SEO Description",
+      admin: {
+        description:
+          "Мета-описание для поисковых систем (150-160 символов). Поддерживает переменные города: /city (Москва), /city/r (Москвы), /city/p (в Москве).",
       },
       required: false,
     },

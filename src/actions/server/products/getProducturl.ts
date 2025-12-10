@@ -22,13 +22,29 @@ const getProductUrlDataCached = unstable_cache(
       })
 
       if (!product) {
+        console.log(`[v0] Product ${productId} not found in database`)
         return null
       }
 
-      // Get subcategory slug (value field from category)
       const subCategory = product.subCategory as Category | null
+      console.log(`[v0] Product ${productId}:`, {
+        productSlug: product.slug,
+        subCategory: subCategory
+          ? {
+              id: subCategory.id,
+              value: subCategory.value,
+              name: subCategory.name,
+            }
+          : null,
+      })
+
       if (!subCategory || !subCategory.value) {
+        console.log(`[v0] Product ${productId}: Missing subCategory or subCategory.value`)
         return null
+      }
+
+      if (!product.slug) {
+        console.log(`[v0] Product ${productId}: Missing product.slug`)
       }
 
       return {
@@ -43,7 +59,7 @@ const getProductUrlDataCached = unstable_cache(
   ["product-url-data"],
   {
     tags: ["product-urls", "categories_and_products"],
-    revalidate: 3600, // 1 hour
+    revalidate: 3600,
   },
 )
 
