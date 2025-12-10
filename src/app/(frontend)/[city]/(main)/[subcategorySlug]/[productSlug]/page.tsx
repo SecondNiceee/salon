@@ -1,22 +1,19 @@
 import ErrorAlert from "@/components/error-alert/ErrorAlert"
 import { routerConfig } from "@/config/router.config"
-import { getProductById } from "@/actions/server/products/getProductById"
+import { getProductBySlug } from "@/actions/server/products/getProductBySlug"
 import type { Metadata } from "next"
 import type { Category, Media } from "@/payload-types"
-import ProductPageClient from "./prodcut-page-client"
+import ProductPageClient from "./product-page-client"
 import { ProductSchema } from "./productSchema"
 
 export async function generateMetadata({
-  searchParams,
   params,
 }: {
-  searchParams: Promise<{ id?: string }>
-  params: Promise<{ city: string }>
+  params: Promise<{ productSlug: string; subcategorySlug: string; city: string }>
 }): Promise<Metadata> {
-  const { id } = await searchParams
-  const { city: citySlug } = await params
+  const { productSlug, subcategorySlug, city: citySlug } = await params
 
-  if (!id) {
+  if (!productSlug) {
     return {
       title: "Услуга не найдена",
       description: "Услуга не найдена",
@@ -28,7 +25,7 @@ export async function generateMetadata({
   }
 
   try {
-    const response = await getProductById(id)
+    const response = await getProductBySlug(productSlug)
     const product = response.product
 
     if (!product || !product.category[0] || !product.subCategory) {
@@ -69,7 +66,7 @@ export async function generateMetadata({
       description: processedDescription,
       keywords: [processedSeoTitle, category[0].title || "", subCategory.title || "", "забронировать", "запись онлайн"],
       alternates: {
-        canonical: siteUrl ? `${siteUrl}/${citySlug}/product?id=${id}` : undefined,
+        canonical: siteUrl ? `${siteUrl}/${citySlug}/${subcategorySlug}/${productSlug}` : undefined,
       },
       openGraph: {
         title: `${processedSeoTitle} | Академия профессионального образования`,
@@ -106,25 +103,25 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({
-  searchParams,
   params,
 }: {
-  searchParams: Promise<{ id?: string }>
-  params: Promise<{ city: string }>
+  params: Promise<{ productSlug: string; subcategorySlug: string; city: string }>
 }) {
-  const { id } = await searchParams
-  const { city: citySlug } = await params
+  const { productSlug, subcategorySlug, city: citySlug } = await params
 
-  if (!id) {
+  if (!productSlug) {
     return (
-      <ErrorAlert buttonAction={() => (window.location.href = `/${citySlug}/${routerConfig.home}`)} errorMessage="Услуга не найдена" />
+      <ErrorAlert
+        buttonAction={() => (window.location.href = `/${citySlug}/${routerConfig.home}`)}
+        errorMessage="Услуга не найдена"
+      />
     )
   }
 
   try {
-    const product = await getProductById(id)
+    const { product } = await getProductBySlug(productSlug)
 
-    if (!product?.product) {
+    if (!product) {
       return (
         <ErrorAlert
           buttonAction={() => (window.location.href = `${citySlug}/${routerConfig.home}`)}
@@ -138,8 +135,8 @@ export default async function ProductPage({
 
     return (
       <>
-        <ProductSchema product={product.product} />
-        <ProductPageClient product={product.product} productId={id} city={city} />
+        <ProductSchema product={product} subcategorySlug={subcategorySlug} />
+        <ProductPageClient product={product} productId={String(product.id)} city={city} />
       </>
     )
   } catch (error) {

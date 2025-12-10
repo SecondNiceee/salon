@@ -33,7 +33,8 @@ const Categories: CollectionConfig = {
     afterChange: [
       ({}) => {
         revalidateTag("categories")
-        revalidateTag("categories_and_products");
+        revalidateTag("categories_and_products")
+        revalidateTag("product-urls") // Added product-urls tag for revalidation when categories change
       },
     ],
   },

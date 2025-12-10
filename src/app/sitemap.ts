@@ -86,14 +86,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       limit: 10000,
       select: {
         id: true,
+        slug: true,
+        subCategory: true,
         updatedAt: true,
       },
+      depth: 1, // To populate subCategory
     })
 
     for (const city of cities) {
       for (const product of productsResult.docs) {
+        const subCategory = product.subCategory as any
+        const subcategorySlug = subCategory?.value || ""
         productRoutes.push({
-          url: `${siteUrl}/${city.slug}/product?id=${product.id}`,
+          url: `${siteUrl}/${city.slug}/${subcategorySlug}/${product.slug || product.id}`,
           lastModified: safeDate(product.updatedAt),
           changeFrequency: "weekly" as const,
           priority: 0.7,

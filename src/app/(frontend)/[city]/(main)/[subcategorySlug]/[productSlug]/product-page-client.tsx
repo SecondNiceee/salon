@@ -95,7 +95,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
         }
 
         setIsSubmitting(false)
-        openBookingModal(user, product.id, "success") // Open modal in success mode
+        openBookingModal(user, product.id, "success")
       } catch (error) {
         console.error("Error submitting booking:", error)
         toast.error("Ошибка при отправке заявки. Попробуйте еще раз.")

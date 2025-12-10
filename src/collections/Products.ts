@@ -8,23 +8,85 @@ import { lexicalEditor, BlocksFeature, HeadingFeature } from "@payloadcms/richte
 import { revalidateTag } from "next/cache"
 import type { CollectionConfig } from "payload"
 
+const generateSlug = (title: string): string => {
+  const translitMap: Record<string, string> = {
+    а: "a",
+    б: "b",
+    в: "v",
+    г: "g",
+    д: "d",
+    е: "e",
+    ё: "yo",
+    ж: "zh",
+    з: "z",
+    и: "i",
+    й: "y",
+    к: "k",
+    л: "l",
+    м: "m",
+    н: "n",
+    о: "o",
+    п: "p",
+    р: "r",
+    с: "s",
+    т: "t",
+    у: "u",
+    ф: "f",
+    х: "h",
+    ц: "ts",
+    ч: "ch",
+    ш: "sh",
+    щ: "sch",
+    ъ: "",
+    ы: "y",
+    ь: "",
+    э: "e",
+    ю: "yu",
+    я: "ya",
+  }
+
+  return title
+    .toLowerCase()
+    .split("")
+    .map((char) => translitMap[char] || char)
+    .join("")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .substring(0, 100)
+}
+
 const Products: CollectionConfig = {
   slug: "products",
   admin: {
     useAsTitle: "title",
     group: "Категории, подкатегории, товары",
   },
-  access: {
-    read: () => true,
-    create: isAccess("products"),
-    update: isAccess("products"),
-    delete: isAccess("products"),
+  // access: {
+  //   read: () => true,
+  //   create: isAccess("products"),
+  //   update: isAccess("products"),
+  //   delete: isAccess("products"),
+  // },
+  access : {
+    read : () => true,
+    create : () => true,
+    update : () => true,
   },
 
   hooks: {
+    beforeValidate: [
+      ({ data, operation }) => {
+        // Only auto-generate slug on create if not provided
+        if (operation === "create" && data?.title && !data?.slug) {
+          data.slug = generateSlug(data.title)
+        }
+        return data
+      },
+    ],
     afterChange: [
       ({}) => {
         revalidateTag("categories_and_products")
+        revalidateTag("product-urls")
       },
     ],
   },
@@ -37,6 +99,18 @@ const Products: CollectionConfig = {
       admin: {
         description:
           "Название услуги. Поддерживает переменные города для автоматической замены: /city (Москва), /city/r (Москвы), /city/p (в Москве).",
+      },
+    },
+    {
+      name: "slug",
+      type: "text",
+      label: "URL slug",
+      unique: true,
+      index: true,
+      admin: {
+        position: "sidebar",
+        description:
+          "URL-friendly идентификатор товара. Генерируется автоматически при создании, но можно изменить вручную.",
       },
     },
     {

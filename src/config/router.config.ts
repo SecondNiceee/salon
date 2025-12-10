@@ -2,11 +2,11 @@ class Router {
   // Helper method to generate city-aware routes
   withCity(city: string | null, path: string): string {
     // Remove leading slash if present
-    if (city){
+    if (city) {
       const cleanPath = path.startsWith("/") ? path.slice(1) : path
       return `/${city}${cleanPath ? `/${cleanPath}` : ""}`
     }
-    return path;
+    return path
   }
 
   // Base routes (will be prefixed with city)
@@ -17,9 +17,12 @@ class Router {
   favorited = "/favorites"
   mobileLogin = "/login"
   mobileCatalog = "/catalog"
-  product = "/product"
   about = "/about"
   contacts = "/contacts"
+
+  product(subcategorySlug: string, productSlug: string): string {
+    return `/${subcategorySlug}/${productSlug}`
+  }
 
   // Get full path with city
   getPath(city: string, route: string): string {

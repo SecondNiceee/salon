@@ -271,6 +271,10 @@ export interface Product {
    */
   title: string;
   /**
+   * URL-friendly идентификатор товара. Генерируется автоматически при создании, но можно изменить вручную.
+   */
+  slug?: string | null;
+  /**
    * Название услуги на странице услуги и в SEO метаданных. Поддерживает переменные города: /city (Москва), /city/r (Москвы), /city/p (в Москве).
    */
   pageTitle?: string | null;
@@ -570,6 +574,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
+  slug?: T;
   pageTitle?: T;
   price?: T;
   category?: T;

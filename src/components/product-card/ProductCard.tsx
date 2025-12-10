@@ -16,12 +16,13 @@ import SmartImage from "../smart-image/SmartImage"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
 import { replaceCityVariables } from "@/utils/replaceCityVariables"
 import { useCityStore } from "@/entities/city/cityStore"
+import { getProductUrlData } from "@/actions/server/products/getProducturl"
 
 interface IProductCard {
   product: Product
   clickHandler?: () => void
   city: any
-  priority?: boolean // Добавил проп для приоритетной загрузки первых карточек
+  priority?: boolean
 }
 
 export function ProductCard({ product, clickHandler, city, priority = false }: IProductCard) {
@@ -42,7 +43,15 @@ export function ProductCard({ product, clickHandler, city, priority = false }: I
       return
     }
 
-    router.push(routerConfig.getPath(city.slug, `${routerConfig.product}?id=${product.id}`))
+    const urlData = await getProductUrlData(product.id)
+
+    if (urlData) {
+      router.push(routerConfig.getPath(city?.slug, routerConfig.product(urlData.subcategorySlug, urlData.productSlug)))
+    } else {
+      console.warn(`[ProductCard] Could not get URL data for product ${product.id}`)
+      handleBooking()
+    }
+
     if (clickHandler) {
       clickHandler()
     }

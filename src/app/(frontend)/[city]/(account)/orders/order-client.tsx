@@ -13,7 +13,7 @@ import { toast } from "sonner"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { formatDate } from "@/utils/formatData"
 import { routerConfig } from "@/config/router.config"
-import { replaceCityVariables, getCityDeclensions } from "@/utils/replaceCityVariables"
+import { replaceCityVariables } from "@/utils/replaceCityVariables"
 import { useCityStore } from "@/entities/city/cityStore"
 import { useCity } from "@/lib/use-city"
 import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
@@ -30,8 +30,8 @@ export default function OrdersClientPage() {
   const { user } = useAuth()
   const { orders, loading, error, loadOrders, clearOrders, refreshOrder, refreshingOrderId } = useOrdersStore()
   const [hideCancel, setHideCancel] = useState(true)
-  const {city} = useCityStore();
-  const citySlug = useCity();
+  const { city } = useCityStore()
+  const citySlug = useCity()
 
   useEffect(() => {
     loadOrders()
@@ -153,10 +153,19 @@ export default function OrdersClientPage() {
                       )}
                       <div className="flex-1 min-w-0 space-y-2">
                         <h3 className="font-semibold text-base sm:text-lg text-gray-900">
-                          {replaceCityVariables(product?.title || "Услуга", city?.declensions as any )}
+                          {replaceCityVariables(product?.title || "Услуга", city?.declensions as any)}
                         </h3>
                         <Button
-                          onClick={() => router.push(routerConfig.withCity(citySlug, `/product?id=${product?.id}`))}
+                          onClick={() => {
+                            const subCategory = product?.subCategory as any
+                            const subcategorySlug = subCategory?.value || subCategory?.slug || ""
+                            router.push(
+                              routerConfig.withCity(
+                                citySlug,
+                                routerConfig.product(subcategorySlug, product?.slug || product?.id),
+                              ),
+                            )
+                          }}
                           variant="outline"
                           size="sm"
                           className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"
