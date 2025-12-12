@@ -121,7 +121,7 @@ const SubCategoryClientPage = ({
               <ProductsSkeleton />
             ) : (
               <div
-                className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
+                className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
               >
                 {initialData?.products.map((product) => (
                   <ProductCard city={initialCity} key={product.id} product={product} />

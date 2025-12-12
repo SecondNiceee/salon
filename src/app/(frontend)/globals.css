@@ -406,14 +406,60 @@ html.high-contrast .hc-category-circle {
 html.high-contrast .hc-category-link {
   background: transparent !important;
   background-color: transparent !important;
+  /* Force fixed width for horizontal scrolling - categories must not collapse */
+  min-width: 90px !important;
+  max-width: 90px !important;
+  width: 90px !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: 90px !important;
 }
 
 html.high-contrast .hc-category-circle img {
   filter: none !important;
 }
 
-html.high-contrast .hc-catalog-icon {
-  display: none !important;
+/* Ensure scroll container keeps proper gap and layout in high-contrast mode */
+html.high-contrast .hc-categories-scroll {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 20px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Force categories to maintain fixed width and not shrink/collapse */
+html.high-contrast .hc-categories-scroll > * {
+  flex-shrink: 0 !important;
+}
+
+/* Ensure scroll arrows are visible and styled properly */
+html.high-contrast .hc-scroll-arrow {
+  background: #000 !important;
+  border: 2px solid #fff !important;
+  z-index: 10 !important;
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+html.high-contrast .hc-scroll-arrow:hover {
+  background: #333 !important;
+}
+
+/* Remove restrictive styles that collapse categories - keep proper spacing for scrolling */
+html.high-contrast .hc-category-icon {
+  background: #fff !important;
+  background-color: #fff !important;
+  /* Ensure icon circles maintain size */
+  min-width: 40px !important;
+  min-height: 40px !important;
+  flex-shrink: 0 !important;
+}
+
+html.high-contrast .hc-category-title {
+  font-size: 12px !important;
+  font-weight: 600 !important;
 }
 
 @layer base {

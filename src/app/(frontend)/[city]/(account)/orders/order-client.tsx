@@ -155,24 +155,26 @@ export default function OrdersClientPage() {
                         <h3 className="font-semibold text-base sm:text-lg text-gray-900">
                           {replaceCityVariables(product?.title || "Услуга", city?.declensions as any)}
                         </h3>
-                        <Button
-                          onClick={() => {
-                            const subCategory = product?.subCategory as any
-                            const subcategorySlug = subCategory?.value || subCategory?.slug || ""
-                            router.push(
-                              routerConfig.withCity(
-                                citySlug,
-                                routerConfig.product(subcategorySlug, product?.slug || product?.id),
-                              ),
-                            )
-                          }}
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"
-                        >
-                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          Перейти на услугу
-                        </Button>
+                        {product?.hasProductPage && (
+                          <Button
+                            onClick={() => {
+                              const subCategory = product?.subCategory as any
+                              const subcategorySlug = subCategory?.value || subCategory?.slug || ""
+                              router.push(
+                                routerConfig.withCity(
+                                  citySlug,
+                                  routerConfig.product(subcategorySlug, product?.slug || product?.id),
+                                ),
+                              )
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="w-full sm:w-auto text-xs sm:text-sm bg-white hover:bg-pink-50 border-pink-200 text-pink-600 hover:text-pink-700"
+                          >
+                            <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            Перейти на услугу
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

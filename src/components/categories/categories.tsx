@@ -4,13 +4,14 @@ import type React from "react"
 
 import { useCategoriesStore } from "@/entities/categories/categoriesStore"
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import type { Media } from "@/payload-types"
 import { Button } from "../ui/button"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useCity } from "@/lib/use-city"
 import type { CategoryWithSubs } from "@/actions/server/categories/getCategorysWithSubs"
+import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 
 interface CategoriesProps {
   initialCategories?: CategoryWithSubs[]
@@ -18,6 +19,7 @@ interface CategoriesProps {
 
 export function Categories({ initialCategories = [] }: CategoriesProps) {
   const { setCategories } = useCategoriesStore()
+  const { isLargeText } = useAccessibilityStore()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -35,13 +37,27 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
     setCategories(initialCategories)
   }, [initialCategories, setCategories])
 
-  const checkScrollability = () => {
+  const checkScrollability = useCallback(() => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
       setCanScrollLeft(scrollLeft > 0)
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth)
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    checkScrollability()
+
+    window.addEventListener("resize", checkScrollability)
+
+    // Small delay to ensure DOM is fully rendered
+    const timeout = setTimeout(checkScrollability, 100)
+
+    return () => {
+      window.removeEventListener("resize", checkScrollability)
+      clearTimeout(timeout)
+    }
+  }, [checkScrollability, initialCategories])
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -90,7 +106,7 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:bg-gray-50 rounded-full w-5 h-5 sm:w-8 sm:h-8"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:bg-gray-50 rounded-full w-5 h-5 sm:w-8 sm:h-8 hc-scroll-arrow"
             onClick={scrollLeft}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -101,7 +117,7 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:bg-gray-50 rounded-full w-5 h-5 sm:w-8 sm:h-8"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:bg-gray-50 rounded-full w-5 h-5 sm:w-8 sm:h-8 hc-scroll-arrow"
             onClick={scrollRight}
           >
             <ChevronRight className="h-4 w-4" />
@@ -110,7 +126,7 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
 
         <div
           ref={scrollContainerRef}
-          className="flex items-start gap-1 sm:gap-3 md:gap-5 overflow-x-scroll hide-scrollbar overflow-y-hidden overscroll-x-contain overscroll-y-none touch-pan-x"
+          className={`flex flex-nowrap items-start ${isLargeText ? "gap-5" : "gap-1 sm:gap-3 md:gap-5"} overflow-x-scroll hide-scrollbar overflow-y-hidden overscroll-x-contain overscroll-y-none touch-pan-x hc-categories-scroll`}
           onScroll={checkScrollability}
           onWheelCapture={handleWheel}
         >
@@ -125,14 +141,16 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
               <Link
                 href={href}
                 key={index}
-                className={`flex flex-col !bg-white items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors hc-category-link`}
+                className={`flex flex-col flex-shrink-0 !bg-white items-center gap-2 min-w-[90px] max-w-[90px] cursor-pointer hover:text-brand-600 transition-colors hc-category-link`}
               >
                 <div
-                  className={`sm:w-12 sm:h-12 w-10 h-10 bg-white hc-category-circle ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
+                  className={`sm:w-12 sm:h-12 w-10 h-10 bg-white hc-category-circle hc-category-icon ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
                   <img alt={"shop"} src={imageUrl || "/placeholder.svg"} className="w-6 h-6 text-black" />
                 </div>
-                <span className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight`}>
+                <span
+                  className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight hc-category-title`}
+                >
                   {category.title}
                 </span>
               </Link>
