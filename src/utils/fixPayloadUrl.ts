@@ -16,10 +16,7 @@ export const fixPayloadUrl = (url: string | null | undefined): string => {
       'https://alexestetica.ru/media/'
     );
   
-    // 3. Только на сервере — подменяем домен на 127.0.0.1 для внутреннего запроса
-    if (typeof window === 'undefined') {
-      return fixedUrl.replace('https://alexestetica.ru', 'http://127.0.0.1');
-    }
+
   
     // 4. В браузере — возвращаем чистый публичный URL
     return fixedUrl;

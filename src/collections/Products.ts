@@ -1,9 +1,9 @@
+import { AccordionBlock } from "@/lib/payload-blocks/AccordionBlock"
 import { HeaderBlock } from "@/lib/payload-blocks/HeaderBlock"
 import { ImageBlock } from "@/lib/payload-blocks/ImageBlock"
 import { ListBlock } from "@/lib/payload-blocks/ListBlock"
 import { TextBlock } from "@/lib/payload-blocks/TextBlock"
 import { TextWithImageBlock } from "@/lib/payload-blocks/TextWithImageBlock"
-import { isAccess } from "@/utils/accessUtils"
 import { lexicalEditor, BlocksFeature, HeadingFeature } from "@payloadcms/richtext-lexical"
 import { revalidateTag } from "next/cache"
 import type { CollectionConfig } from "payload"
@@ -231,7 +231,7 @@ const Products: CollectionConfig = {
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, ImageBlock, ListBlock, TextWithImageBlock, TextBlock],
+            blocks: [HeaderBlock, ListBlock, TextBlock, AccordionBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

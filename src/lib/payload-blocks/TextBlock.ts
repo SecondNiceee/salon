@@ -1,4 +1,4 @@
-import { BlocksFeature, HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
+import { HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
 import type { Block } from "payload"
 
 export const TextBlock: Block = {

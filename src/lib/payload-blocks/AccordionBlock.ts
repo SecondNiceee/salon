@@ -46,7 +46,7 @@ export const AccordionBlock: Block = {
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
           BlocksFeature({
-            blocks: [HeaderBlock, PararaphBlock, BookingButtonBlock, TextBlock, ImageBlock],
+            blocks: [HeaderBlock, BookingButtonBlock, TextBlock, ImageBlock],
           }),
           HeadingFeature({
             enabledHeadingSizes: ["h1", "h2", "h3", "h4"],

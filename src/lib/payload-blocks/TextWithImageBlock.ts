@@ -1,5 +1,9 @@
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { BlocksFeature, HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical";
 import { Block } from "payload";
+import { HeaderBlock } from "./HeaderBlock";
+import { TextBlock } from "./TextBlock";
+import { ListBlock } from "./ListBlock";
+import { AccordionBlock } from "./AccordionBlock";
 
 
 export const TextWithImageBlock:Block = {
@@ -16,7 +20,17 @@ export const TextWithImageBlock:Block = {
             admin : {
                 description : "Введите текст с возможностью форматирования"
             },
-            editor : lexicalEditor({})
+            editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  BlocksFeature({
+                    blocks: [HeaderBlock, TextBlock, ListBlock ],
+                  }),
+                  HeadingFeature({
+                    enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+                  }),
+                ],
+              }),
         },
         {
             name : "image",
