@@ -5,6 +5,7 @@ import "@/styles/richText.scss"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 import { ProductsSectionSkeleton } from "@/components/products-section/ProductsSkeleton"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
+import { useHydrated } from "@/hooks/useHydrated"
 import dynamic from "next/dynamic"
 
 const ProductsSection = dynamic(() => import("@/components/products-section/ProductsSection"), {
@@ -13,8 +14,11 @@ const ProductsSection = dynamic(() => import("@/components/products-section/Prod
 })
 
 function ProductsSectionSkeletonWrapper() {
+  const hydrated = useHydrated()
   const { isLargeText } = useAccessibilityStore()
-  return <ProductsSectionSkeleton categoriesCount={3} isLargeText={isLargeText} />
+
+  // Use default value (false) during SSR/initial render, actual value after hydration
+  return <ProductsSectionSkeleton categoriesCount={3} isLargeText={hydrated ? isLargeText : false} />
 }
 
 type Props = {
