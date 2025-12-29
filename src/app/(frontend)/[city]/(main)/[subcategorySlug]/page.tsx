@@ -121,3 +121,4 @@ export default async function SubCategoryPage({ params }: Props) {
     />
   )
 }
+export const revalidate = 3600

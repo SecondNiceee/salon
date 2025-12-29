@@ -6,7 +6,6 @@ interface IMemoRichText{
     data : any
 }
 const MemoRichText = ({data}:IMemoRichText) => {
-    console.log("Рендер rich текста")
     return (
         <RichText data={data} converters={jsxConverters} />
     );

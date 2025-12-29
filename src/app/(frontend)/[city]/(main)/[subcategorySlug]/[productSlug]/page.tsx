@@ -6,6 +6,9 @@ import type { Category, Media } from "@/payload-types"
 import ProductPageClient from "./product-page-client"
 import { ProductSchema } from "./productSchema"
 
+
+
+export const revalidate = 3600
 export async function generateMetadata({
   params,
 }: {

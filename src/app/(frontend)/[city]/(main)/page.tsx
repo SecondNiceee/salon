@@ -2,6 +2,8 @@ import { getCityBySlug } from "@/actions/server/cities/getCities"
 import GrandBazarClientApp from "./main-client-page"
 import { getCachedHomeContent } from "@/actions/server/getHomeContent"
 
+
+export const revalidate = 3600
 type Props = {
   params: Promise<{ city: string }>
 }

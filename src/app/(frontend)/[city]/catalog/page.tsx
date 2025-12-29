@@ -6,6 +6,8 @@ import { notFound } from "next/navigation"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
+export const revalidate = 3600
+
 export async function generateMetadata({
   params,
 }: {
