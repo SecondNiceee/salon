@@ -1,34 +1,15 @@
 import type React from "react"
-import "../globals.css"
 import { Header } from "@/components/header/header"
 import { PopupProvider } from "@/components/popup/PopupProvider"
-import "leaflet/dist/leaflet.css"
 import { Toaster } from "sonner"
 import { BottomNavigation } from "@/components/bottom-navigation/BottomNavigation"
 import { Footer } from "@/components/footer/footer"
-import { ContactWidget } from "@/components/contact-widget/contact-widget"
-import { Poppins, Inter } from "next/font/google"
 import type { Metadata } from "next"
 import { getCityBySlug } from "@/actions/server/cities/getCities"
 import { notFound } from "next/navigation"
 import Script from "next/script"
 import { CityInit } from "@/components/city-init/CityInit"
-
-const poppins = Poppins({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
-  variable: "--font-poppins",
-  display: "swap",
-  preload: true,
-})
-
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: true,
-})
+import { LazyContactWidget } from "@/components/contact-widget/lazy-contact-widget"
 
 export async function generateMetadata({
   params,
@@ -140,76 +121,70 @@ export default async function CityLayout({
   const cityName = city.declensions.nominative
 
   return (
-    <html lang="ru" className={`${poppins.variable} ${inter.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+    <>
+      <Script id="yandex-metrika" strategy="afterInteractive">
+        {`
+          (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+          (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+          ym(49347352, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+          });
+        `}
+      </Script>
+      <Script id="city-json-ld" type="application/ld+json" strategy="afterInteractive">
+        {JSON.stringify([
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Академия профессионального образования",
+            url: siteUrl,
+            description: "Салон красоты с услугами массажа, спа, косметологии и татуировок.",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Академия профессионального образования",
+            url: siteUrl,
+            logo: `${siteUrl}/logo-icon.png`,
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "customer support",
+              availableLanguage: "Russian",
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BeautySalon",
+            name: `Академия профессионального образования - ${cityName}`,
+            description: `Салон красоты в г. ${cityName} с услугами массажа, спа, косметологии и онлайн-курсами.`,
+            url: `${siteUrl}/${citySlug}`,
+            areaServed: {
+              "@type": "City",
+              name: cityName,
+            },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: cityName,
+              addressCountry: "RU",
+            },
+          },
+        ])}
+      </Script>
 
-        <Script id="yandex-metrika" strategy="afterInteractive">
-          {`
-            (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-            ym(49347352, "init", {
-              clickmap:true,
-              trackLinks:true,
-              accurateTrackBounce:true
-            });
-          `}
-        </Script>
-        <Script id="city-json-ld" type="application/ld+json">
-          {JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "Академия профессионального образования",
-              url: siteUrl,
-              description: "Салон красоты с услугами массажа, спа, косметологии и татуировок.",
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Академия профессионального образования",
-              url: siteUrl,
-              logo: `${siteUrl}/logo-icon.png`,
-              contactPoint: {
-                "@type": "ContactPoint",
-                contactType: "customer support",
-                availableLanguage: "Russian",
-              },
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "BeautySalon",
-              name: `Академия профессионального образования - ${cityName}`,
-              description: `Салон красоты в г. ${cityName} с услугами массажа, спа, косметологии и онлайн-курсами.`,
-              url: `${siteUrl}/${citySlug}`,
-              areaServed: {
-                "@type": "City",
-                name: cityName,
-              },
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: cityName,
-                addressCountry: "RU",
-              },
-            },
-          ])}
-        </Script>
-      </head>
-      <body className="min-h-screen bg-background">
-        <PopupProvider>
-          <Header />
-          <CityInit city={city} />
-          <main className="mx-auto min-h-[60vh]">{children}</main>
-          <BottomNavigation />
-          <Footer city={city} />
-          <Toaster />
-          <ContactWidget />
-        </PopupProvider>
-      </body>
-    </html>
+      <PopupProvider>
+        <Header />
+        <CityInit city={city} />
+        <main className="mx-auto min-h-[60vh]">{children}</main>
+        <BottomNavigation />
+        <Footer city={city} />
+        <Toaster />
+        <LazyContactWidget />
+      </PopupProvider>
+    </>
   )
 }

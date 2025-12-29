@@ -1,4 +1,4 @@
-import {string, z} from "zod";
+import {z} from "zod";
 import { emailSchema, passwordSchema } from "./validation-constants";
 export const registrationSchema = z.object({
     email : emailSchema,

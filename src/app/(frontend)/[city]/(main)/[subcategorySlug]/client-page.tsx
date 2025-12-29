@@ -12,6 +12,7 @@ import { useAccessibilityStore } from "@/entities/accessibility/accessibilitySto
 import useSWR from "swr"
 import { getSubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 import { getFilteredProducts } from "@/actions/server/products/getFilterProducts"
+import NotFound from "@/app/(frontend)/not-found"
 
 type Props = {
   subcategorySlug: string
@@ -92,6 +93,10 @@ const SubCategoryClientPage = ({
   const prevButtonTitle = initialData?.prevSubCategory
     ? initialData.prevSubCategory.title
     : initialData?.prevCategoryLastSubCategory?.title
+
+  if (!allSubCategories){
+    return <NotFound />
+  }
 
   return (
     <>

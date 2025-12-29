@@ -1,5 +1,4 @@
 import { routerConfig } from '@/config/router.config';
-import { useCityStore } from '@/entities/city/cityStore';
 import useAuth from '@/hooks/useAuth';
 import { useCity } from '@/lib/use-city';
 import { Home, Search, User } from 'lucide-react';

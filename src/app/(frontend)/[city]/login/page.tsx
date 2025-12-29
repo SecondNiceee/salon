@@ -5,7 +5,6 @@ import { redirect } from "next/navigation"
 import { routerConfig } from "@/config/router.config"
 import LoginPageClient from "./login-client-page"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
   title: "Вход в аккаунт | Академия профессионального образования | Салон красоты",

@@ -3,7 +3,6 @@ import { Block } from "payload";
 import { HeaderBlock } from "./HeaderBlock";
 import { TextBlock } from "./TextBlock";
 import { ListBlock } from "./ListBlock";
-import { AccordionBlock } from "./AccordionBlock";
 
 
 export const TextWithImageBlock:Block = {

@@ -34,7 +34,7 @@ export function BookingButtonBlock({
           body: JSON.stringify({
             name: user.name,
             phone: user.phone,
-            city: city?.declensions?.nominative || city?.title,
+            city: city?.declensions?.nominative || city?.name,
           }),
         })
 

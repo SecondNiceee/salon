@@ -1,7 +1,5 @@
 "use client"
 
-import { RichText } from "@payloadcms/richtext-lexical/react"
-import jsxConverters from "@/utils/jsx-converters"
 import "@/styles/richText.scss"
 import type { Product } from "@/payload-types"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"

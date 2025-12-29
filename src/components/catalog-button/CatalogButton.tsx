@@ -1,6 +1,5 @@
 "use client"
 import { Button } from "../ui/button"
-import Image from "next/image"
 import { useCatalogStore } from "@/entities/catalog/catalogStore"
 
 const CatalogButton = () => {

@@ -3,9 +3,11 @@
 import config from "@/payload.config"
 import { getPayload } from "payload"
 import { unstable_cache } from "next/cache"
+import { TCity } from "@/entities/city/cityStore"
 
 
-async function fetchCitiesFromPayload(): Promise<any> {
+
+async function fetchCitiesFromPayload(): Promise<TCity[] | null | undefined> {
   try {
     const payload = await getPayload({ config })
     const citiesGlobal = await payload.findGlobal({
@@ -31,16 +33,21 @@ export const getCities = unstable_cache(
 )
 
 export async function getDefaultCity(): Promise<any> {
-  const cities = await getCities()
+  const cities = await getCities();
+  if (cities)
   return cities.find((city:any) => city.isDefault) || cities[0] || null
+  else return [];
 }
 
 export async function getCityBySlug(slug: string): Promise<any> {
   const cities = await getCities();
 
   // Проверяем основной slug
-  const cityBySlug = cities.find((city:any) => city.slug === slug)
-  return cityBySlug || null
+  if (cities){
+    const cityBySlug = cities.find((city:any) => city.slug === slug);
+    return cityBySlug
+  }
+  return null
 }
 
 

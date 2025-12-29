@@ -1,4 +1,4 @@
-import { isAdmin, isLoggedIn, isOwn } from '@/utils/accessUtils';
+import { isAdmin, isLoggedIn } from '@/utils/accessUtils';
 import { type CollectionConfig } from 'payload'
 
 const Reviews: CollectionConfig = {

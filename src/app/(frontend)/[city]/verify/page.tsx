@@ -77,7 +77,7 @@ const VerifyEmailPage = async ({ searchParams }: { searchParams: Promise<any> | 
         </Card>
       </main>
     )
-  } catch (error: unknown) {
+  } catch {
     return (
       <main className="h-[90vh] bg-gradient-to-br from-red-50 to-pink-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-xl border-0">

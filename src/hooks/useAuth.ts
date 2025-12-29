@@ -1,13 +1,11 @@
 "use client"
 
 import { routerConfig } from "@/config/router.config"
-import { useAuthDialogStore } from "@/entities/auth/authDialogStore"
-import { type TUserResponse, useAuthStore } from "@/entities/auth/authStore"
-import { useCityStore } from "@/entities/city/cityStore"
+import {  useAuthStore } from "@/entities/auth/authStore"
 import { useOrdersStore } from "@/entities/orders/ordersStore"
 import { useCity } from "@/lib/use-city"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const useAuth = () => {
   const router = useRouter()

@@ -24,7 +24,7 @@ export const TextWithImageBlock: React.FC<TextWithImageBlockProps> = ({ text, im
         {imageUrl ? (
           <Image
             src={imageUrl || "/placeholder.svg"}
-            alt={image.alt || ""}
+            alt={image?.alt || ""}
             fill
             className="object-cover"
             quality={90}

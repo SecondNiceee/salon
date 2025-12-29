@@ -10,11 +10,8 @@ import { searchProducts } from "@/actions/server/products/getPruductsByQuery"
 import { ProductCard } from "../product-card/ProductCard"
 import { useCityStore } from "@/entities/city/cityStore"
 
-interface ProductSearchProps {
-  onProductSelect?: (product: Product) => void
-}
 
-const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
+const ProductSearch = () => {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -60,11 +57,6 @@ const ProductSearch = ({ onProductSelect }: ProductSearchProps) => {
     setQuery(e.target.value)
   }
 
-  const handleProductClick = (product: Product) => {
-    setIsOpen(false)
-    setQuery("")
-    onProductSelect?.(product)
-  }
 
   const clearSearch = () => {
     setQuery("")

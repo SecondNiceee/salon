@@ -13,11 +13,17 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {
+      'react/display-name': 'off',
+      '@typescript-eslint/no-explicit-any': 'off', // 👈 отключено
+      "react-hooks/exhaustive-deps" : 'off',
+      "@next/next/no-img-element" : "off",
+      "react/no-unescaped-entities" : "off",
+
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         {
           vars: 'all',
           args: 'after-used',

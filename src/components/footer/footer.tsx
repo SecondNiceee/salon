@@ -1,7 +1,6 @@
 import { getSiteSettings } from "@/actions/server/globals/getSiteSettings"
 import { routerConfig } from "@/config/router.config"
 import type { Media } from "@/payload-types"
-import Image from "next/image"
 import Link from "next/link"
 export const dynamic = "auto"
 

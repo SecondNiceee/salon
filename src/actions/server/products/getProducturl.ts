@@ -27,16 +27,6 @@ const getProductUrlDataCached = unstable_cache(
       }
 
       const subCategory = product.subCategory as Category | null
-      console.log(`[v0] Product ${productId}:`, {
-        productSlug: product.slug,
-        subCategory: subCategory
-          ? {
-              id: subCategory.id,
-              value: subCategory.value,
-              name: subCategory.name,
-            }
-          : null,
-      })
 
       if (!subCategory || !subCategory.value) {
         console.log(`[v0] Product ${productId}: Missing subCategory or subCategory.value`)

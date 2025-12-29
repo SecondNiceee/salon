@@ -20,29 +20,19 @@ export default function AppInit() {
   useEffect(() => {
     if (didBoot.current) return
     didBoot.current = true
-    ;(async () => {
-      try {
-        // 1) Fetch current user session
-        await fetchMe()
-      } catch {}
 
+    // Use requestIdleCallback for lower priority tasks
+    const loadNonCritical = () => {
+      Promise.allSettled([fetchMe(), getCategories(), loadFavoritiesIds(), loadSiteSettings()])
+    }
 
-      try {
-        // 3) Prefetch categories (optional, improves UX of header/catalog)
-        await getCategories()
-      } catch {}
-
-      try {
-        await loadFavoritiesIds()
-      } catch (e) {
-        console.log(e)
-      }
-
-      try {
-        await loadSiteSettings()
-      } catch {}
-    })()
-  }, [fetchMe, getCategories])
+    if (typeof requestIdleCallback !== "undefined") {
+      requestIdleCallback(loadNonCritical, { timeout: 2000 })
+    } else {
+      // Fallback for Safari
+      setTimeout(loadNonCritical, 100)
+    }
+  }, [fetchMe, getCategories, loadFavoritiesIds, loadSiteSettings])
 
   return null
 }

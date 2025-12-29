@@ -1,91 +1,9 @@
 /* src/app/globals.css */
-/* Removed duplicate @tailwind directives that were causing extra CSS bundle size */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@custom-variant dark (&:is(.dark *));
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
+/* Removed duplicate :root and .dark definitions - keeping only OKLCH values */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -193,6 +111,18 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
+
+/* Single @layer base block instead of 3 duplicates */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@custom-variant dark (&:is(.dark *));
 
 .hide-scrollbar {
   -ms-overflow-style: none;
@@ -406,7 +336,6 @@ html.high-contrast .hc-category-circle {
 html.high-contrast .hc-category-link {
   background: transparent !important;
   background-color: transparent !important;
-  /* Force fixed width for horizontal scrolling - categories must not collapse */
   min-width: 90px !important;
   max-width: 90px !important;
   width: 90px !important;
@@ -419,7 +348,6 @@ html.high-contrast .hc-category-circle img {
   filter: none !important;
 }
 
-/* Ensure scroll container keeps proper gap and layout in high-contrast mode */
 html.high-contrast .hc-categories-scroll {
   display: flex !important;
   flex-wrap: nowrap !important;
@@ -429,12 +357,10 @@ html.high-contrast .hc-categories-scroll {
   -webkit-overflow-scrolling: touch !important;
 }
 
-/* Force categories to maintain fixed width and not shrink/collapse */
 html.high-contrast .hc-categories-scroll > * {
   flex-shrink: 0 !important;
 }
 
-/* Ensure scroll arrows are visible and styled properly */
 html.high-contrast .hc-scroll-arrow {
   background: #000 !important;
   border: 2px solid #fff !important;
@@ -447,11 +373,9 @@ html.high-contrast .hc-scroll-arrow:hover {
   background: #333 !important;
 }
 
-/* Remove restrictive styles that collapse categories - keep proper spacing for scrolling */
 html.high-contrast .hc-category-icon {
   background: #fff !important;
   background-color: #fff !important;
-  /* Ensure icon circles maintain size */
   min-width: 40px !important;
   min-height: 40px !important;
   flex-shrink: 0 !important;
@@ -460,13 +384,4 @@ html.high-contrast .hc-category-icon {
 html.high-contrast .hc-category-title {
   font-size: 12px !important;
   font-weight: 600 !important;
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }

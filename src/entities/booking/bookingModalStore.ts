@@ -8,7 +8,7 @@ interface BookingModalStore {
   user: User | null
   productId: string | number | null
   isSubmitting: boolean
-  openModal: (user: User | null, productId: string | number, form? : "form" | "success") => void
+  openModal: (user: User | null, productId: string | number | null, form? : "form" | "success") => void
   closeModal: () => void
   setMode: (mode: "form" | "success") => void // New method to change mode
   setUser: (user: User | null) => void
@@ -21,7 +21,7 @@ export const useBookingModalStore = create<BookingModalStore>((set) => ({
   user: null,
   productId: null,
   isSubmitting: false,
-  openModal: (user, productId, form) => set({ isOpen: true, user, productId, mode: form ?? "form" }), // Reset mode to form when opening
+  openModal: (user, productId = null, form) => set({ isOpen: true, user, productId, mode: form ?? "form" }), // Reset mode to form when opening
   closeModal: () => set({ isOpen: false, mode: "form" }), // Reset mode when closing
   setMode: (mode) => set({ mode }),
   setUser: (user) => set({ user }),

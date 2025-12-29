@@ -16,7 +16,7 @@ export function ContactWidget() {
   }
 
   const handleCallRequest = () => {
-    openModal(null)
+    openModal(null, null)
     setIsOpen(false)
   }
 

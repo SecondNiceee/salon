@@ -27,13 +27,12 @@ export async function POST(request: NextRequest) {
 
     const payload = await getPayload({ config })
 
-    let product
     try {
-      product = await payload.findByID({
+      await payload.findByID({
         collection: "products",
         id: data.productId,
       })
-    } catch (error) {
+    } catch  {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })
     }
 
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
       try {
         const { user } = await payload.auth({ headers: request.headers })
         currentUser = user
-      } catch (error) {
+      } catch {
         console.log("No authenticated user found")
       }
     }

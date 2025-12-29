@@ -47,7 +47,7 @@ export default function ProfileClientPage() {
       await updateProfile({ name: name.trim() })
       setOriginalName(name.trim())
       toast.success("Имя обновлено")
-    } catch (error) {
+    } catch  {
       toast.error("Не удалось обновить имя")
     } finally {
       setIsUpdatingName(false)
@@ -71,7 +71,7 @@ export default function ProfileClientPage() {
       await updateProfile({ phone: normalizePhone(phone) })
       setOriginalPhone(phone)
       toast.success("Номер телефона обновлен")
-    } catch (error) {
+    } catch  {
       toast.error("Не удалось обновить номер телефона")
     } finally {
       setIsUpdatingPhone(false)

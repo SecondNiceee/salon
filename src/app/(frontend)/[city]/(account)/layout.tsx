@@ -50,7 +50,7 @@ export default async function AccountLayout({
     if (!data.user) {
       redirect(routerConfig.getPath(city, "home"))
     }
-  } catch (e) {
+  } catch {
     redirect(routerConfig.getPath(city, "home"))
   }
 

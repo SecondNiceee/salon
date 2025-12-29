@@ -12,6 +12,8 @@ import { useParams } from "next/navigation"
 import { useCity } from "@/lib/use-city"
 import type { CategoryWithSubs } from "@/actions/server/categories/getCategorysWithSubs"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
+import Image from "next/image"
+import { fixPayloadUrl } from "@/utils/fixPayloadUrl"
 
 interface CategoriesProps {
   initialCategories?: CategoryWithSubs[]
@@ -146,7 +148,7 @@ export function Categories({ initialCategories = [] }: CategoriesProps) {
                 <div
                   className={`sm:w-12 sm:h-12 w-10 h-10 bg-white hc-category-circle hc-category-icon ${isActive ? "border-pink-500 border-2 border-solid" : "border-black border-[1px] border-solid"}  rounded-full flex items-center justify-center hover:bg-brand-50`}
                 >
-                  <img alt={"shop"} src={imageUrl || "/placeholder.svg"} className="w-6 h-6 text-black" />
+                  <Image width={20} height={20} alt={"shop"} src={fixPayloadUrl(imageUrl)} className="w-6 h-6 text-black" />
                 </div>
                 <span
                   className={`text-xs ${isActive ? "text-brand-400 font-semibold" : ""} text-center leading-tight hc-category-title`}

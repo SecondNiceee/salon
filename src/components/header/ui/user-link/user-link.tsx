@@ -19,7 +19,7 @@ const UserLink: FC<IUserLink> = ({ className = "" }) => {
   const city = useCity() // Get city from hook
 
   const clickHandler = () => {
-    if (user) {
+    if (user && city) {
       router.push(routerConfig.getPath(city, "profile"))
     } else {
       openDialog("login")

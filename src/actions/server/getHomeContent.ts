@@ -1,7 +1,6 @@
 import { getSiteSettings } from "@/actions/server/globals/getSiteSettings"
 import { replaceCityInRichText } from "@/utils/replaceCityVariables"
 import { unstable_cache } from "next/cache"
-import { getCityDeclensions } from "@/utils/replaceCityVariables"
 import { getSubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 
 export const getCachedHomeContent = unstable_cache(
