@@ -68,6 +68,13 @@ const Products: CollectionConfig = {
     useAsTitle: "title",
     group: "Категории, подкатегории, товары",
     defaultColumns: ["title", "serviceType", "price", "category"],
+    components: {
+      views: {
+        list: {
+          Component: "@/components/admin/ProductsHub#ProductsHub",
+        },
+      },
+    },
   },
   // access: {
   //   read: () => true,
@@ -244,7 +251,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         condition: (data) => data.hasProductPage === true,
-        description: "Доступно только когда включена страничка товара",
+        description: "Доступно т��лько когда включена страничка товара",
       },
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
