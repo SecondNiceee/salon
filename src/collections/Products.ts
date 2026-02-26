@@ -53,11 +53,28 @@ const generateSlug = (title: string): string => {
     .substring(0, 100)
 }
 
+export const SERVICE_TYPES = [
+  { label: "Обучение", value: "education" },
+  { label: "Массаж", value: "massage" },
+  { label: "Косметология", value: "cosmetology" },
+  { label: "Спа", value: "spa" },
+  { label: "Тату", value: "tattoo" },
+  { label: "Подарочные сертификаты", value: "gift-certificates" },
+] as const
+
 const Products: CollectionConfig = {
   slug: "products",
   admin: {
     useAsTitle: "title",
     group: "Категории, подкатегории, товары",
+    defaultColumns: ["title", "serviceType", "price", "category"],
+    components: {
+      views: {
+        list: {
+          Component: "@/components/admin/ProductsHub#ProductsHub",
+        },
+      },
+    },
   },
   // access: {
   //   read: () => true,
@@ -89,6 +106,17 @@ const Products: CollectionConfig = {
     ],
   },
   fields: [
+    {
+      name: "serviceType",
+      type: "select",
+      label: "Тип услуги",
+      required: true,
+      options: SERVICE_TYPES.map((t) => ({ label: t.label, value: t.value })),
+      admin: {
+        position: "sidebar",
+        description: "Раздел, к которому относится товар",
+      },
+    },
     {
       name: "title",
       type: "text",
@@ -223,7 +251,7 @@ const Products: CollectionConfig = {
       required: false,
       admin: {
         condition: (data) => data.hasProductPage === true,
-        description: "Доступно только когда включена страничка товара",
+        description: "Доступно т��лько когда включена страничка товара",
       },
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
