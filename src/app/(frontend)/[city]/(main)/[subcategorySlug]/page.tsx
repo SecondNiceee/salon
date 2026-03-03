@@ -6,6 +6,8 @@ import SubCategoryClientPage from "./client-page"
 import { notFound } from "next/navigation"
 import { getCachedSubCategoryContent } from "@/actions/server/getHomeContent"
 import { getSubCategoryBySlug } from "@/actions/server/products/getSubCategoryBySlug"
+import { getFilterConfig } from "@/actions/server/products/getFilterConfig"
+import type { Category } from "@/payload-types"
 
 type Props = {
   params: Promise<{ subcategorySlug: string; city: string }>
@@ -109,7 +111,14 @@ export default async function SubCategoryPage({ params }: Props) {
 
   // Эти запросы быстрые - только city и richText контент
   const city = await getCityBySlug(citySlug)
-  const { processedContent, processedContentAfter } = await getCachedSubCategoryContent(subcategorySlug, city)
+
+  const [{ processedContent, processedContentAfter }, filterConfig] = await Promise.all([
+    getCachedSubCategoryContent(subcategorySlug, city),
+    getFilterConfig(
+      subCategory.id,
+      typeof subCategory.parent === "object" ? (subCategory.parent as Category).id : (subCategory.parent as number),
+    ),
+  ])
 
   return (
     <SubCategoryClientPage
@@ -118,6 +127,7 @@ export default async function SubCategoryPage({ params }: Props) {
       initialCity={city}
       processedContent={processedContent}
       processedContentAfter={processedContentAfter}
+      filterConfig={filterConfig}
     />
   )
 }

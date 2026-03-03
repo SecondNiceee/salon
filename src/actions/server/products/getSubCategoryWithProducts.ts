@@ -134,6 +134,7 @@ const _getSubCategoryWithProducts = async (subcategorySlug: string): Promise<Sub
         reviewsCount: true,
         content: true,
         hasProductPage: true,
+        filterValues: true,
       },
     })
 
