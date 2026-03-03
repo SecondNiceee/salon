@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     categories: Category;
     products: Product;
+    'filter-configs': FilterConfig;
     orders: Order;
     reviews: Review;
     favorites: Favorite;
@@ -324,8 +325,41 @@ export interface Product {
   /**
    * Обновляется автоматически при добавлении отзыва
    */
+  filterValues?:
+    | {
+        key: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   averageRating?: number | null;
   reviewsCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filter-configs".
+ */
+export interface FilterConfig {
+  id: number;
+  category: number | Category;
+  filters?:
+    | {
+        key: string;
+        label: string;
+        type: 'checkbox' | 'radio';
+        isAdvanced?: boolean | null;
+        options?:
+          | {
+              value: string;
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }

@@ -16,6 +16,7 @@ import Orders from "./collections/Orders"
 import Reviews from "./collections/Reviews"
 import Favorites from "./collections/Favorites"
 import { Pages } from "./collections/Pages"
+import FilterConfigs from "./collections/FilterConfigs"
 import { ImageBlock } from "./lib/payload-blocks/ImageBlock"
 import { PararaphBlock } from "./lib/payload-blocks/ParagraphBlock"
 import { TextWithImageBlock } from "./lib/payload-blocks/TextWithImageBlock"
@@ -41,7 +42,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Products, Orders, Reviews, Favorites, Pages],
+  collections: [Users, Media, Categories, Products, FilterConfigs, Orders, Reviews, Favorites, Pages],
   globals: [SiteSettings, Cities],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

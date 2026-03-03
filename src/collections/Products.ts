@@ -240,6 +240,36 @@ const Products: CollectionConfig = {
       }),
     },
     {
+      name: "filterValues",
+      type: "array",
+      label: "Атрибуты фильтрации",
+      admin: {
+        description:
+          "Заполняется по ключам из настроек фильтров (FilterConfigs) категории/подкатегории. " +
+          'Пример: key="goal", value="medical". Ключи и значения должны совпадать с теми, что указаны в FilterConfigs.',
+      },
+      fields: [
+        {
+          name: "key",
+          type: "text",
+          label: "Ключ",
+          required: true,
+          admin: {
+            description: 'Ключ фильтра: "goal", "direction", "format", "document"',
+          },
+        },
+        {
+          name: "value",
+          type: "text",
+          label: "Значение",
+          required: true,
+          admin: {
+            description: 'Значение: "medical", "beginner", "offline"',
+          },
+        },
+      ],
+    },
+    {
       name: "averageRating",
       type: "number",
       label: "Средний рейтинг",

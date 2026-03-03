@@ -1,17 +1,18 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useRef } from "react"
+import { useRef, useState, useMemo } from "react"
 import { ProductCard } from "@/components/product-card/ProductCard"
 import { ArrowRight, ArrowLeft } from "lucide-react"
 import SubCategories from "@/components/sub-categories/SubCategories"
-import type { City, Category } from "@/payload-types"
+import type { City, Category, FilterConfig, Product } from "@/payload-types"
 import "@/styles/richText.scss"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 import { useAccessibilityStore } from "@/entities/accessibility/accessibilityStore"
 import useSWR from "swr"
 import { getSubCategoryWithProducts } from "@/actions/server/products/getSubCategoryWithProducts"
 import { getFilteredProducts } from "@/actions/server/products/getFilterProducts"
+import { ProductFilters, type ActiveFilters } from "@/components/product-filters/ProductFilters"
 
 type Props = {
   subcategorySlug: string
@@ -19,6 +20,7 @@ type Props = {
   initialCity: City | null
   processedContent: any
   processedContentAfter: any
+  filterConfig: FilterConfig | null
 }
 
 function ProductsSkeleton() {
@@ -38,15 +40,36 @@ function ProductsSkeleton() {
   )
 }
 
+function applyFilters(products: Product[], activeFilters: ActiveFilters): Product[] {
+  const entries = Object.entries(activeFilters).filter(([, vals]) => vals.length > 0)
+  if (entries.length === 0) return products
+
+  return products.filter((product) => {
+    const productFilterValues = product.filterValues ?? []
+
+    return entries.every(([key, selectedValues]) => {
+      // Find the product's value(s) for this filter key
+      const productValues = productFilterValues
+        .filter((fv) => fv.key === key)
+        .map((fv) => fv.value)
+
+      // The product must have at least one matching value
+      return selectedValues.some((sv) => productValues.includes(sv))
+    })
+  })
+}
+
 const SubCategoryClientPage = ({
   subcategorySlug,
   citySlug,
   initialCity,
   processedContent,
   processedContentAfter,
+  filterConfig,
 }: Props) => {
   const router = useRouter()
   const { isLargeText } = useAccessibilityStore()
+  const [activeFilters, setActiveFilters] = useState<ActiveFilters>({})
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -62,6 +85,11 @@ const SubCategoryClientPage = ({
     ([, parentSlug]) => (parentSlug ? getFilteredProducts(parentSlug) : Promise.resolve([])),
     { revalidateOnFocus: false },
   )
+
+  const filteredProducts = useMemo(() => {
+    if (!initialData?.products) return []
+    return applyFilters(initialData.products, activeFilters)
+  }, [initialData?.products, activeFilters])
 
   const goToNext = () => {
     if (initialData?.nextSubCategory) {
@@ -117,16 +145,35 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
+            {/* Filters */}
+            {filterConfig && (
+              <div className="mb-4">
+                <ProductFilters
+                  filterConfig={filterConfig}
+                  activeFilters={activeFilters}
+                  onChange={setActiveFilters}
+                />
+              </div>
+            )}
+
             {isLoadingProducts ? (
               <ProductsSkeleton />
             ) : (
-              <div
-                className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
-              >
-                {initialData?.products.map((product) => (
-                  <ProductCard city={initialCity} key={product.id} product={product} />
-                ))}
-              </div>
+              <>
+                {filteredProducts.length === 0 && Object.values(activeFilters).flat().length > 0 ? (
+                  <p className="text-gray-500 text-sm py-8 text-center">
+                    По выбранным фильтрам ничего не найдено
+                  </p>
+                ) : (
+                  <div
+                    className={`grid w-full gap-4 ${isLargeText ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}
+                  >
+                    {filteredProducts.map((product) => (
+                      <ProductCard city={initialCity} key={product.id} product={product} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {processedContentAfter && (
