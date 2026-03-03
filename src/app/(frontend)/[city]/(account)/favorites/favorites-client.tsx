@@ -15,6 +15,7 @@ export default function FavoritesClientPage({ city }: { city: any }) {
     loadFavorites,
     favoriteProductIds,
     loadMoreFavorites,
+    removeFromFavorites,
     hasMore,
     isLoadingMore,
   } = useFavoritesStore()

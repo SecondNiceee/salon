@@ -1,6 +1,7 @@
 "use client"
 import { routerConfig } from "@/config/router.config"
 import Link from "next/link"
+import Image from "next/image"
 import { useCity } from "@/lib/use-city"
 
 const HeaderLogo = () => {

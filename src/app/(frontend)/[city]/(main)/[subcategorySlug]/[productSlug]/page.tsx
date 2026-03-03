@@ -96,7 +96,7 @@ export async function generateMetadata({
         images: media?.url ? [media.url] : [],
       },
     }
-  } catch  {
+  } catch (error) {
     return {
       title: "Ошибка загрузки услуги",
       description: "Не удалось загрузить информацию об услуге",
@@ -145,7 +145,7 @@ export default async function ProductPage({
         <ProductPageClient product={product} productId={String(product.id)} city={city} />
       </>
     )
-  } catch {
+  } catch (error) {
     return <ErrorAlert buttonAction={() => window.location.reload()} errorMessage="Не удалось загрузить услугу" />
   }
 }

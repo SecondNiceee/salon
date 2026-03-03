@@ -2,18 +2,15 @@
 
 import { create } from "zustand"
 
-export type TCity = {
-  name: string;
-  slug: string;
-  declensions: {
-      nominative: string;
-      genitive: string;
-      prepositional: string;
-  };
-  seoTitle?: string | null;
-  metaDescription?: string | null;
-  isDefault?: boolean | null;
-  id?: string | null;
+type TCity = {
+  id : string,
+  name : string,
+  slug : string,
+  declensions : {
+    genitive : string,
+    nominative : string,
+    prepositional : string
+  }
 }
 
 type CityState = {

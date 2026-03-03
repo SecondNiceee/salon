@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
 import ReviewSection from "@/components/product-page/ui/ReviewSection"
 import type { Product } from "@/payload-types"
+import type { City } from "@/payload-types"
 import { replaceCityVariables, replaceCityInRichText } from "@/utils/replaceCityVariables"
 import "@/styles/richText.scss"
 import { useFavoritesStore } from "@/entities/favorites/favoritesStore"
@@ -14,14 +15,14 @@ import { Button } from "@/components/ui/button"
 import ThankYouModal from "@/components/product-page/ui/ThankYouModal"
 import { toast } from "sonner"
 import { useBookingModalStore } from "@/entities/booking/bookingModalStore"
-import { TCity, useCityStore } from "@/entities/city/cityStore"
+import { useCityStore } from "@/entities/city/cityStore"
 import MemoRichText from "@/components/memo-rich-text/MemoRichText"
 import { useHistory } from "@/providers/history-provider"
 
 interface ProductPageClientProps {
   product: Product
   productId: string
-  city: TCity
+  city: City | null
 }
 
 export default function ProductPageClient({ product, productId, city }: ProductPageClientProps) {
@@ -73,7 +74,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
       try {
         setIsSubmitting(true)
 
-        const currentCity = (storedCity || city) as TCity
+        const currentCity = storedCity || city
         const response = await fetch("/api/booking/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -81,7 +82,7 @@ export default function ProductPageClient({ product, productId, city }: ProductP
             name: user.name,
             phone: user.phone,
             productId: product.id,
-            city: currentCity?.declensions?.nominative || currentCity.name
+            city: currentCity?.declensions?.nominative || currentCity?.title,
           }),
         })
 

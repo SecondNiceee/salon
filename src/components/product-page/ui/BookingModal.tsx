@@ -85,7 +85,7 @@ export default function BookingModal() {
             name: formData.name,
             phone: formData.phone,
             productId: productId,
-            city: city?.declensions?.nominative || city?.name,
+            city: city?.declensions?.nominative || city?.title,
           }),
         })
 
@@ -103,7 +103,7 @@ export default function BookingModal() {
           body: JSON.stringify({
             name: formData.name,
             phone: formData.phone,
-            city: city?.declensions?.nominative || city?.name,
+            city: city?.declensions?.nominative || city?.title,
           }),
         })
 

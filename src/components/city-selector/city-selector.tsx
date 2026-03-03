@@ -28,7 +28,7 @@ export function CitySelector({ className }: { className?: string }) {
   const [allCities, setAllCities] = useState<City[]>([])
 
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null)
+  const debounceTimer = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     fetch("/api/cities")

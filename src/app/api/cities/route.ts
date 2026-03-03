@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     let filteredCities = cities
 
-    if (searchParam && cities) {
+    if (searchParam) {
       const term = searchParam.toLowerCase()
       filteredCities = cities
         .filter((city: any) => {
@@ -43,8 +43,6 @@ export async function GET(request: NextRequest) {
 
 // Если у тебя нет этой функции — добавь её или импортируй
 async function getDefaultCity() {
-  const cities = await getCities();
-  if (cities)
+  const cities = await getCities()
   return cities.find((city) => city.isDefault) || cities[0] || null
-  else return null
 }

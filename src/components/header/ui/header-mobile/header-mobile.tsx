@@ -14,7 +14,6 @@ import { useCity } from "@/lib/use-city"
 import { CitySelector } from "@/components/city-selector/city-selector"
 import Link from "next/link"
 import { AccessibilityDropdown } from "@/components/accessibility/AccessibilityDropdown"
-import NotFound from "@/app/(frontend)/not-found"
 
 const HeaderMobile = () => {
   const { isOpened, setOpened } = useMobileStore()
@@ -26,13 +25,13 @@ const HeaderMobile = () => {
 
   const clickHandler = () => {
     setOpened(false)
-    if (user && city) {
+    if (user) {
       router.push(routerConfig.getPath(city, "profile"))
     } else {
       openDialog("login")
     }
   }
-  if (!city) return <NotFound />
+
   return (
     <div className="md:hidden">
       <div className="text-center space-y-1 pb-3 pt-1">
@@ -50,7 +49,7 @@ const HeaderMobile = () => {
           </Button>
         </Link>
         <div className="flex-1 min-w-0">
-          <ProductSearch />
+          <ProductSearch onProductSelect={() => {}} />
         </div>
 
         <AccessibilityDropdown />
