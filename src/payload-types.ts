@@ -86,6 +86,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    'filter-configs': FilterConfigsSelect<false> | FilterConfigsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
@@ -323,36 +324,71 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * Обновляется автоматически при добавлении отзыва
+   * Заполняется по ключам из настроек фильтров (FilterConfigs) категории/подкатегории. Пример: key="goal", value="medical". Ключи и значения должны совпадать с теми, что указаны в FilterConfigs.
    */
   filterValues?:
     | {
+        /**
+         * Ключ фильтра: "goal", "direction", "format", "document"
+         */
         key: string;
+        /**
+         * Значение: "medical", "beginner", "offline"
+         */
         value: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Обновляется автоматически при добавлении отзыва
+   */
   averageRating?: number | null;
   reviewsCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Настройка фильтров для категорий и подкатегорий
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "filter-configs".
  */
 export interface FilterConfig {
   id: number;
+  /**
+   * Выберите категорию или подкатегорию, для которой настраиваются фильтры. Один конфиг на одну категорию.
+   */
   category: number | Category;
+  /**
+   * Список фильтров, которые будут отображаться на странице
+   */
   filters?:
     | {
+        /**
+         * Уникальный ключ фильтра на английском (без пробелов): goal, direction, format, document
+         */
         key: string;
+        /**
+         * Текст заголовка фильтра: "Ваша цель", "Направление", "Документ"
+         */
         label: string;
         type: 'checkbox' | 'radio';
+        /**
+         * Если включено — фильтр скрыт под кнопкой "Ещё параметры"
+         */
         isAdvanced?: boolean | null;
+        /**
+         * Список значений, из которых можно выбирать
+         */
         options?:
           | {
+              /**
+               * Внутренний ключ для фильтрации: "beginner", "medical", "offline"
+               */
               value: string;
+              /**
+               * Текст, который видит пользователь: "Начинающий", "Медицина", "Очно"
+               */
               label: string;
               id?: string | null;
             }[]
@@ -483,6 +519,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'filter-configs';
+        value: number | FilterConfig;
       } | null)
     | ({
         relationTo: 'orders';
@@ -622,8 +662,40 @@ export interface ProductsSelect<T extends boolean = true> {
   seoDescription?: T;
   hasProductPage?: T;
   content?: T;
+  filterValues?:
+    | T
+    | {
+        key?: T;
+        value?: T;
+        id?: T;
+      };
   averageRating?: T;
   reviewsCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filter-configs_select".
+ */
+export interface FilterConfigsSelect<T extends boolean = true> {
+  category?: T;
+  filters?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        type?: T;
+        isAdvanced?: T;
+        options?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
