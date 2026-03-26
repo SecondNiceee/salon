@@ -20,7 +20,7 @@ interface CategoriesResponse {
 }
 
 async function fetchCategories(): Promise<Category[]> {
-  const url = `${API_URL}/api/categories?depth=1`
+  const url = `${API_URL}/api/categories?depth=1&limit=0`
 
   console.log(`\nЗапрос к: ${url}\n`)
 
