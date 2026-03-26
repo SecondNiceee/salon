@@ -16,7 +16,8 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "seed:cities": "cross-env NODE_OPTIONS=--no-deprecation npx tsx scripts/seed-cities.ts"
+    "seed:cities": "cross-env NODE_OPTIONS=--no-deprecation npx tsx scripts/seed-cities.ts",
+    "list:categories": "cross-env NODE_OPTIONS=--no-deprecation npx tsx scripts/list-categories.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
