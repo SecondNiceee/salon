@@ -17,21 +17,33 @@ interface Category {
 interface CategoriesResponse {
   docs: Category[]
   totalDocs: number
+  hasNextPage: boolean
 }
 
 async function fetchCategories(): Promise<Category[]> {
-  const url = `${API_URL}/api/categories?limit=1000&depth=1`
-  
-  console.log(`\nЗапрос к: ${url}\n`)
-  
-  const response = await fetch(url)
-  
-  if (!response.ok) {
-    throw new Error(`Ошибка API: ${response.status} ${response.statusText}`)
+  const allDocs: Category[] = []
+  let page = 1
+  let hasNextPage = true
+
+  while (hasNextPage) {
+    const url = `${API_URL}/api/categories?limit=100&depth=1&page=${page}`
+
+    if (page === 1) console.log(`\nЗапрос к: ${API_URL}/api/categories\n`)
+
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error(`Ошибка API: ${response.status} ${response.statusText}`)
+    }
+
+    const data: CategoriesResponse = await response.json()
+    allDocs.push(...data.docs)
+
+    hasNextPage = data.hasNextPage ?? false
+    page++
   }
-  
-  const data: CategoriesResponse = await response.json()
-  return data.docs
+
+  return allDocs
 }
 
 function printCategories(categories: Category[]) {
