@@ -9,15 +9,9 @@ export const fixPayloadUrl = (url: string | null | undefined): string => {
   // 1. Нормализуем URL — приводим к полному HTTPS-виду, если нужно
   let fullUrl = url
 
-  // Обработка localhost URL (для локальной разработки)
-  // Заменяем http://localhost:3000/api/media/file/ на production CDN
+  // Для localhost/127.0.0.1 просто возвращаем URL как есть (без CDN преобразований)
   if (url.includes("localhost") || url.includes("127.0.0.1")) {
-    fullUrl = url
-      .replace(/http:\/\/localhost:\d+\/api\/media\/file\//, `https://${CDN_DOMAIN}/media/`)
-      .replace(/http:\/\/127\.0\.0\.1:\d+\/api\/media\/file\//, `https://${CDN_DOMAIN}/media/`)
-      .replace(/http:\/\/localhost:\d+\/media\//, `https://${CDN_DOMAIN}/media/`)
-      .replace(/http:\/\/127\.0\.0\.1:\d+\/media\//, `https://${CDN_DOMAIN}/media/`)
-    return fullUrl
+    return url
   }
 
   // Если URL относительный и начинается с /api/media/file/ → конвертируем в полный
