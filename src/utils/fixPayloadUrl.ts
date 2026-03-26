@@ -9,6 +9,11 @@ export const fixPayloadUrl = (url: string | null | undefined): string => {
   // 1. Нормализуем URL — приводим к полному HTTPS-виду, если нужно
   let fullUrl = url
 
+  // Для localhost/127.0.0.1 просто возвращаем URL как есть (без CDN преобразований)
+  if (url.includes("localhost") || url.includes("127.0.0.1")) {
+    return url
+  }
+
   // Если URL относительный и начинается с /api/media/file/ → конвертируем в полный
   if (url.startsWith("/api/media/file/")) {
     fullUrl = `https://${ORIGIN_DOMAIN}${url}`

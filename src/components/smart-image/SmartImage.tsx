@@ -15,6 +15,11 @@ interface SmartImageProps {
   onError?: () => void
 }
 
+// Проверяем, является ли URL локальным (localhost или 127.0.0.1)
+const isLocalUrl = (url: string): boolean => {
+  return url.includes("localhost") || url.includes("127.0.0.1")
+}
+
 export default function SmartImage({
   src,
   alt = "Изображение",
@@ -29,10 +34,14 @@ export default function SmartImage({
   onError,
 }: SmartImageProps) {
   const finalSrc = src || "/placeholder.svg"
+  const processedSrc = fixPayloadUrl(finalSrc) || "/placeholder.svg"
+  
+  // Для localhost URL отключаем оптимизацию Next.js Image
+  const shouldUnoptimize = isLocalUrl(processedSrc)
 
   return (
     <Image
-      src={fixPayloadUrl(finalSrc) || "/placeholder.svg"}
+      src={processedSrc}
       alt={alt}
       width={width}
       height={height}
@@ -45,6 +54,7 @@ export default function SmartImage({
       blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
       onLoad={onLoad}
       onError={onError}
+      unoptimized={shouldUnoptimize}
     />
   )
 }
