@@ -1,8 +1,5 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
-const isLocalDev = process.env.PAYLOAD_PUBLIC_SERVER_URL?.includes("localhost") ||
-  process.env.PAYLOAD_PUBLIC_SERVER_URL?.includes("127.0.0.1")
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -137,7 +134,6 @@ const nextConfig = {
     ]
   },
   images: {
-    unoptimized: isLocalDev,
     remotePatterns: [
       { protocol: "http", hostname: "127.0.0.1" },
       { protocol: "http", hostname: "localhost" },
