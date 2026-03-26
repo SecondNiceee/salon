@@ -20,16 +20,16 @@ interface CategoriesResponse {
 }
 
 async function fetchCategories(): Promise<Category[]> {
-  const url = `${API_URL}/api/categories?limit=1000&depth=1`
-  
+  const url = `${API_URL}/api/categories?depth=1&limit=0`
+
   console.log(`\nЗапрос к: ${url}\n`)
-  
+
   const response = await fetch(url)
-  
+
   if (!response.ok) {
     throw new Error(`Ошибка API: ${response.status} ${response.statusText}`)
   }
-  
+
   const data: CategoriesResponse = await response.json()
   return data.docs
 }
