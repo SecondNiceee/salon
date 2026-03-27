@@ -1,88 +1,110 @@
 // scripts/list-categories.ts
-// Скрипт для вывода всех категорий и подкатегорий через REST API
+// Скрипт для вывода всех категорий и подкатегорий через Payload Local API
 // Запуск: pnpm list:categories
 
 import "dotenv/config"
+import { getPayload } from "payload"
+import config from "../src/payload.config"
 
-const API_URL = process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000"
+// ---------------------------------------------------------------------------
+// Логирование
+// ---------------------------------------------------------------------------
+const log = {
+  info: (msg: string) => console.log(`[INFO]  ${msg}`),
+  success: (msg: string) => console.log(`[OK]    ${msg}`),
+  warn: (msg: string) => console.warn(`[WARN]  ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+  divider: () => console.log("─".repeat(70)),
+  header: (title: string) => {
+    console.log("\n" + "═".repeat(70))
+    console.log(`  ${title}`)
+    console.log("═".repeat(70))
+  },
+}
+
+// ---------------------------------------------------------------------------
+// Типы
+// ---------------------------------------------------------------------------
 
 interface Category {
-  id: string
+  id: number
   title: string
   value: string
   order?: number
-  parent?: Category | string | null
+  parent?: Category | number | null
 }
 
-interface CategoriesResponse {
-  docs: Category[]
-  totalDocs: number
-}
+// ---------------------------------------------------------------------------
+// Точка входа
+// ---------------------------------------------------------------------------
 
-async function fetchCategories(): Promise<Category[]> {
-  const url = `${API_URL}/api/categories?depth=1&limit=0`
+async function main() {
+  log.header("СПИСОК КАТЕГОРИЙ (Payload Local API)")
 
-  console.log(`\nЗапрос к: ${url}\n`)
+  // Инициализация Payload
+  log.info("Инициализация Payload...")
+  const payload = await getPayload({ config })
+  log.success("Payload инициализирован")
 
-  const response = await fetch(url)
+  log.divider()
 
-  if (!response.ok) {
-    throw new Error(`Ошибка API: ${response.status} ${response.statusText}`)
-  }
+  // Получить все категории
+  log.info("Получение списка категорий...")
+  const result = await payload.find({
+    collection: "categories",
+    limit: 0, // Все записи
+    depth: 1,
+    overrideAccess: true,
+  })
 
-  const data: CategoriesResponse = await response.json()
-  return data.docs
-}
+  const categories = result.docs as Category[]
+  log.info(`Найдено категорий: ${categories.length}`)
 
-function printCategories(categories: Category[]) {
   // Разделяем на родительские и дочерние
   const parentCategories = categories.filter(cat => !cat.parent)
   const childCategories = categories.filter(cat => cat.parent)
-  
+
   // Сортируем по order
   parentCategories.sort((a, b) => (a.order || 0) - (b.order || 0))
-  
-  console.log("=" .repeat(60))
-  console.log("КАТЕГОРИИ И ПОДКАТЕГОРИИ")
-  console.log("=" .repeat(60))
-  
+
+  log.divider()
+  console.log("\nКатегории верхнего уровня (parent = null):")
+  log.divider()
+
   for (const parent of parentCategories) {
-    console.log(`\n[${parent.value}] ${parent.title}`)
-    console.log(`   ID: ${parent.id}, Order: ${parent.order || 0}`)
-    
+    console.log(`\n[${parent.id}] ${parent.value}`)
+    console.log(`    title: "${parent.title}"`)
+    console.log(`    order: ${parent.order || 0}`)
+
     // Находим подкатегории этой категории
     const children = childCategories.filter(child => {
       const parentId = typeof child.parent === "object" ? child.parent?.id : child.parent
       return parentId === parent.id
     })
-    
+
     children.sort((a, b) => (a.order || 0) - (b.order || 0))
-    
+
     if (children.length > 0) {
-      console.log("   Подкатегории:")
-      for (const child of children) {
-        console.log(`      - [${child.value}] ${child.title} (order: ${child.order || 0})`)
-      }
+      console.log(`    Подкатегории: ${children.length}`)
+      children.forEach((child, idx) => {
+        const prefix = idx === children.length - 1 ? "└──" : "├──"
+        console.log(`      ${prefix} [${child.id}] ${child.value} - "${child.title}"`)
+      })
     } else {
-      console.log("   (нет подкатегорий)")
+      console.log("    Подкатегории: 0")
     }
   }
-  
-  console.log("\n" + "=" .repeat(60))
-  console.log(`Всего категорий: ${parentCategories.length}`)
-  console.log(`Всего подкатегорий: ${childCategories.length}`)
-  console.log("=" .repeat(60))
+
+  log.header("ИТОГИ")
+  log.info(`Категорий верхнего уровня: ${parentCategories.length}`)
+  log.info(`Подкатегорий: ${childCategories.length}`)
+  log.info(`Всего: ${categories.length}`)
+
+  process.exit(0)
 }
 
-async function main() {
-  try {
-    console.log("Загрузка категорий...")
-    const categories = await fetchCategories()
-    printCategories(categories)
-  } catch (error) {
-    console.error("Ошибка:", error instanceof Error ? error.message : error)
-    process.exit(1)
-  }
-}
-
-main()
+main().catch((err) => {
+  log.error(`Критическая ошибка: ${err.message}`)
+  console.error(err)
+  process.exit(1)
+})
