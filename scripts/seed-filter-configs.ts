@@ -425,7 +425,7 @@ async function main() {
 
   // Инициализация Payload
   log.info("Инициализация Payload...")
-  const payload = await getPayload({ config, secret: PAYLOAD_SECRET })
+  const payload = await getPayload({ config: { ...config, secret: PAYLOAD_SECRET } })
   log.success("Payload инициализирован")
   
   log.info(`Количество категорий для обработки: ${filterConfigs.length}`)
