@@ -19,8 +19,12 @@ const FilterConfigs: CollectionConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag("filter-configs")
-        revalidateTag("categories_and_products")
+        try {
+          revalidateTag("filter-configs")
+          revalidateTag("categories_and_products")
+        } catch {
+          // revalidateTag не работает вне контекста Next.js (например, в скриптах)
+        }
       },
     ],
   },
