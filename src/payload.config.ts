@@ -55,7 +55,7 @@ export default buildConfig({
       }),
     ],
   }),
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret: process.env.PAYLOAD_SECRET || "42a7038a6aa3db05199544b1",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
