@@ -1,11 +1,10 @@
 // scripts/delete-filter-configs.ts
-// Скрипт для удаления ВСЕХ FilterConfig через REST API
+// Скрипт для удаления ВСЕХ FilterConfig через Payload Local API
 // Запуск: pnpm delete:filters
 
 import "dotenv/config"
-
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-const API_KEY = process.env.PAYLOAD_API_KEY
+import { getPayload } from "payload"
+import config from "../src/payload.config"
 
 // ---------------------------------------------------------------------------
 // Логирование
@@ -30,84 +29,37 @@ const stats = {
 }
 
 // ---------------------------------------------------------------------------
-// Вспомогательные функции
-// ---------------------------------------------------------------------------
-
-function headers(): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    ...(API_KEY ? { Authorization: `users ${API_KEY}` } : {}),
-  }
-}
-
-interface FilterConfigDoc {
-  id: number
-  category?: {
-    id: number
-    value?: string
-    title?: string
-  } | number
-}
-
-async function fetchAllFilterConfigs(): Promise<FilterConfigDoc[]> {
-  const url = `${BASE_URL}/api/filter-configs?limit=100&depth=1`
-  log.info(`Получение списка FilterConfigs: GET ${url}`)
-
-  const res = await fetch(url, { headers: headers() })
-  if (!res.ok) {
-    log.error(`Ошибка получения списка: ${res.status} ${res.statusText}`)
-    return []
-  }
-
-  const data = await res.json()
-  log.info(`Найдено FilterConfigs: ${data.docs?.length ?? 0}`)
-  return data.docs || []
-}
-
-async function deleteFilterConfig(id: number, categoryInfo: string): Promise<boolean> {
-  const url = `${BASE_URL}/api/filter-configs/${id}`
-  log.info(`Удаление: DELETE ${url}`)
-
-  const res = await fetch(url, { method: "DELETE", headers: headers() })
-  if (!res.ok) {
-    const text = await res.text()
-    log.error(`Ошибка удаления ID=${id} (${categoryInfo}): ${res.status} — ${text}`)
-    return false
-  }
-
-  log.success(`Удалён FilterConfig ID=${id} (${categoryInfo})`)
-  return true
-}
-
-function getCategoryInfo(doc: FilterConfigDoc): string {
-  if (!doc.category) return "без категории"
-  if (typeof doc.category === "number") return `categoryId=${doc.category}`
-  return doc.category.value || doc.category.title || `categoryId=${doc.category.id}`
-}
-
-// ---------------------------------------------------------------------------
 // Точка входа
 // ---------------------------------------------------------------------------
 
 async function main() {
   const startTime = Date.now()
 
-  log.header("УДАЛЕНИЕ ВСЕХ FILTER CONFIGS")
-  log.info(`Сервер: ${BASE_URL}`)
-  log.info(`API Key: ${API_KEY ? "установлен" : "НЕ УСТАНОВЛЕН"}`)
+  log.header("УДАЛЕНИЕ ВСЕХ FILTER CONFIGS (Payload Local API)")
 
-  if (!API_KEY) {
-    log.warn("PAYLOAD_API_KEY не задан. Запрос может завершиться ошибкой 403.")
-  }
+  // Инициализация Payload
+  log.info("Инициализация Payload...")
+  const payload = await getPayload({ config })
+  log.success("Payload инициализирован")
 
   log.divider()
 
-  const configs = await fetchAllFilterConfigs()
+  // Получить все FilterConfigs
+  log.info("Получение списка всех FilterConfigs...")
+  const result = await payload.find({
+    collection: "filter-configs",
+    limit: 100,
+    depth: 1,
+    overrideAccess: true,
+  })
+
+  const configs = result.docs
+  log.info(`Найдено FilterConfigs: ${configs.length}`)
 
   if (configs.length === 0) {
     log.info("Нет FilterConfigs для удаления.")
     log.success("Завершено!")
-    return
+    process.exit(0)
   }
 
   log.divider()
@@ -116,13 +68,30 @@ async function main() {
 
   for (let i = 0; i < configs.length; i++) {
     const doc = configs[i]
-    const categoryInfo = getCategoryInfo(doc)
-    log.info(`[${i + 1}/${configs.length}] ID=${doc.id}, категория: ${categoryInfo}`)
+    
+    // Получить информацию о категории
+    let categoryInfo = "без категории"
+    if (doc.category) {
+      if (typeof doc.category === "number") {
+        categoryInfo = `categoryId=${doc.category}`
+      } else if (typeof doc.category === "object" && doc.category !== null) {
+        const cat = doc.category as { id?: number; value?: string; title?: string }
+        categoryInfo = cat.value || cat.title || `categoryId=${cat.id}`
+      }
+    }
 
-    const success = await deleteFilterConfig(doc.id, categoryInfo)
-    if (success) {
+    log.info(`[${i + 1}/${configs.length}] Удаление ID=${doc.id}, категория: ${categoryInfo}`)
+
+    try {
+      await payload.delete({
+        collection: "filter-configs",
+        id: doc.id,
+        overrideAccess: true,
+      })
+      log.success(`Удалён FilterConfig ID=${doc.id} (${categoryInfo})`)
       stats.deleted++
-    } else {
+    } catch (err) {
+      log.error(`Ошибка удаления ID=${doc.id} (${categoryInfo}): ${(err as Error).message}`)
       stats.errors++
     }
   }
@@ -140,6 +109,7 @@ async function main() {
     process.exit(1)
   } else {
     log.success("Все FilterConfigs успешно удалены!")
+    process.exit(0)
   }
 }
 
