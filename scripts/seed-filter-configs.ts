@@ -487,9 +487,93 @@ const filterConfigs: FilterConfigPayload[] = [
         isAdvanced: true,
         options: [
           { value: "discount", label: "Есть акция / скидка" },
-          { value: "online_booking", label: "Можно записаться онлайн" },
+          { value: "online_booking", label: "Мож��о записаться онлайн" },
           { value: "high_rating", label: "Рейтинг услуги от 4+" },
           { value: "premium_products", label: "Использование премиальных препаратов" },
+        ],
+      },
+    ],
+  },
+  // ---------------------------------------------------------------------------
+  // tatu-main — Татуировка и татуаж
+  // ---------------------------------------------------------------------------
+  {
+    categoryValue: "tatu-main",
+    filters: [
+      // --- Основные ---
+      {
+        key: "direction",
+        label: "Направление обучения",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "classic_tattoo", label: "Классическая татуировка (Тату-мастер, Мини-тату)" },
+          { value: "permanent_makeup", label: "Перманентный макияж (татуаж)" },
+        ],
+      },
+      {
+        key: "level",
+        label: "Уровень подготовки",
+        type: "radio",
+        isAdvanced: false,
+        options: [
+          { value: "beginners", label: "Для начинающих (с нуля)" },
+          { value: "advanced", label: "Повышение квалификации" },
+        ],
+      },
+      {
+        key: "document_type",
+        label: "Тип документа",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "certificate", label: "Свидетельство специалиста" },
+          { value: "advanced_cert", label: "Удостоверение повышения квалификации" },
+        ],
+      },
+      // --- Расширенные ---
+      {
+        key: "skills_tattoo",
+        label: "Ключевой навык/техника (тату)",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "sketches", label: "Работа с эскизами" },
+          { value: "outline", label: "Контур" },
+          { value: "fill_shading", label: "Закрас / Штриховка" },
+          { value: "hygiene", label: "Гигиена и стерильность" },
+        ],
+      },
+      {
+        key: "skills_makeup",
+        label: "Ключевой навык/техника (татуаж)",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "eyebrows", label: "Брови" },
+          { value: "lips", label: "Губы" },
+          { value: "eyelids", label: "Веки" },
+          { value: "removal_correction", label: "Удаление / коррекция" },
+        ],
+      },
+      {
+        key: "format",
+        label: "Формат обучения",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "individual", label: "Очно индивидуально" },
+          { value: "group", label: "Очно в группе" },
+        ],
+      },
+      {
+        key: "extra_options",
+        label: "Дополнительные опции",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "portfolio_help", label: "Помощь с портфолио" },
+          { value: "payment_plan", label: "Рассрочка оплаты" },
         ],
       },
     ],
