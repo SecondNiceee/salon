@@ -6,6 +6,8 @@ import "dotenv/config"
 import { getPayload } from "payload"
 import config from "../src/payload.config"
 
+const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET || "42a7038a6aa3db05199544b1"
+
 // ---------------------------------------------------------------------------
 // Логирование
 // ---------------------------------------------------------------------------
@@ -39,7 +41,7 @@ async function main() {
 
   // Инициализация Payload
   log.info("Инициализация Payload...")
-  const payload = await getPayload({ config })
+  const payload = await getPayload({ config, secret: PAYLOAD_SECRET })
   log.success("Payload инициализирован")
 
   log.divider()
