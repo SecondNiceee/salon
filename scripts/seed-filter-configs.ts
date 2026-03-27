@@ -8,6 +8,30 @@ const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
 const API_KEY = process.env.PAYLOAD_API_KEY
 
 // ---------------------------------------------------------------------------
+// Логирование
+// ---------------------------------------------------------------------------
+const log = {
+  info: (msg: string) => console.log(`[INFO]  ${msg}`),
+  success: (msg: string) => console.log(`[OK]    ${msg}`),
+  warn: (msg: string) => console.warn(`[WARN]  ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+  divider: () => console.log("─".repeat(70)),
+  header: (title: string) => {
+    console.log("\n" + "═".repeat(70))
+    console.log(`  ${title}`)
+    console.log("═".repeat(70))
+  },
+}
+
+// Статистика
+const stats = {
+  created: 0,
+  updated: 0,
+  skipped: 0,
+  errors: 0,
+}
+
+// ---------------------------------------------------------------------------
 // Типы
 // ---------------------------------------------------------------------------
 
@@ -402,25 +426,37 @@ function headers(): Record<string, string> {
 
 async function fetchCategoryIdByValue(value: string): Promise<number | null> {
   const url = `${BASE_URL}/api/categories?where[value][equals]=${encodeURIComponent(value)}&limit=1&depth=0`
+  log.info(`Запрос категории: GET ${url}`)
+  
   const res = await fetch(url, { headers: headers() })
   if (!res.ok) {
-    console.error(`  Ошибка получения категории [${value}]: ${res.status} ${res.statusText}`)
+    log.error(`Ошибка получения категории [${value}]: ${res.status} ${res.statusText}`)
     return null
   }
   const data = await res.json()
   if (!data.docs || data.docs.length === 0) {
-    console.warn(`  Категория не найдена: value="${value}"`)
+    log.warn(`Категория не найдена: value="${value}"`)
     return null
   }
+  log.success(`Категория найдена: ID=${data.docs[0].id}, title="${data.docs[0].title || value}"`)
   return data.docs[0].id as number
 }
 
 async function findExistingFilterConfig(categoryId: number): Promise<number | null> {
   const url = `${BASE_URL}/api/filter-configs?where[category][equals]=${categoryId}&limit=1&depth=0`
+  log.info(`Проверка существующего FilterConfig: GET ${url}`)
+  
   const res = await fetch(url, { headers: headers() })
-  if (!res.ok) return null
+  if (!res.ok) {
+    log.warn(`Не удалось проверить существующий FilterConfig: ${res.status}`)
+    return null
+  }
   const data = await res.json()
-  if (!data.docs || data.docs.length === 0) return null
+  if (!data.docs || data.docs.length === 0) {
+    log.info(`Существующий FilterConfig не найден`)
+    return null
+  }
+  log.info(`Найден существующий FilterConfig: ID=${data.docs[0].id}`)
   return data.docs[0].id as number
 }
 
@@ -428,27 +464,37 @@ async function upsertFilterConfig(categoryId: number, filters: FilterField[], ca
   const existingId = await findExistingFilterConfig(categoryId)
 
   const body = JSON.stringify({ category: categoryId, filters })
+  log.info(`Количество фильтров: ${filters.length}`)
+  filters.forEach((f, i) => {
+    log.info(`  [${i + 1}] ${f.key}: "${f.label}" (${f.type}, ${f.isAdvanced ? "расширенный" : "основной"}, ${f.options.length} опций)`)
+  })
 
   if (existingId) {
     // UPDATE
     const url = `${BASE_URL}/api/filter-configs/${existingId}`
+    log.info(`Обновление: PATCH ${url}`)
     const res = await fetch(url, { method: "PATCH", headers: headers(), body })
     if (!res.ok) {
       const text = await res.text()
-      console.error(`  [PATCH] Ошибка обновления filter-config для [${categoryValue}]: ${res.status} — ${text}`)
+      log.error(`[PATCH] Ошибка обновления filter-config для [${categoryValue}]: ${res.status} — ${text}`)
+      stats.errors++
     } else {
-      console.log(`  [PATCH] Обновлён filter-config ID=${existingId} для [${categoryValue}]`)
+      log.success(`[PATCH] Обновлён filter-config ID=${existingId} для [${categoryValue}]`)
+      stats.updated++
     }
   } else {
     // CREATE
     const url = `${BASE_URL}/api/filter-configs`
+    log.info(`Создание: POST ${url}`)
     const res = await fetch(url, { method: "POST", headers: headers(), body })
     if (!res.ok) {
       const text = await res.text()
-      console.error(`  [POST] Ошибка создания filter-config для [${categoryValue}]: ${res.status} — ${text}`)
+      log.error(`[POST] Ошибка создания filter-config для [${categoryValue}]: ${res.status} — ${text}`)
+      stats.errors++
     } else {
       const created = await res.json()
-      console.log(`  [POST] Создан filter-config ID=${created.doc?.id ?? "?"} для [${categoryValue}]`)
+      log.success(`[POST] Создан filter-config ID=${created.doc?.id ?? "?"} для [${categoryValue}]`)
+      stats.created++
     }
   }
 }
@@ -458,34 +504,52 @@ async function upsertFilterConfig(categoryId: number, filters: FilterField[], ca
 // ---------------------------------------------------------------------------
 
 async function main() {
+  const startTime = Date.now()
+
+  log.header("СИДИРОВАНИЕ FILTER CONFIGS")
+  log.info(`Сервер: ${BASE_URL}`)
+  log.info(`API Key: ${API_KEY ? "установлен" : "НЕ УСТАНОВЛЕН"}`)
+  log.info(`Количество категорий для обработки: ${filterConfigs.length}`)
+  
   if (!API_KEY) {
-    console.warn("⚠️  PAYLOAD_API_KEY не задан. Запрос может завершиться ошибкой 403.")
+    log.warn("PAYLOAD_API_KEY не задан. Запрос может завершиться ошибкой 403.")
   }
 
-  console.log(`\nСервер: ${BASE_URL}`)
-  console.log("=".repeat(60))
-  console.log("СИДИРОВАНИЕ FILTER CONFIGS")
-  console.log("=".repeat(60))
-
-  for (const config of filterConfigs) {
-    console.log(`\nКатегория: ${config.categoryValue}`)
+  for (let i = 0; i < filterConfigs.length; i++) {
+    const config = filterConfigs[i]
+    log.divider()
+    log.info(`[${i + 1}/${filterConfigs.length}] Обработка категории: ${config.categoryValue}`)
 
     const categoryId = await fetchCategoryIdByValue(config.categoryValue)
     if (!categoryId) {
-      console.warn(`  Пропускаем — категория не найдена.`)
+      log.warn(`Пропускаем — категория не найдена.`)
+      stats.skipped++
       continue
     }
-    console.log(`  ID категории: ${categoryId}`)
 
     await upsertFilterConfig(categoryId, config.filters, config.categoryValue)
   }
 
-  console.log("\n" + "=".repeat(60))
-  console.log("Готово!")
-  console.log("=".repeat(60))
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2)
+
+  log.header("ИТОГИ")
+  log.info(`Создано:    ${stats.created}`)
+  log.info(`Обновлено:  ${stats.updated}`)
+  log.info(`Пропущено:  ${stats.skipped}`)
+  log.info(`Ошибок:     ${stats.errors}`)
+  log.divider()
+  log.info(`Время выполнения: ${elapsed} сек.`)
+  
+  if (stats.errors > 0) {
+    log.error("Завершено с ошибками!")
+    process.exit(1)
+  } else {
+    log.success("Успешно завершено!")
+  }
 }
 
 main().catch((err) => {
-  console.error("Критическая ошибка:", err)
+  log.error(`Критическая ошибка: ${err.message}`)
+  console.error(err)
   process.exit(1)
 })
