@@ -410,6 +410,90 @@ const filterConfigs: FilterConfigPayload[] = [
       },
     ],
   },
+  // ---------------------------------------------------------------------------
+  // cosmetology-main — Косметология
+  // ---------------------------------------------------------------------------
+  {
+    categoryValue: "cosmetology-main",
+    filters: [
+      // --- Основные ---
+      {
+        key: "procedure_type",
+        label: "Тип процедуры",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "facial_care", label: "Уход за лицом" },
+          { value: "injection", label: "Инъекционная косметология" },
+          { value: "hardware", label: "Аппаратная косметология" },
+          { value: "facial_cleansing", label: "Чистка лица" },
+          { value: "peeling", label: "Пилинг" },
+          { value: "facial_massage", label: "Массаж лица и тела" },
+          { value: "epilation", label: "Эпиляция" },
+        ],
+      },
+      {
+        key: "zone",
+        label: "Зона воздействия",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "face", label: "Лицо" },
+          { value: "neck_decollete", label: "Шея и декольте" },
+          { value: "body", label: "Тело" },
+          { value: "any", label: "Любая" },
+        ],
+      },
+      {
+        key: "price_range",
+        label: "Цена (₽)",
+        type: "radio",
+        isAdvanced: false,
+        options: [
+          { value: "under_3000", label: "до 3 000" },
+          { value: "3000_6000", label: "3 000 – 6 000" },
+          { value: "6000_10000", label: "6 000 – 10 000" },
+          { value: "over_10000", label: "более 10 000" },
+        ],
+      },
+      // --- Расширенные ---
+      {
+        key: "specialist",
+        label: "Специалист",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "esthetician", label: "Косметолог-эстетист" },
+          { value: "medical_cosmetologist", label: "Врач-косметолог (медицинское образование)" },
+          { value: "dermatologist", label: "Дерматолог" },
+        ],
+      },
+      {
+        key: "duration",
+        label: "Длительность процедуры",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "under_30", label: "До 30 мин" },
+          { value: "30_60", label: "30 – 60 мин" },
+          { value: "60_90", label: "60 – 90 мин" },
+          { value: "over_90", label: "Более 90 мин" },
+        ],
+      },
+      {
+        key: "extra",
+        label: "Дополнительные опции",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "discount", label: "Есть акция / скидка" },
+          { value: "online_booking", label: "Можно записаться онлайн" },
+          { value: "high_rating", label: "Рейтинг услуги от 4+" },
+          { value: "premium_products", label: "Использование премиальных препаратов" },
+        ],
+      },
+    ],
+  },
 ]
 
 // ---------------------------------------------------------------------------
