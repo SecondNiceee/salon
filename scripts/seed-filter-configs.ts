@@ -4,9 +4,15 @@
 
 import "dotenv/config"
 import { getPayload } from "payload"
-import config from "../src/payload.config"
+import configPromise from "../src/payload.config"
 
 const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET || "42a7038a6aa3db05199544b1"
+
+// Резолвим Promise от buildConfig и добавляем secret
+async function getConfig() {
+  const config = await configPromise
+  return { ...config, secret: PAYLOAD_SECRET }
+}
 
 // ---------------------------------------------------------------------------
 // Логирование
@@ -425,7 +431,8 @@ async function main() {
 
   // Инициализация Payload
   log.info("Инициализация Payload...")
-  const payload = await getPayload({ config, secret: PAYLOAD_SECRET })
+  const config = await getConfig()
+  const payload = await getPayload({ config })
   log.success("Payload инициализирован")
   
   log.info(`Количество категорий для обработки: ${filterConfigs.length}`)
