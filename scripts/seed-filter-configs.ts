@@ -410,6 +410,174 @@ const filterConfigs: FilterConfigPayload[] = [
       },
     ],
   },
+  // ---------------------------------------------------------------------------
+  // cosmetology-main — Косметология
+  // ---------------------------------------------------------------------------
+  {
+    categoryValue: "cosmetology-main",
+    filters: [
+      // --- Основные ---
+      {
+        key: "procedure_type",
+        label: "Тип процедуры",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "facial_care", label: "Уход за лицом" },
+          { value: "injection", label: "Инъекционная косметология" },
+          { value: "hardware", label: "Аппаратная косметология" },
+          { value: "facial_cleansing", label: "Чистка лица" },
+          { value: "peeling", label: "Пилинг" },
+          { value: "facial_massage", label: "Массаж лица и тела" },
+          { value: "epilation", label: "Эпиляция" },
+        ],
+      },
+      {
+        key: "zone",
+        label: "Зона воздействия",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "face", label: "Лицо" },
+          { value: "neck_decollete", label: "Шея и декольте" },
+          { value: "body", label: "Тело" },
+          { value: "any", label: "Любая" },
+        ],
+      },
+      {
+        key: "price_range",
+        label: "Цена (₽)",
+        type: "radio",
+        isAdvanced: false,
+        options: [
+          { value: "under_3000", label: "до 3 000" },
+          { value: "3000_6000", label: "3 000 – 6 000" },
+          { value: "6000_10000", label: "6 000 – 10 000" },
+          { value: "over_10000", label: "более 10 000" },
+        ],
+      },
+      // --- Расширенные ---
+      {
+        key: "specialist",
+        label: "Специалист",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "esthetician", label: "Косметолог-эстетист" },
+          { value: "medical_cosmetologist", label: "Врач-косметолог (медицинское образование)" },
+          { value: "dermatologist", label: "Дерматолог" },
+        ],
+      },
+      {
+        key: "duration",
+        label: "Длительность процедуры",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "under_30", label: "До 30 мин" },
+          { value: "30_60", label: "30 – 60 мин" },
+          { value: "60_90", label: "60 – 90 мин" },
+          { value: "over_90", label: "Более 90 мин" },
+        ],
+      },
+      {
+        key: "extra",
+        label: "Дополнительные опции",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "discount", label: "Есть акция / скидка" },
+          { value: "online_booking", label: "Мож��о записаться онлайн" },
+          { value: "high_rating", label: "Рейтинг услуги от 4+" },
+          { value: "premium_products", label: "Использование премиальных препаратов" },
+        ],
+      },
+    ],
+  },
+  // ---------------------------------------------------------------------------
+  // tatu-main — Татуировка и татуаж
+  // ---------------------------------------------------------------------------
+  {
+    categoryValue: "tatu-main",
+    filters: [
+      // --- Основные ---
+      {
+        key: "direction",
+        label: "Направление обучения",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "classic_tattoo", label: "Классическая татуировка (Тату-мастер, Мини-тату)" },
+          { value: "permanent_makeup", label: "Перманентный макияж (татуаж)" },
+        ],
+      },
+      {
+        key: "level",
+        label: "Уровень подготовки",
+        type: "radio",
+        isAdvanced: false,
+        options: [
+          { value: "beginners", label: "Для начинающих (с нуля)" },
+          { value: "advanced", label: "Повышение квалификации" },
+        ],
+      },
+      {
+        key: "document_type",
+        label: "Тип документа",
+        type: "checkbox",
+        isAdvanced: false,
+        options: [
+          { value: "certificate", label: "Свидетельство специалиста" },
+          { value: "advanced_cert", label: "Удостоверение повышения квалификации" },
+        ],
+      },
+      // --- Расширенные ---
+      {
+        key: "skills_tattoo",
+        label: "Ключевой навык/техника (тату)",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "sketches", label: "Работа с эскизами" },
+          { value: "outline", label: "Контур" },
+          { value: "fill_shading", label: "Закрас / Штриховка" },
+          { value: "hygiene", label: "Гигиена и стерильность" },
+        ],
+      },
+      {
+        key: "skills_makeup",
+        label: "Ключевой навык/техника (татуаж)",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "eyebrows", label: "Брови" },
+          { value: "lips", label: "Губы" },
+          { value: "eyelids", label: "Веки" },
+          { value: "removal_correction", label: "Удаление / коррекция" },
+        ],
+      },
+      {
+        key: "format",
+        label: "Формат обучения",
+        type: "radio",
+        isAdvanced: true,
+        options: [
+          { value: "individual", label: "Очно индивидуально" },
+          { value: "group", label: "Очно в группе" },
+        ],
+      },
+      {
+        key: "extra_options",
+        label: "Дополнительные опции",
+        type: "checkbox",
+        isAdvanced: true,
+        options: [
+          { value: "portfolio_help", label: "Помощь с портфолио" },
+          { value: "payment_plan", label: "Рассрочка оплаты" },
+        ],
+      },
+    ],
+  },
 ]
 
 // ---------------------------------------------------------------------------
