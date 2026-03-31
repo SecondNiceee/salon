@@ -1,8 +1,14 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import type { Category, Product, FilterConfig } from "@/payload-types"
-import { getProductsByCategory, getFilterConfigByCategory, updateProductFilterValues } from "./actions"
+import {
+  getSubcategories,
+  getProductsBySubCategory,
+  getFilterConfigByCategory,
+  checkCategoryHasSubFilters,
+  updateProductFilterValues,
+} from "./actions"
 
 type FilterOption = { value: string; label: string }
 type Filter = { key: string; label: string; options?: FilterOption[] | null }
@@ -11,30 +17,71 @@ type Props = {
   categories: Category[]
 }
 
-export default function SetProductsClient({ categories }: Props) {
+export default function SetFiltersClient({ categories }: Props) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
+  const [subcategories, setSubcategories] = useState<Category[]>([])
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null)
+  const [hasSubFilters, setHasSubFilters] = useState(false)
+
   const [products, setProducts] = useState<Product[]>([])
   const [filterConfig, setFilterConfig] = useState<FilterConfig | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState<Record<number, boolean>>({})
   const [saved, setSaved] = useState<Record<number, boolean>>({})
-  const [isPending, startTransition] = useTransition()
 
   // Local edits: productId -> { key: value }
   const [edits, setEdits] = useState<Record<number, Record<string, string>>>({})
 
   async function handleCategorySelect(categoryId: number) {
     setSelectedCategoryId(categoryId)
+    setSelectedSubcategoryId(null)
+    setProducts([])
+    setFilterConfig(null)
+    setEdits({})
+    setSaved({})
+    setLoading(true)
+
+    // Check if category itself has a filter config
+    const directFilterConfig = await getFilterConfigByCategory(categoryId)
+
+    if (directFilterConfig) {
+      // Category has its own filter config — load products by subCategory = categoryId (unlikely case)
+      // But actually in this setup, products are linked via subCategory
+      // So if the main category has filters, we show products where category includes this ID
+      setFilterConfig(directFilterConfig)
+      setHasSubFilters(false)
+      setSubcategories([])
+      setLoading(false)
+      return
+    }
+
+    // Check if subcategories have filter configs
+    const hasSubcategoryFilters = await checkCategoryHasSubFilters(categoryId)
+
+    if (hasSubcategoryFilters) {
+      const subs = await getSubcategories(categoryId)
+      setSubcategories(subs)
+      setHasSubFilters(true)
+    } else {
+      setSubcategories([])
+      setHasSubFilters(false)
+    }
+
+    setLoading(false)
+  }
+
+  async function handleSubcategorySelect(subCategoryId: number) {
+    setSelectedSubcategoryId(subCategoryId)
     setLoading(true)
     setEdits({})
     setSaved({})
 
     const [prods, fConfig] = await Promise.all([
-      getProductsByCategory(categoryId),
-      getFilterConfigByCategory(categoryId),
+      getProductsBySubCategory(subCategoryId),
+      getFilterConfigByCategory(subCategoryId),
     ])
 
-    // Initialise edits from existing filterValues
+    // Initialize edits from existing filterValues
     const initial: Record<number, Record<string, string>> = {}
     for (const p of prods) {
       initial[p.id] = {}
@@ -84,12 +131,12 @@ export default function SetProductsClient({ categories }: Props) {
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-foreground mb-1">Назначить фильтры товарам</h1>
           <p className="text-sm text-muted-foreground">
-            Выберите категорию, затем назначьте каждому товару нужные фильтры.
+            Выберите категорию, затем подкатегорию (если есть), и назначьте каждому товару нужные фильтры.
           </p>
         </div>
 
         {/* Category Selector */}
-        <div className="mb-8">
+        <div className="mb-6">
           <p className="text-sm font-medium text-foreground mb-3">Категория</p>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
@@ -108,10 +155,39 @@ export default function SetProductsClient({ categories }: Props) {
           </div>
         </div>
 
+        {/* Subcategory Selector */}
+        {hasSubFilters && subcategories.length > 0 && (
+          <div className="mb-6">
+            <p className="text-sm font-medium text-foreground mb-3">Подкатегория</p>
+            <div className="flex flex-wrap gap-2">
+              {subcategories.map((sub) => (
+                <button
+                  key={sub.id}
+                  onClick={() => handleSubcategorySelect(sub.id)}
+                  className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    selectedSubcategoryId === sub.id
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-foreground border-border hover:border-primary/60"
+                  }`}
+                >
+                  {sub.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* No filters warning */}
-        {selectedCategoryId && !loading && !filterConfig && (
+        {selectedCategoryId && !loading && !hasSubFilters && !filterConfig && (
           <div className="rounded-lg border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
-            У выбранной категории нет настроенных фильтров (FilterConfig).
+            У этой категории нет настроенных фильтров (FilterConfig). Создайте FilterConfig для категории или её подкатегорий.
+          </div>
+        )}
+
+        {/* Need to select subcategory */}
+        {selectedCategoryId && !loading && hasSubFilters && !selectedSubcategoryId && (
+          <div className="rounded-lg border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
+            Выберите подкатегорию, чтобы увидеть товары и их фильтры.
           </div>
         )}
 
@@ -119,7 +195,7 @@ export default function SetProductsClient({ categories }: Props) {
         {filterConfig && filters.length > 0 && (
           <div className="mb-6 rounded-lg border border-border bg-card px-5 py-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-              Доступные фильтры для этой категории
+              Доступные фильтры
             </p>
             <div className="flex flex-wrap gap-3">
               {filters.map((f) => (
@@ -162,7 +238,7 @@ export default function SetProductsClient({ categories }: Props) {
                         {product.title}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {(product.price ?? 0).toLocaleString("ru-RU")} ₽
+                        {(product.price ?? 0).toLocaleString("ru-RU")} RUB
                       </p>
                     </div>
 
@@ -176,7 +252,7 @@ export default function SetProductsClient({ categories }: Props) {
                           : "bg-primary text-primary-foreground hover:opacity-90"
                       } disabled:opacity-50`}
                     >
-                      {isSaving ? "Сохранение..." : isSaved ? "Сохранено" : "Сохранить"}
+                      {isSaving ? "..." : isSaved ? "OK" : "Сохранить"}
                     </button>
                   </div>
 
@@ -195,7 +271,7 @@ export default function SetProductsClient({ categories }: Props) {
                             }
                             className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
                           >
-                            <option value="">— не выбрано —</option>
+                            <option value="">-- не выбрано --</option>
                             {(filter.options ?? []).map((opt) => (
                               <option key={opt.value} value={opt.value}>
                                 {opt.label}
@@ -213,9 +289,16 @@ export default function SetProductsClient({ categories }: Props) {
         )}
 
         {/* Empty state */}
-        {!loading && selectedCategoryId && products.length === 0 && filterConfig && (
+        {!loading && selectedSubcategoryId && products.length === 0 && filterConfig && (
           <div className="text-sm text-muted-foreground py-4">
-            В этой категории нет товаров.
+            В этой подкатегории нет товаров.
+          </div>
+        )}
+
+        {/* No filter config for selected subcategory */}
+        {!loading && selectedSubcategoryId && !filterConfig && (
+          <div className="rounded-lg border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
+            У этой подкатегории нет настроенных фильтров (FilterConfig).
           </div>
         )}
       </div>

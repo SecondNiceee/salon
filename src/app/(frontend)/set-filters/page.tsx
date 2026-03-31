@@ -1,12 +1,12 @@
 import { getTopLevelCategories } from "./actions"
-import SetProductsClient from "./set-products-client"
+import SetFiltersClient from "./set-filters-client"
 
 export const metadata = {
   title: "Назначить фильтры товарам",
 }
 
-export default async function SetProductsPage() {
+export default async function SetFiltersPage() {
   const categories = await getTopLevelCategories()
 
-  return <SetProductsClient categories={categories} />
+  return <SetFiltersClient categories={categories} />
 }
