@@ -13,12 +13,17 @@ export type VisibilityRule = {
   whenFilterKey: string
   whenFilterValue: string
 }
+export type ShowWhenRule = {
+  whenFilterKey: string
+  whenFilterValue: string
+}
 export type Filter = {
   key: string
   label: string
   type: "checkbox" | "radio"
   isAdvanced?: boolean | null
   options?: FilterOption[] | null
+  showWhenRules?: ShowWhenRule[] | null
   visibilityRules?: VisibilityRule[] | null
 }
 

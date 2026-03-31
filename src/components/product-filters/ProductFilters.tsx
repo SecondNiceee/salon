@@ -8,6 +8,7 @@ export type ActiveFilters = Record<string, string[]>
 
 type FilterDef = NonNullable<FilterConfig["filters"]>[number]
 type VisibilityRule = NonNullable<FilterDef["visibilityRules"]>[number]
+type ShowWhenRule = { whenFilterKey: string; whenFilterValue: string }
 
 interface ProductFiltersProps {
   filterConfig: FilterConfig
@@ -39,6 +40,23 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
   const clearAll = () => onChange({})
 
   /**
+   * Проверить, должен ли фильтр быть показан на основе showWhenRules
+   * Если правила не заданы — фильтр показывается всегда
+   * Если правила заданы — фильтр показывается когда хотя бы одно условие выполнено
+   */
+  function shouldShowFilter(filter: FilterDef): boolean {
+    const rules = filter.showWhenRules as ShowWhenRule[] | null | undefined
+    if (!rules || rules.length === 0) {
+      return true // No rules = always show
+    }
+    // Show if ANY rule condition is met
+    return rules.some((rule) => {
+      const selectedValues = activeFilters[rule.whenFilterKey] ?? []
+      return selectedValues.includes(rule.whenFilterValue)
+    })
+  }
+
+  /**
    * Вычислить действие для конкретной опции на основе visibilityRules
    * Возможные результаты: "hide" | "highlight" | null
    */
@@ -62,6 +80,11 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
   }
 
   const renderFilter = (filter: FilterDef) => {
+    // Check if this filter should be shown based on showWhenRules
+    if (!shouldShowFilter(filter)) {
+      return null
+    }
+
     const selected = activeFilters[filter.key] ?? []
     const options = filter.options ?? []
     
@@ -162,7 +185,8 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
       <div className={`flex flex-col gap-5 ${isOpen ? "block" : "hidden"} md:flex`}>
         {basicFilters.map(renderFilter)}
 
-        {advancedFilters.length > 0 && (
+        {/* Only show advanced toggle if there are visible advanced filters */}
+        {advancedFilters.some(shouldShowFilter) && (
           <>
             {showAdvanced && advancedFilters.map(renderFilter)}
             <button
