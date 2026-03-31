@@ -123,54 +123,53 @@ const FilterConfigs: CollectionConfig = {
             },
           ],
         },
-      },
-      {
-        name: "visibilityRules",
-        type: "array",
-        label: "Правила видимости опций",
-        admin: {
-          description:
-            "Условия, при которых отдельные опции этого фильтра скрываются или подсвечиваются на основе выбора в другом фильтре",
-        },
-        fields: [
-          {
-            name: "targetOptionValue",
-            type: "text",
-            label: "Опция (значение), к которой применяется правило",
-            required: true,
-            admin: {
-              description: 'Значение опции этого фильтра: например "medical_required"',
+        {
+          name: "visibilityRules",
+          type: "array",
+          label: "Правила видимости опций",
+          admin: {
+            description:
+              "Условия, при которых отдельные опции этого фильтра скрываются или подсвечиваются на основе выбора в другом фильтре",
+          },
+          fields: [
+            {
+              name: "targetOptionValue",
+              type: "text",
+              label: "Опция (значение), к которой применяется правило",
+              required: true,
+              admin: {
+                description: 'Значение опции этого фильтра: например "medical_required"',
+              },
             },
-          },
-          {
-            name: "action",
-            type: "select",
-            label: "Действие",
-            required: true,
-            options: [
-              { label: "Скрыть", value: "hide" },
-              { label: "Подсветить как важное", value: "highlight" },
-            ],
-          },
-          {
-            name: "whenFilterKey",
-            type: "text",
-            label: "Когда в фильтре...",
-            required: true,
-            admin: {
-              description: 'Ключ другого фильтра: например "goal"',
+            {
+              name: "action",
+              type: "select",
+              label: "Действие",
+              required: true,
+              options: [
+                { label: "Скрыть", value: "hide" },
+                { label: "Подсветить как важное", value: "highlight" },
+              ],
             },
-          },
-          {
-            name: "whenFilterValue",
-            type: "text",
-            label: "...выбрано значение",
-            required: true,
-            admin: {
-              description: 'Значение другого фильтра: например "beginner"',
+            {
+              name: "whenFilterKey",
+              type: "text",
+              label: "Когда в фильтре...",
+              required: true,
+              admin: {
+                description: 'Ключ другого фильтра: например "goal"',
+              },
             },
-          },
-        ],
+            {
+              name: "whenFilterValue",
+              type: "text",
+              label: "...выбрано значение",
+              required: true,
+              admin: {
+                description: 'Значение другого фильтра: например "beginner"',
+              },
+            },
+          ],
         },
       ],
     },
