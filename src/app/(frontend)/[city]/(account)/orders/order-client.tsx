@@ -148,6 +148,7 @@ export default function OrdersClientPage() {
                             src={fixPayloadUrl(media.url) || "/placeholder.svg"}
                             alt={media.alt || product?.title || "Услуга"}
                             className="object-cover w-full h-full"
+                            
                           />
                         </div>
                       )}

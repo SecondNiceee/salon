@@ -29,8 +29,11 @@ const SubCategories = forwardRef<HTMLDivElement, ISubCategories>(
 
     const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
       if (!localRef.current) return
-      e.preventDefault()
-      e.stopPropagation()
+      try{
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      catch(e){}
       const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX
       localRef.current.scrollBy({ left: delta, behavior: 'smooth' })
     }
