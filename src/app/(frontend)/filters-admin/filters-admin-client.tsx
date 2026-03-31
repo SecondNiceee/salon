@@ -11,7 +11,7 @@ import {
   type VisibilityRule,
   type ShowWhenRule,
 } from "./actions"
-import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles } from "lucide-react"
+import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, ArrowUp, ArrowDown } from "lucide-react"
 
 type Props = {
   initialCategories: Category[]
@@ -162,6 +162,26 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
     if (expandedFilterIndex === index) {
       setExpandedFilterIndex(null)
     }
+  }
+
+  function moveFilterUp(index: number) {
+    if (index === 0) return
+    setFilters((prev) => {
+      const next = [...prev]
+      ;[next[index - 1], next[index]] = [next[index], next[index - 1]]
+      return next
+    })
+    setExpandedFilterIndex((prev) => (prev === index ? index - 1 : prev === index - 1 ? index : prev))
+  }
+
+  function moveFilterDown(index: number) {
+    setFilters((prev) => {
+      if (index >= prev.length - 1) return prev
+      const next = [...prev]
+      ;[next[index], next[index + 1]] = [next[index + 1], next[index]]
+      return next
+    })
+    setExpandedFilterIndex((prev) => (prev === index ? index + 1 : prev === index + 1 ? index : prev))
   }
 
   // Option management
@@ -353,6 +373,9 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                           onClick={() => setExpandedFilterIndex(isExpanded ? null : filterIndex)}
                         >
                           <div className="flex items-center gap-3">
+                            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs font-semibold shrink-0">
+                              {filterIndex + 1}
+                            </span>
                             <span className="font-medium text-sm text-foreground">
                               {filter.label}
                             </span>
@@ -365,7 +388,30 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                moveFilterUp(filterIndex)
+                              }}
+                              disabled={filterIndex === 0}
+                              className="p-1 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+                              title="Переместить вверх"
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                moveFilterDown(filterIndex)
+                              }}
+                              disabled={filterIndex === filters.length - 1}
+                              className="p-1 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+                              title="Переместить вниз"
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                            <div className="w-px h-4 bg-border mx-1" />
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -375,7 +421,9 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                             >
                               <Trash2 size={14} />
                             </button>
-                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            <div className="ml-1">
+                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </div>
                           </div>
                         </div>
 
