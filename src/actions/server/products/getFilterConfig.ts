@@ -28,7 +28,10 @@ const _getFilterConfig = async (
     })
 
     if (subCategoryResult.docs.length > 0) {
-      return subCategoryResult.docs[0] as FilterConfig
+      const filterConfig = subCategoryResult.docs[0] as FilterConfig
+      console.log("[v0] getFilterConfig found for subCategoryId:", subCategoryId)
+      console.log("[v0] filterConfig.filters:", JSON.stringify(filterConfig.filters, null, 2))
+      return filterConfig
     }
 
     // 2. Fallback: try to find FilterConfig for the parent category
@@ -63,7 +66,7 @@ export const getFilterConfig = async (
     ["filter-configs", String(subCategoryId), String(parentCategoryId ?? "")],
     {
       tags: ["filter-configs"],
-      revalidate: 60 * 60 * 24,
+      revalidate: 10, // Temporarily reduced for debugging
     },
   )()
 }
