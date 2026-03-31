@@ -74,6 +74,9 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
     setFilters((config.filters as Filter[]) ?? [])
     setExpandedFilterIndex(null)
     setError(null)
+    
+    // Scroll to top to show the edit form
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   async function handleSave() {
