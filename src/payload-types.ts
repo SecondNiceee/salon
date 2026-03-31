@@ -393,11 +393,23 @@ export interface FilterConfig {
               id?: string | null;
             }[]
           | null;
+        /**
+         * Условия, при которых отдельные опции этого фильтра скрываются или подсвечиваются на основе выбора в другом фильтре
+         */
         visibilityRules?:
           | {
+              /**
+               * Значение опции этого фильтра: например "medical_required"
+               */
               targetOptionValue: string;
               action: 'hide' | 'highlight';
+              /**
+               * Ключ другого фильтра: например "goal"
+               */
               whenFilterKey: string;
+              /**
+               * Значение другого фильтра: например "beginner"
+               */
               whenFilterValue: string;
               id?: string | null;
             }[]
@@ -703,6 +715,15 @@ export interface FilterConfigsSelect<T extends boolean = true> {
               label?: T;
               id?: T;
             };
+        visibilityRules?:
+          | T
+          | {
+              targetOptionValue?: T;
+              action?: T;
+              whenFilterKey?: T;
+              whenFilterValue?: T;
+              id?: T;
+            };
         id?: T;
       };
   updatedAt?: T;
@@ -830,7 +851,7 @@ export interface SiteSetting {
            */
           image: number | Media;
           /**
-           * Основной заголовок слайда. Можете использовать переменные города: /city (именительный: ��осква), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
+           * Основной заголовок слайда. Можете использовать переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
            */
           title?: string | null;
           /**
