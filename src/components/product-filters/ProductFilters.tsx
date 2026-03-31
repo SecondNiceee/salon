@@ -16,8 +16,6 @@ interface ProductFiltersProps {
 }
 
 export function ProductFilters({ filterConfig, activeFilters, onChange }: ProductFiltersProps) {
-  console.log("[v0] ProductFilters received filterConfig:", JSON.stringify(filterConfig, null, 2))
-  
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -54,9 +52,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
         continue
       }
       const selectedValues = activeFilters[rule.whenFilterKey] ?? []
-      console.log("[v0] Checking rule for option:", optionValue, { rule, selectedValues })
       if (selectedValues.includes(rule.whenFilterValue)) {
-        console.log("[v0] Rule MATCHED! Applying action:", rule.action)
         // "hide" takes priority over "highlight"
         if (rule.action === "hide") return "hide"
         result = "highlight"
@@ -81,15 +77,6 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
         'whenFilterValue' in rule
       ) as VisibilityRule[]
     }
-    
-    console.log("[v0] renderFilter:", { 
-      key: filter.key, 
-      label: filter.label,
-      rawVisibilityRules: filter.visibilityRules,
-      validatedRules: rules,
-      hasRules: !!rules && rules.length > 0,
-      activeFilters 
-    })
 
     return (
       <div key={filter.key} className="flex flex-col gap-2">
