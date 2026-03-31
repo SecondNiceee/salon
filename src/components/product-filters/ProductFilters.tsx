@@ -16,6 +16,8 @@ interface ProductFiltersProps {
 }
 
 export function ProductFilters({ filterConfig, activeFilters, onChange }: ProductFiltersProps) {
+  console.log("[v0] ProductFilters received filterConfig:", JSON.stringify(filterConfig, null, 2))
+  
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -43,17 +45,28 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
    * Возможные результаты: "hide" | "highlight" | null
    */
   function getOptionAction(rules: VisibilityRule[] | null | undefined, optionValue: string): "hide" | "highlight" | null {
-    if (!rules || rules.length === 0) return null
+    console.log("[v0] getOptionAction called:", { rules, optionValue, activeFilters })
+    if (!rules || rules.length === 0) {
+      console.log("[v0] No rules found for this filter")
+      return null
+    }
     let result: "hide" | "highlight" | null = null
     for (const rule of rules) {
-      if (rule.targetOptionValue !== optionValue) continue
+      console.log("[v0] Checking rule:", rule)
+      if (rule.targetOptionValue !== optionValue) {
+        console.log("[v0] Rule targetOptionValue doesn't match optionValue")
+        continue
+      }
       const selectedValues = activeFilters[rule.whenFilterKey] ?? []
+      console.log("[v0] selectedValues for", rule.whenFilterKey, ":", selectedValues)
       if (selectedValues.includes(rule.whenFilterValue)) {
+        console.log("[v0] Rule matched! Action:", rule.action)
         // "hide" takes priority over "highlight"
         if (rule.action === "hide") return "hide"
         result = "highlight"
       }
     }
+    console.log("[v0] Final result:", result)
     return result
   }
 
@@ -61,6 +74,14 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
     const selected = activeFilters[filter.key] ?? []
     const options = filter.options ?? []
     const rules = filter.visibilityRules as VisibilityRule[] | null | undefined
+    
+    console.log("[v0] renderFilter:", { 
+      key: filter.key, 
+      label: filter.label,
+      hasRules: !!rules && rules.length > 0,
+      rules,
+      activeFilters 
+    })
 
     return (
       <div key={filter.key} className="flex flex-col gap-2">
