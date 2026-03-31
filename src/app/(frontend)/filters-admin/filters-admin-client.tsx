@@ -9,6 +9,7 @@ import {
   type Filter,
   type FilterOption,
   type VisibilityRule,
+  type ShowWhenRule,
 } from "./actions"
 import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles } from "lucide-react"
 
@@ -145,6 +146,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
       type: "checkbox",
       isAdvanced: false,
       options: [],
+      showWhenRules: [],
       visibilityRules: [],
     }
     setFilters((prev) => [...prev, newFilter])
@@ -186,6 +188,32 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
     const filter = filters[filterIndex]
     const newOptions = (filter.options ?? []).filter((_, i) => i !== optionIndex)
     updateFilter(filterIndex, { options: newOptions })
+  }
+
+  // ShowWhen rules management (show filter when condition is met)
+  function addShowWhenRule(filterIndex: number) {
+    const filter = filters[filterIndex]
+    const newRule: ShowWhenRule = {
+      whenFilterKey: "",
+      whenFilterValue: "",
+    }
+    updateFilter(filterIndex, {
+      showWhenRules: [...(filter.showWhenRules ?? []), newRule],
+    })
+  }
+
+  function updateShowWhenRule(filterIndex: number, ruleIndex: number, updates: Partial<ShowWhenRule>) {
+    const filter = filters[filterIndex]
+    const newRules = (filter.showWhenRules ?? []).map((rule, i) =>
+      i === ruleIndex ? { ...rule, ...updates } : rule
+    )
+    updateFilter(filterIndex, { showWhenRules: newRules })
+  }
+
+  function removeShowWhenRule(filterIndex: number, ruleIndex: number) {
+    const filter = filters[filterIndex]
+    const newRules = (filter.showWhenRules ?? []).filter((_, i) => i !== ruleIndex)
+    updateFilter(filterIndex, { showWhenRules: newRules })
   }
 
   // Visibility rules management
@@ -235,7 +263,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground mb-1">Управление фильтрами</h1>
+            <h1 className="text-2xl font-semibold text-foreground mb-1">Управление ф��льтрами</h1>
             <p className="text-sm text-muted-foreground">
               Создавайте и редактируйте конфигурации фильтров для категорий.
             </p>
@@ -458,11 +486,109 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                               )}
                             </div>
 
+                            {/* Show When Rules - conditions for showing the entire filter */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <label className="text-xs font-medium text-muted-foreground">
+                                  Показывать фильтр при условии
+                                </label>
+                                <button
+                                  onClick={() => addShowWhenRule(filterIndex)}
+                                  className="text-xs text-primary hover:opacity-80 font-medium"
+                                >
+                                  + Добавить условие
+                                </button>
+                              </div>
+
+                              {(filter.showWhenRules ?? []).length === 0 ? (
+                                <div className="text-xs text-muted-foreground italic">
+                                  Фильтр показывается всегда (нет условий)
+                                </div>
+                              ) : (
+                                <div className="flex flex-col gap-2">
+                                  <div className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+                                    Фильтр скрыт по умолчанию. Появится когда выполнится одно из условий:
+                                  </div>
+                                  {(filter.showWhenRules ?? []).map((rule, ruleIndex) => (
+                                    <div
+                                      key={ruleIndex}
+                                      className="rounded-md border border-border bg-amber-50/50 p-3"
+                                    >
+                                      <div className="flex items-start justify-between gap-2 mb-2">
+                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                          <Eye size={14} className="text-amber-500" />
+                                          Условие #{ruleIndex + 1}
+                                        </div>
+                                        <button
+                                          onClick={() => removeShowWhenRule(filterIndex, ruleIndex)}
+                                          className="p-1 text-muted-foreground hover:text-red-500"
+                                        >
+                                          <X size={12} />
+                                        </button>
+                                      </div>
+
+                                      <div className="grid grid-cols-2 gap-3">
+                                        {/* When filter */}
+                                        <div>
+                                          <label className="block text-xs text-muted-foreground mb-1">
+                                            Когда в фильтре
+                                          </label>
+                                          <select
+                                            value={rule.whenFilterKey}
+                                            onChange={(e) =>
+                                              updateShowWhenRule(filterIndex, ruleIndex, {
+                                                whenFilterKey: e.target.value,
+                                                whenFilterValue: "",
+                                              })
+                                            }
+                                            className="w-full rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                          >
+                                            <option value="">-- выберите --</option>
+                                            {otherFilters.map((f) => (
+                                              <option key={f.filterKey} value={f.filterKey}>
+                                                {f.filterLabel}
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </div>
+
+                                        {/* When value */}
+                                        <div>
+                                          <label className="block text-xs text-muted-foreground mb-1">
+                                            Выбрано значение
+                                          </label>
+                                          <select
+                                            value={rule.whenFilterValue}
+                                            onChange={(e) =>
+                                              updateShowWhenRule(filterIndex, ruleIndex, {
+                                                whenFilterValue: e.target.value,
+                                              })
+                                            }
+                                            className="w-full rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                            disabled={!rule.whenFilterKey}
+                                          >
+                                            <option value="">-- выберите --</option>
+                                            {otherFilters
+                                              .find((f) => f.filterKey === rule.whenFilterKey)
+                                              ?.options.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                  {opt.label}
+                                                </option>
+                                              ))}
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
                             {/* Visibility Rules */}
                             <div>
                               <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs font-medium text-muted-foreground">
-                                  Правила видимости
+                                  Правила видимости опций
                                 </label>
                                 <button
                                   onClick={() => addVisibilityRule(filterIndex)}

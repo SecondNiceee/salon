@@ -124,6 +124,35 @@ const FilterConfigs: CollectionConfig = {
           ],
         },
         {
+          name: "showWhenRules",
+          type: "array",
+          label: "Показывать фильтр при условии",
+          admin: {
+            description:
+              "Если заданы правила — фильтр будет скрыт по умолчанию и появится только когда выполнится одно из условий",
+          },
+          fields: [
+            {
+              name: "whenFilterKey",
+              type: "text",
+              label: "Когда в фильтре...",
+              required: true,
+              admin: {
+                description: 'Ключ другого фильтра: например "style"',
+              },
+            },
+            {
+              name: "whenFilterValue",
+              type: "text",
+              label: "...выбрано значение",
+              required: true,
+              admin: {
+                description: 'Значение другого фильтра: например "classic_tattoo"',
+              },
+            },
+          ],
+        },
+        {
           name: "visibilityRules",
           type: "array",
           label: "Правила видимости опций",
