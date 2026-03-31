@@ -42,27 +42,32 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
   const clearAll = () => onChange({})
 
   /**
-   * Проверить, должен ли фильтр быть показан на основе showWhenRules
-   * Если правила не заданы — фильтр показывается всегда
-   * Если правила заданы — фильтр показывается когда хотя бы одно условие выполнено
+   * Получить validated visibilityRules для фильтра
    */
-  function shouldShowFilter(filter: FilterDef): boolean {
-    const rules = filter.showWhenRules as ShowWhenRule[] | null | undefined
-    if (!rules || rules.length === 0) {
-      return true // No rules = always show
+  function getValidatedRules(filter: FilterDef): VisibilityRule[] | null {
+    if (!Array.isArray(filter.visibilityRules) || filter.visibilityRules.length === 0) {
+      return null
     }
-    // Show if ANY rule condition is met
-    return rules.some((rule) => {
-      const selectedValues = activeFilters[rule.whenFilterKey] ?? []
-      return selectedValues.includes(rule.whenFilterValue)
-    })
+    return filter.visibilityRules.filter(rule => 
+      rule && 
+      typeof rule === 'object' && 
+      'targetOptionValue' in rule && 
+      'action' in rule && 
+      'whenFilterKey' in rule && 
+      'whenFilterValue' in rule
+    ) as VisibilityRule[]
   }
 
   /**
    * Вычислить действие для конкретной опции на основе visibilityRules
    * Приоритет: hide > autoselect > highlight
+   * effectiveFilters — расширенный набор фильтров включая autoselected значения
    */
-  function getOptionAction(rules: VisibilityRule[] | null | undefined, optionValue: string): VisibilityAction {
+  function getOptionAction(
+    rules: VisibilityRule[] | null | undefined, 
+    optionValue: string,
+    effectiveFilters: ActiveFilters
+  ): VisibilityAction {
     if (!rules || rules.length === 0) {
       return null
     }
@@ -71,7 +76,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
       if (rule.targetOptionValue !== optionValue) {
         continue
       }
-      const selectedValues = activeFilters[rule.whenFilterKey] ?? []
+      const selectedValues = effectiveFilters[rule.whenFilterKey] ?? []
       if (selectedValues.includes(rule.whenFilterValue)) {
         if (rule.action === "hide") return "hide"
         if (rule.action === "autoselect") result = "autoselect"
@@ -82,14 +87,70 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
   }
 
   /**
-   * Собрать набор значений, которые должны быть принудительно выбраны (autoselect)
-   * Используется чтобы добавить их в activeFilters не изменяя оригинал
+   * Собрать ВСЕ autoselected значения со всех фильтров
+   * Использует итеративный подход для обработки цепочек (A -> B -> C)
    */
-  function getAutoselectedValues(filter: FilterDef, rules: VisibilityRule[] | null): string[] {
+  function computeEffectiveFilters(): ActiveFilters {
+    const effective: ActiveFilters = { ...activeFilters }
+    
+    // Iterate multiple times to handle chains (max 10 iterations to prevent infinite loops)
+    for (let iteration = 0; iteration < 10; iteration++) {
+      let changed = false
+      
+      for (const filter of filters) {
+        const rules = getValidatedRules(filter)
+        if (!rules) continue
+        
+        const currentSelected = effective[filter.key] ?? []
+        const autoselected: string[] = []
+        
+        for (const opt of filter.options ?? []) {
+          const action = getOptionAction(rules, opt.value, effective)
+          if (action === "autoselect" && !currentSelected.includes(opt.value)) {
+            autoselected.push(opt.value)
+          }
+        }
+        
+        if (autoselected.length > 0) {
+          effective[filter.key] = Array.from(new Set([...currentSelected, ...autoselected]))
+          changed = true
+        }
+      }
+      
+      if (!changed) break
+    }
+    
+    return effective
+  }
+
+  // Compute effective filters once (includes all autoselected values)
+  const effectiveFilters = computeEffectiveFilters()
+
+  /**
+   * Проверить, должен ли фильтр быть показан на основе showWhenRules
+   * Использует effectiveFilters чтобы учитывать autoselected значения
+   */
+  function shouldShowFilter(filter: FilterDef): boolean {
+    const rules = filter.showWhenRules as ShowWhenRule[] | null | undefined
+    if (!rules || rules.length === 0) {
+      return true // No rules = always show
+    }
+    // Show if ANY rule condition is met (using effective filters with autoselected values)
+    return rules.some((rule) => {
+      const selectedValues = effectiveFilters[rule.whenFilterKey] ?? []
+      return selectedValues.includes(rule.whenFilterValue)
+    })
+  }
+
+  /**
+   * Собрать набор значений, которые должны быть принудительно выбраны (autoselect)
+   */
+  function getAutoselectedValues(filter: FilterDef): string[] {
+    const rules = getValidatedRules(filter)
     if (!rules) return []
     return (filter.options ?? [])
       .map((opt) => opt.value)
-      .filter((val) => getOptionAction(rules, val) === "autoselect")
+      .filter((val) => getOptionAction(rules, val, effectiveFilters) === "autoselect")
   }
 
   const renderFilter = (filter: FilterDef) => {
