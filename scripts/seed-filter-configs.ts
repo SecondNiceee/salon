@@ -39,12 +39,20 @@ interface FilterOption {
   label: string
 }
 
+interface VisibilityRule {
+  targetOptionValue: string
+  action: "hide" | "highlight"
+  whenFilterKey: string
+  whenFilterValue: string
+}
+
 interface FilterField {
   key: string
   label: string
   type: "checkbox" | "radio"
   isAdvanced: boolean
   options: FilterOption[]
+  visibilityRules?: VisibilityRule[]
 }
 
 interface FilterConfigPayload {
@@ -103,6 +111,22 @@ const filterConfigs: FilterConfigPayload[] = [
         options: [
           { value: "medical_required", label: "Медицинское образование обязательно (для лечебных курсов)" },
           { value: "no_requirements", label: "Без требований" },
+        ],
+        visibilityRules: [
+          // Скрыть "мед. образование обязательно" если выбрана цель "для начинающих"
+          {
+            targetOptionValue: "medical_required",
+            action: "hide",
+            whenFilterKey: "goal",
+            whenFilterValue: "beginner",
+          },
+          // Подсветить "мед. образование обязательно" если выбрано направление "лечебный"
+          {
+            targetOptionValue: "medical_required",
+            action: "highlight",
+            whenFilterKey: "direction",
+            whenFilterValue: "medical",
+          },
         ],
       },
       {

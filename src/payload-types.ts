@@ -393,6 +393,15 @@ export interface FilterConfig {
               id?: string | null;
             }[]
           | null;
+        visibilityRules?:
+          | {
+              targetOptionValue: string;
+              action: 'hide' | 'highlight';
+              whenFilterKey: string;
+              whenFilterValue: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -821,7 +830,7 @@ export interface SiteSetting {
            */
           image: number | Media;
           /**
-           * Основной заголовок слайда. Можете использовать переменные города: /city (именительный: Москва), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
+           * Основной заголовок слайда. Можете использовать переменные города: /city (именительный: ��осква), /city/r (родительный: Москвы), /city/p (предложный: в Москве). Они автоматически заменятся на город пользователя.
            */
           title?: string | null;
           /**
