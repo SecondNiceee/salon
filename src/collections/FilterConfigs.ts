@@ -178,6 +178,7 @@ const FilterConfigs: CollectionConfig = {
               options: [
                 { label: "Скрыть", value: "hide" },
                 { label: "Подсветить как важное", value: "highlight" },
+                { label: "Выбрать автоматически (нельзя снять)", value: "autoselect" },
               ],
             },
             {

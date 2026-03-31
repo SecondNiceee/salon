@@ -394,6 +394,22 @@ export interface FilterConfig {
             }[]
           | null;
         /**
+         * Если заданы правила — фильтр будет скрыт по умолчанию и появится только когда выполнится одно из условий
+         */
+        showWhenRules?:
+          | {
+              /**
+               * Ключ другого фильтра: например "style"
+               */
+              whenFilterKey: string;
+              /**
+               * Значение другого фильтра: например "classic_tattoo"
+               */
+              whenFilterValue: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
          * Условия, при которых отдельные опции этого фильтра скрываются или подсвечиваются на основе выбора в другом фильтре
          */
         visibilityRules?:
@@ -713,6 +729,13 @@ export interface FilterConfigsSelect<T extends boolean = true> {
           | {
               value?: T;
               label?: T;
+              id?: T;
+            };
+        showWhenRules?:
+          | T
+          | {
+              whenFilterKey?: T;
+              whenFilterValue?: T;
               id?: T;
             };
         visibilityRules?:

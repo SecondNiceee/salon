@@ -11,7 +11,7 @@ import {
   type VisibilityRule,
   type ShowWhenRule,
 } from "./actions"
-import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, ArrowUp, ArrowDown } from "lucide-react"
+import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, ArrowUp, ArrowDown, AlertCircle } from "lucide-react"
 
 type Props = {
   initialCategories: Category[]
@@ -661,6 +661,8 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                           {rule.action === "hide" ? (
                                             <EyeOff size={14} className="text-red-500" />
+                                          ) : rule.action === "autoselect" ? (
+                                            <AlertCircle size={14} className="text-orange-500" />
                                           ) : (
                                             <Sparkles size={14} className="text-yellow-500" />
                                           )}
@@ -714,6 +716,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                           >
                                             <option value="highlight">Подсветить</option>
                                             <option value="hide">Скрыть</option>
+                                            <option value="autoselect">Выбрать автоматически (нельзя снять)</option>
                                           </select>
                                         </div>
 

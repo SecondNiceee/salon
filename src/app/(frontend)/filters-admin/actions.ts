@@ -9,7 +9,7 @@ import type { Category, FilterConfig } from "@/payload-types"
 export type FilterOption = { value: string; label: string }
 export type VisibilityRule = {
   targetOptionValue: string
-  action: "hide" | "highlight"
+  action: "hide" | "highlight" | "autoselect"
   whenFilterKey: string
   whenFilterValue: string
 }
