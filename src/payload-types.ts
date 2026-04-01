@@ -418,7 +418,7 @@ export interface FilterConfig {
                * Значение опции этого фильтра: например "medical_required"
                */
               targetOptionValue: string;
-              action: 'hide' | 'highlight';
+              action: 'hide' | 'highlight' | 'autoselect';
               /**
                * Ключ другого фильтра: например "goal"
                */

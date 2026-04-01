@@ -70,6 +70,8 @@ const SubCategoryClientPage = ({
   const router = useRouter()
   const { isLargeText } = useAccessibilityStore()
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({})
+  // effectiveFilters включает autoselect значения и используется для фильтрации продуктов
+  const [effectiveFilters, setEffectiveFilters] = useState<ActiveFilters>({})
 
   const badgesRef = useRef<(HTMLDivElement | null)[]>([])
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -88,8 +90,9 @@ const SubCategoryClientPage = ({
 
   const filteredProducts = useMemo(() => {
     if (!initialData?.products) return []
-    return applyFilters(initialData.products, activeFilters)
-  }, [initialData?.products, activeFilters])
+    // Используем effectiveFilters для фильтрации (включает autoselect значения)
+    return applyFilters(initialData.products, effectiveFilters)
+  }, [initialData?.products, effectiveFilters])
 
   const goToNext = () => {
     if (initialData?.nextSubCategory) {
@@ -152,6 +155,7 @@ const SubCategoryClientPage = ({
                   filterConfig={filterConfig}
                   activeFilters={activeFilters}
                   onChange={setActiveFilters}
+                  onEffectiveFiltersChange={setEffectiveFilters}
                 />
               </div>
             )}
@@ -160,7 +164,7 @@ const SubCategoryClientPage = ({
               <ProductsSkeleton />
             ) : (
               <>
-                {filteredProducts.length === 0 && Object.values(activeFilters).flat().length > 0 ? (
+                {filteredProducts.length === 0 && Object.values(effectiveFilters).flat().length > 0 ? (
                   <p className="text-gray-500 text-sm py-8 text-center">
                     По выбранным фильтрам ничего не найдено
                   </p>
