@@ -6,6 +6,7 @@ import {
   createFilterConfig,
   updateFilterConfig,
   deleteFilterConfig,
+  toggleFiltersEnabled,
   type Filter,
   type FilterOption,
   type VisibilityRule,
@@ -48,6 +49,24 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
   // UI state
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // isEnabled toggle state per config id
+  const [enabledMap, setEnabledMap] = useState<Record<number, boolean>>(() => {
+    const map: Record<number, boolean> = {}
+    for (const fc of initialFilterConfigs) {
+      map[fc.id] = (fc as any).isEnabled !== false
+    }
+    return map
+  })
+  const [togglingId, setTogglingId] = useState<number | null>(null)
+
+  async function handleToggleEnabled(configId: number) {
+    const next = !enabledMap[configId]
+    setTogglingId(configId)
+    setEnabledMap((prev) => ({ ...prev, [configId]: next }))
+    await toggleFiltersEnabled(configId, next)
+    setTogglingId(null)
+  }
 
   // Categories not yet assigned to a filter config
   const usedCategoryIds = new Set(
@@ -907,15 +926,29 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                 return (
                   <div
                     key={config.id}
-                    className="rounded-xl border border-border bg-card px-5 py-4 flex items-center justify-between"
+                    className="rounded-xl border border-border bg-card px-5 py-4 flex items-center justify-between gap-4"
                   >
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-medium text-foreground text-sm">{categoryLabel}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {filtersCount} фильтр(ов)
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Toggle isEnabled */}
+                      <button
+                        onClick={() => handleToggleEnabled(config.id)}
+                        disabled={togglingId === config.id}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-50 ${
+                          enabledMap[config.id]
+                            ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                            : "bg-muted border-border text-muted-foreground hover:bg-muted/70"
+                        }`}
+                        title={enabledMap[config.id] ? "Фильтры включены — нажмите чтобы скрыть" : "Фильтры скрыты — нажмите чтобы показать"}
+                      >
+                        {enabledMap[config.id] ? <Eye size={13} /> : <EyeOff size={13} />}
+                        {enabledMap[config.id] ? "Отображать фильтры" : "Скрыто"}
+                      </button>
                       <button
                         onClick={() => startEdit(config)}
                         className="p-2 text-muted-foreground hover:text-primary transition-colors"

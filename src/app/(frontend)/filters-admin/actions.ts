@@ -118,6 +118,26 @@ export async function updateFilterConfig(
   }
 }
 
+// Toggle isEnabled for filter config
+export async function toggleFiltersEnabled(
+  id: number,
+  isEnabled: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const payload = await getPayload({ config })
+    await payload.update({
+      collection: "filter-configs",
+      id,
+      data: { isEnabled },
+    })
+    revalidateTag("filter-configs")
+    return { success: true }
+  } catch (error) {
+    console.error("toggleFiltersEnabled error:", error)
+    return { success: false, error: String(error) }
+  }
+}
+
 // Delete filter config
 export async function deleteFilterConfig(id: number): Promise<{ success: boolean; error?: string }> {
   try {
