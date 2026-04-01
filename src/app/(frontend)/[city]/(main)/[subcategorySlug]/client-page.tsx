@@ -48,7 +48,19 @@ function applyFilters(products: Product[], activeFilters: ActiveFilters): Produc
     const productFilterValues = product.filterValues ?? []
 
     return entries.every(([key, selectedValues]) => {
-      // Find the product's value(s) for this filter key
+      // Range filter: stored as ["min:VALUE"]
+      const rangeEntry = selectedValues[0]
+      if (typeof rangeEntry === "string" && rangeEntry.startsWith("min:")) {
+        const minVal = parseInt(rangeEntry.replace("min:", ""), 10)
+        // Product must have a numeric value for this key >= minVal
+        const productValues = productFilterValues
+          .filter((fv) => fv.key === key)
+          .map((fv) => parseInt(fv.value, 10))
+          .filter((n) => !isNaN(n))
+        return productValues.some((n) => n >= minVal)
+      }
+
+      // Checkbox / radio filter
       const productValues = productFilterValues
         .filter((fv) => fv.key === key)
         .map((fv) => fv.value)

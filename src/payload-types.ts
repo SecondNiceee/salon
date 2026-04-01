@@ -372,11 +372,27 @@ export interface FilterConfig {
          * Текст заголовка фильтра: "Ваша цель", "Направление", "Документ"
          */
         label: string;
-        type: 'checkbox' | 'radio';
+        type: 'checkbox' | 'radio' | 'range';
         /**
          * Если включено — фильтр скрыт под кнопкой "Ещё параметры"
          */
         isAdvanced?: boolean | null;
+        /**
+         * Нижняя граница ползунка (используется только для типа range)
+         */
+        rangeMin?: number | null;
+        /**
+         * Верхняя граница ползунка (используется только для типа range)
+         */
+        rangeMax?: number | null;
+        /**
+         * Шаг ползунка (используется только для типа range)
+         */
+        rangeStep?: number | null;
+        /**
+         * Единица измерения (например "мин", "ч", "₽")
+         */
+        rangeUnit?: string | null;
         /**
          * Список значений, из которых можно выбирать
          */

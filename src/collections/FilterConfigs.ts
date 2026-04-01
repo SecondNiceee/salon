@@ -83,7 +83,50 @@ const FilterConfigs: CollectionConfig = {
               label: "Радиокнопки (только одно значение)",
               value: "radio",
             },
+            {
+              label: "Диапазон (ползунок)",
+              value: "range",
+            },
           ],
+        },
+        {
+          name: "rangeMin",
+          type: "number",
+          label: "Минимальное значение диапазона",
+          defaultValue: 0,
+          admin: {
+            description: "Нижняя граница ползунка (например, 0 или 30)",
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
+        },
+        {
+          name: "rangeMax",
+          type: "number",
+          label: "Максимальное значение диапазона",
+          defaultValue: 120,
+          admin: {
+            description: "Верхняя граница ползунка (например, 120 или 480)",
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
+        },
+        {
+          name: "rangeStep",
+          type: "number",
+          label: "Шаг ползунка",
+          defaultValue: 30,
+          admin: {
+            description: "Шаг изменения значения (например, 30 для минут)",
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
+        },
+        {
+          name: "rangeUnit",
+          type: "text",
+          label: "Единица измерения",
+          admin: {
+            description: 'Единица отображения рядом с числом: "мин", "ч", "₽" и т.д.',
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
         },
         {
           name: "isAdvanced",
@@ -98,9 +141,10 @@ const FilterConfigs: CollectionConfig = {
           name: "options",
           type: "array",
           label: "Варианты",
-          minRows: 1,
+          minRows: 0,
           admin: {
-            description: "Список значений, из которых можно выбирать",
+            description: "Список значений, из которых можно выбирать (не нужен для типа «Диапазон»)",
+            condition: (_, siblingData) => siblingData?.type !== "range",
           },
           fields: [
             {

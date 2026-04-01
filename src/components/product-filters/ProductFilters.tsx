@@ -178,7 +178,122 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
       return null
     }
 
-    // Validate and properly cast visibilityRules
+    // --- Range filter ---
+    if (filter.type === "range") {
+      const min = filter.rangeMin ?? 0
+      const max = filter.rangeMax ?? 120
+      const step = filter.rangeStep ?? 30
+      const unit = filter.rangeUnit ?? ""
+
+      // Stored as ["min:VALUE"] where VALUE is the selected minimum duration
+      const stored = activeFilters[filter.key]?.[0]
+      const currentValue = stored ? parseInt(stored.replace("min:", ""), 10) : min
+
+      const handleRangeChange = (val: number) => {
+        if (val === min) {
+          // Reset to "no filter"
+          const next = { ...activeFilters }
+          delete next[filter.key]
+          onChange(next)
+        } else {
+          onChange({ ...activeFilters, [filter.key]: [`min:${val}`] })
+        }
+      }
+
+      const formatLabel = (val: number): string => {
+        if (val >= 60 && unit === "мин") {
+          const hours = Math.floor(val / 60)
+          const mins = val % 60
+          if (mins === 0) return `${hours} ч`
+          return `${hours} ч ${mins} мин`
+        }
+        return unit ? `${val} ${unit}` : `${val}`
+      }
+
+      // Build tick marks
+      const ticks: number[] = []
+      for (let v = min; v <= max; v += step) {
+        ticks.push(v)
+      }
+
+      const percent = max === min ? 0 : ((currentValue - min) / (max - min)) * 100
+
+      return (
+        <div key={filter.key} className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
+            {currentValue > min && (
+              <button
+                type="button"
+                onClick={() => handleRangeChange(min)}
+                className="text-xs text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-1"
+              >
+                <X size={11} />
+                Сбросить
+              </button>
+            )}
+          </div>
+
+          {/* Current value display */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">
+              {currentValue === min ? "Любая длительность" : `от ${formatLabel(currentValue)}`}
+            </span>
+            {currentValue > min && (
+              <span className="text-xs font-medium text-pink-500">
+                от {formatLabel(currentValue)}
+              </span>
+            )}
+          </div>
+
+          {/* Slider track */}
+          <div className="relative py-1">
+            <div className="relative h-2 rounded-full bg-gray-200">
+              {/* Filled portion */}
+              <div
+                className="absolute left-0 top-0 h-2 rounded-full bg-pink-500 transition-all duration-150"
+                style={{ width: `${percent}%` }}
+              />
+              <input
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={currentValue}
+                onChange={(e) => handleRangeChange(Number(e.target.value))}
+                className="absolute inset-0 w-full opacity-0 cursor-pointer h-2"
+                style={{ zIndex: 1 }}
+              />
+              {/* Thumb */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-pink-500 shadow-sm transition-all duration-150 pointer-events-none"
+                style={{ left: `calc(${percent}% - 8px)` }}
+              />
+            </div>
+
+            {/* Tick labels */}
+            <div className="relative mt-3 flex justify-between">
+              {ticks.map((tick) => (
+                <button
+                  key={tick}
+                  type="button"
+                  onClick={() => handleRangeChange(tick)}
+                  className={`text-xs transition-colors leading-none ${
+                    currentValue === tick
+                      ? "text-pink-500 font-semibold"
+                      : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  {formatLabel(tick)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // --- Checkbox / Radio filter ---
     let rules: VisibilityRule[] | null = null
     if (Array.isArray(filter.visibilityRules) && filter.visibilityRules.length > 0) {
       rules = filter.visibilityRules.filter(rule => 
