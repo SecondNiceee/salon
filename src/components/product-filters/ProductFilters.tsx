@@ -219,7 +219,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
       const percent = max === min ? 0 : ((currentValue - min) / (max - min)) * 100
 
       return (
-        <div key={filter.key} className="flex flex-col gap-3">
+        <div key={filter.key} className="flex flex-col gap-2 md:w-1/3">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
             {currentValue > min && (
@@ -234,45 +234,28 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
             )}
           </div>
 
-          {/* Current value display */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">
-              {currentValue === min ? "Любая длительность" : `от ${formatLabel(currentValue)}`}
-            </span>
-            {currentValue > min && (
-              <span className="text-xs font-medium text-pink-500">
-                от {formatLabel(currentValue)}
-              </span>
-            )}
-          </div>
+          {/* Current value */}
+          <span className="text-xs text-gray-500">
+            {currentValue === min ? "Любая длительность" : `от ${formatLabel(currentValue)}`}
+          </span>
 
-          {/* Slider track */}
-          <div className="relative py-1">
-            <div className="relative h-2 rounded-full bg-gray-200">
-              {/* Filled portion */}
-              <div
-                className="absolute left-0 top-0 h-2 rounded-full bg-pink-500 transition-all duration-150"
-                style={{ width: `${percent}%` }}
-              />
-              <input
-                type="range"
-                min={min}
-                max={max}
-                step={step}
-                value={currentValue}
-                onChange={(e) => handleRangeChange(Number(e.target.value))}
-                className="absolute inset-0 w-full opacity-0 cursor-pointer h-2"
-                style={{ zIndex: 1 }}
-              />
-              {/* Thumb */}
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-pink-500 shadow-sm transition-all duration-150 pointer-events-none"
-                style={{ left: `calc(${percent}% - 8px)` }}
-              />
-            </div>
+          {/* Native slider with filled-track via gradient */}
+          <div className="relative flex flex-col gap-2">
+            <input
+              type="range"
+              min={min}
+              max={max}
+              step={step}
+              value={currentValue}
+              onChange={(e) => handleRangeChange(Number(e.target.value))}
+              className="range-slider"
+              style={{
+                background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${percent}%, oklch(0.929 0.013 255.508) ${percent}%, oklch(0.929 0.013 255.508) 100%)`,
+              }}
+            />
 
             {/* Tick labels */}
-            <div className="relative mt-3 flex justify-between">
+            <div className="flex justify-between">
               {ticks.map((tick) => (
                 <button
                   key={tick}
