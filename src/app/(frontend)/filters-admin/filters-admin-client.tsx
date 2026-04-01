@@ -9,6 +9,7 @@ import {
   toggleFiltersEnabled,
   type Filter,
   type FilterOption,
+  type FilterOptionChild,
   type VisibilityRule,
   type ShowWhenRule,
 } from "./actions"
@@ -227,6 +228,58 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
   function removeOption(filterIndex: number, optionIndex: number) {
     const filter = filters[filterIndex]
     const newOptions = (filter.options ?? []).filter((_, i) => i !== optionIndex)
+    updateFilter(filterIndex, { options: newOptions })
+  }
+
+  // Children (suboptions) management
+  function addChildOption(filterIndex: number, optionIndex: number) {
+    const filter = filters[filterIndex]
+    const options = filter.options ?? []
+    const option = options[optionIndex]
+    if (!option) return
+    
+    const newChild: FilterOptionChild = {
+      value: `child_${Date.now()}`,
+      label: "Новая подопция",
+    }
+    const newOptions = options.map((opt, i) => 
+      i === optionIndex 
+        ? { ...opt, children: [...(opt.children ?? []), newChild] }
+        : opt
+    )
+    updateFilter(filterIndex, { options: newOptions })
+  }
+
+  function updateChildOption(
+    filterIndex: number, 
+    optionIndex: number, 
+    childIndex: number, 
+    updates: Partial<FilterOptionChild>
+  ) {
+    const filter = filters[filterIndex]
+    const options = filter.options ?? []
+    const option = options[optionIndex]
+    if (!option) return
+    
+    const newChildren = (option.children ?? []).map((child, i) =>
+      i === childIndex ? { ...child, ...updates } : child
+    )
+    const newOptions = options.map((opt, i) =>
+      i === optionIndex ? { ...opt, children: newChildren } : opt
+    )
+    updateFilter(filterIndex, { options: newOptions })
+  }
+
+  function removeChildOption(filterIndex: number, optionIndex: number, childIndex: number) {
+    const filter = filters[filterIndex]
+    const options = filter.options ?? []
+    const option = options[optionIndex]
+    if (!option) return
+    
+    const newChildren = (option.children ?? []).filter((_, i) => i !== childIndex)
+    const newOptions = options.map((opt, i) =>
+      i === optionIndex ? { ...opt, children: newChildren } : opt
+    )
     updateFilter(filterIndex, { options: newOptions })
   }
 
@@ -604,33 +657,85 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                               {(filter.options ?? []).length === 0 ? (
                                 <div className="text-xs text-muted-foreground italic">Нет опций</div>
                               ) : (
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-3">
                                   {(filter.options ?? []).map((opt, optIndex) => (
-                                    <div key={optIndex} className="flex items-center gap-2">
-                                      <input
-                                        type="text"
-                                        placeholder="value"
-                                        value={opt.value}
-                                        onChange={(e) =>
-                                          updateOption(filterIndex, optIndex, { value: e.target.value })
-                                        }
-                                        className="flex-1 rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                                      />
-                                      <input
-                                        type="text"
-                                        placeholder="label"
-                                        value={opt.label}
-                                        onChange={(e) =>
-                                          updateOption(filterIndex, optIndex, { label: e.target.value })
-                                        }
-                                        className="flex-1 rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                                      />
-                                      <button
-                                        onClick={() => removeOption(filterIndex, optIndex)}
-                                        className="p-1 text-muted-foreground hover:text-red-500"
-                                      >
-                                        <X size={12} />
-                                      </button>
+                                    <div key={optIndex} className="flex flex-col gap-2">
+                                      {/* Parent option row */}
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          placeholder="value"
+                                          value={opt.value}
+                                          onChange={(e) =>
+                                            updateOption(filterIndex, optIndex, { value: e.target.value })
+                                          }
+                                          className="flex-1 rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                        />
+                                        <input
+                                          type="text"
+                                          placeholder="label"
+                                          value={opt.label}
+                                          onChange={(e) =>
+                                            updateOption(filterIndex, optIndex, { label: e.target.value })
+                                          }
+                                          className="flex-1 rounded-md border border-border bg-background text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                        />
+                                        <button
+                                          onClick={() => addChildOption(filterIndex, optIndex)}
+                                          className="px-2 py-1 text-xs text-blue-600 hover:text-blue-700 border border-blue-300 rounded-md hover:bg-blue-50"
+                                          title="Добавить подопцию"
+                                        >
+                                          + Подопции
+                                        </button>
+                                        <button
+                                          onClick={() => removeOption(filterIndex, optIndex)}
+                                          className="p-1 text-muted-foreground hover:text-red-500"
+                                        >
+                                          <X size={12} />
+                                        </button>
+                                      </div>
+                                      
+                                      {/* Children (suboptions) */}
+                                      {(opt.children ?? []).length > 0 && (
+                                        <div className="ml-6 pl-3 border-l-2 border-blue-200 flex flex-col gap-2">
+                                          <div className="text-xs text-blue-600 font-medium">Подопции:</div>
+                                          {(opt.children ?? []).map((child, childIndex) => (
+                                            <div key={childIndex} className="flex items-center gap-2">
+                                              <div className="text-muted-foreground text-xs">└</div>
+                                              <input
+                                                type="text"
+                                                placeholder="value"
+                                                value={child.value}
+                                                onChange={(e) =>
+                                                  updateChildOption(filterIndex, optIndex, childIndex, { value: e.target.value })
+                                                }
+                                                className="flex-1 rounded-md border border-blue-200 bg-blue-50/50 text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                              />
+                                              <input
+                                                type="text"
+                                                placeholder="label"
+                                                value={child.label}
+                                                onChange={(e) =>
+                                                  updateChildOption(filterIndex, optIndex, childIndex, { label: e.target.value })
+                                                }
+                                                className="flex-1 rounded-md border border-blue-200 bg-blue-50/50 text-foreground px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                              />
+                                              <button
+                                                onClick={() => removeChildOption(filterIndex, optIndex, childIndex)}
+                                                className="p-1 text-muted-foreground hover:text-red-500"
+                                              >
+                                                <X size={12} />
+                                              </button>
+                                            </div>
+                                          ))}
+                                          <button
+                                            onClick={() => addChildOption(filterIndex, optIndex)}
+                                            className="text-xs text-blue-500 hover:text-blue-600 font-medium ml-4"
+                                          >
+                                            + Добавить подопцию
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
                                   ))}
                                 </div>

@@ -6,7 +6,12 @@ import { revalidateTag } from "next/cache"
 import type { Category, FilterConfig } from "@/payload-types"
 
 // Types for filter data
-export type FilterOption = { value: string; label: string }
+export type FilterOptionChild = { value: string; label: string }
+export type FilterOption = { 
+  value: string
+  label: string
+  children?: FilterOptionChild[] | null 
+}
 export type VisibilityRule = {
   targetOptionValue: string
   action: "hide" | "highlight" | "autoselect"
