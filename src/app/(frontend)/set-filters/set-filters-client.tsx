@@ -38,8 +38,8 @@ export default function SetFiltersClient({ categories }: Props) {
   const [saving, setSaving] = useState<Record<number, boolean>>({})
   const [saved, setSaved] = useState<Record<number, boolean>>({})
 
-  // Local edits: productId -> { key: value }
-  const [edits, setEdits] = useState<Record<number, Record<string, string>>>({})
+  // Local edits: productId -> { key: value (string for range/radio, string[] for checkbox) }
+  const [edits, setEdits] = useState<Record<number, Record<string, string | string[]>>>({})
 
   async function handleCategorySelect(categoryId: number) {
     setSelectedCategoryId(categoryId)
@@ -91,12 +91,31 @@ export default function SetFiltersClient({ categories }: Props) {
     ])
 
     // Initialize edits from existing filterValues
-    const initial: Record<number, Record<string, string>> = {}
+    // checkbox filters can have multiple values per key → group into string[]
+    const filtersList = (fConfig?.filters ?? []) as Filter[]
+    const checkboxKeys = new Set(
+      filtersList.filter((f) => f.type === "checkbox").map((f) => f.key),
+    )
+
+    const initial: Record<number, Record<string, string | string[]>> = {}
     for (const p of prods) {
       initial[p.id] = {}
+      // Pre-fill checkbox keys with empty array
+      for (const key of checkboxKeys) {
+        initial[p.id][key] = []
+      }
       if (p.filterValues) {
         for (const fv of p.filterValues as { key: string; value: string }[]) {
-          initial[p.id][fv.key] = fv.value
+          if (checkboxKeys.has(fv.key)) {
+            const existing = initial[p.id][fv.key]
+            if (Array.isArray(existing)) {
+              existing.push(fv.value)
+            } else {
+              initial[p.id][fv.key] = [fv.value]
+            }
+          } else {
+            initial[p.id][fv.key] = fv.value
+          }
         }
       }
     }
@@ -118,11 +137,35 @@ export default function SetFiltersClient({ categories }: Props) {
     setSaved((prev) => ({ ...prev, [productId]: false }))
   }
 
+  function handleCheckboxChange(productId: number, key: string, value: string, checked: boolean) {
+    setEdits((prev) => {
+      const current = prev[productId]?.[key]
+      const arr: string[] = Array.isArray(current) ? [...current] : []
+      const next = checked ? [...arr, value] : arr.filter((v) => v !== value)
+      return {
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          [key]: next,
+        },
+      }
+    })
+    setSaved((prev) => ({ ...prev, [productId]: false }))
+  }
+
   async function handleSave(productId: number) {
     setSaving((prev) => ({ ...prev, [productId]: true }))
-    const filterValues = Object.entries(edits[productId] ?? {})
-      .filter(([, v]) => v !== "")
-      .map(([key, value]) => ({ key, value }))
+    const filterValues: { key: string; value: string }[] = []
+    for (const [key, val] of Object.entries(edits[productId] ?? {})) {
+      if (Array.isArray(val)) {
+        // checkbox — expand into multiple { key, value } entries
+        for (const v of val) {
+          if (v !== "") filterValues.push({ key, value: v })
+        }
+      } else if (val !== "") {
+        filterValues.push({ key, value: val })
+      }
+    }
 
     const result = await updateProductFilterValues(productId, filterValues)
     setSaving((prev) => ({ ...prev, [productId]: false }))
@@ -272,10 +315,13 @@ export default function SetFiltersClient({ categories }: Props) {
                     <div className="mt-3 flex flex-wrap gap-3">
                       {filters.map((filter) => {
                         const isRange = filter.type === "range"
-                        const currentValue = productEdits[filter.key] ?? ""
+                        const isCheckbox = filter.type === "checkbox"
+                        const currentValue = productEdits[filter.key]
+                        const checkedValues: string[] = Array.isArray(currentValue) ? currentValue : []
+                        const singleValue: string = typeof currentValue === "string" ? currentValue : ""
 
                         return (
-                          <div key={filter.key} className="flex flex-col gap-1 min-w-36">
+                          <div key={filter.key} className="flex flex-col gap-1">
                             <label className="text-xs text-muted-foreground font-medium">
                               {filter.label}
                               {isRange && filter.rangeUnit && (
@@ -286,7 +332,7 @@ export default function SetFiltersClient({ categories }: Props) {
                             {isRange ? (
                               <input
                                 type="number"
-                                value={currentValue}
+                                value={singleValue}
                                 min={filter.rangeMin ?? undefined}
                                 max={filter.rangeMax ?? undefined}
                                 step={filter.rangeStep ?? 1}
@@ -300,9 +346,28 @@ export default function SetFiltersClient({ categories }: Props) {
                                 }
                                 className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-36"
                               />
+                            ) : isCheckbox ? (
+                              <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-0.5">
+                                {(filter.options ?? []).map((opt) => (
+                                  <label
+                                    key={opt.value}
+                                    className="flex items-center gap-1.5 text-sm text-foreground cursor-pointer select-none"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={checkedValues.includes(opt.value)}
+                                      onChange={(e) =>
+                                        handleCheckboxChange(product.id, filter.key, opt.value, e.target.checked)
+                                      }
+                                      className="w-3.5 h-3.5 accent-primary cursor-pointer"
+                                    />
+                                    {opt.label}
+                                  </label>
+                                ))}
+                              </div>
                             ) : (
                               <select
-                                value={currentValue}
+                                value={singleValue}
                                 onChange={(e) =>
                                   handleFilterChange(product.id, filter.key, e.target.value)
                                 }
