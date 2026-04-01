@@ -20,9 +20,13 @@ export type ShowWhenRule = {
 export type Filter = {
   key: string
   label: string
-  type: "checkbox" | "radio"
+  type: "checkbox" | "radio" | "range"
   isAdvanced?: boolean | null
   options?: FilterOption[] | null
+  rangeMin?: number | null
+  rangeMax?: number | null
+  rangeStep?: number | null
+  rangeUnit?: string | null
   showWhenRules?: ShowWhenRule[] | null
   visibilityRules?: VisibilityRule[] | null
 }

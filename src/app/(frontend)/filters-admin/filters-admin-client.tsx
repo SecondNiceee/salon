@@ -265,9 +265,11 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
   }
 
   // Get all options from other filters (for visibility rules)
+  // Exclude range filters as they don't have options
   function getOtherFiltersOptions(currentFilterIndex: number) {
     return filters
       .filter((_, i) => i !== currentFilterIndex)
+      .filter((f) => f.type !== "range") // Range filters have no options
       .map((f) => ({
         filterKey: f.key,
         filterLabel: f.label,
@@ -387,6 +389,11 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                 Расширенный
                               </span>
                             )}
+                            {filter.type === "range" && (
+                              <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                                Диапазон
+                              </span>
+                            )}
                           </div>
                           <div className="flex items-center gap-1">
                             <button
@@ -463,13 +470,21 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                 </label>
                                 <select
                                   value={filter.type}
-                                  onChange={(e) =>
-                                    updateFilter(filterIndex, { type: e.target.value as "checkbox" | "radio" })
-                                  }
+                                  onChange={(e) => {
+                                    const newType = e.target.value as "checkbox" | "radio" | "range"
+                                    updateFilter(filterIndex, {
+                                      type: newType,
+                                      // Clear range fields when switching away from range
+                                      ...(newType !== "range" ? { rangeMin: undefined, rangeMax: undefined, rangeStep: undefined, rangeUnit: undefined } : {}),
+                                      // Clear options when switching to range
+                                      ...(newType === "range" ? { options: [] } : {}),
+                                    })
+                                  }}
                                   className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                                 >
                                   <option value="checkbox">Checkbox (множественный)</option>
                                   <option value="radio">Radio (одиночный)</option>
+                                  <option value="range">Диапазон (ползунок)</option>
                                 </select>
                               </div>
                               <div className="flex items-end">
@@ -485,8 +500,68 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                               </div>
                             </div>
 
-                            {/* Options */}
-                            <div className="mb-4">
+                            {/* Range settings OR Options depending on type */}
+                            {filter.type === "range" ? (
+                              <div className="mb-4 rounded-lg border border-border bg-muted/20 p-4">
+                                <label className="block text-xs font-semibold text-foreground mb-3">
+                                  Настройки диапазона
+                                </label>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-xs text-muted-foreground mb-1">
+                                      Минимум
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={filter.rangeMin ?? 0}
+                                      onChange={(e) => updateFilter(filterIndex, { rangeMin: Number(e.target.value) })}
+                                      className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-muted-foreground mb-1">
+                                      Максимум
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={filter.rangeMax ?? 120}
+                                      onChange={(e) => updateFilter(filterIndex, { rangeMax: Number(e.target.value) })}
+                                      className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-muted-foreground mb-1">
+                                      Шаг
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={filter.rangeStep ?? 30}
+                                      onChange={(e) => updateFilter(filterIndex, { rangeStep: Number(e.target.value) })}
+                                      className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-muted-foreground mb-1">
+                                      Единица измерения
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder='мин, ч, ₽...'
+                                      value={filter.rangeUnit ?? ""}
+                                      onChange={(e) => updateFilter(filterIndex, { rangeUnit: e.target.value })}
+                                      className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  </div>
+                                </div>
+                                {/* Preview */}
+                                <div className="mt-3 text-xs text-muted-foreground">
+                                  Ползунок: от {filter.rangeMin ?? 0} до {filter.rangeMax ?? 120} с шагом {filter.rangeStep ?? 30}
+                                  {filter.rangeUnit ? ` ${filter.rangeUnit}` : ""}
+                                </div>
+                              </div>
+                            ) : (
+                              /* Options block for checkbox / radio */
+                              <div className="mb-4">
                               <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs font-medium text-muted-foreground">
                                   Опции
@@ -533,6 +608,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                 </div>
                               )}
                             </div>
+                            )}
 
                             {/* Show When Rules - conditions for showing the entire filter */}
                             <div className="mb-4">
@@ -632,7 +708,8 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                               )}
                             </div>
 
-                            {/* Visibility Rules */}
+                            {/* Visibility Rules — only for checkbox/radio (range has no options) */}
+                            {filter.type !== "range" && (
                             <div>
                               <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs font-medium text-muted-foreground">
@@ -775,6 +852,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                 </div>
                               )}
                             </div>
+                            )} {/* end filter.type !== "range" */}
                           </div>
                         )}
                       </div>
