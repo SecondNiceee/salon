@@ -129,6 +129,16 @@ const FilterConfigs: CollectionConfig = {
           },
         },
         {
+          name: "rangeEmptyLabel",
+          type: "text",
+          label: "Текст при отсутствии выбора",
+          admin: {
+            description:
+              'Текст, который показывается когда ползунок в минимальном положении. Например: "Любая длительность", "Любая цена", "Без ограничений"',
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
+        },
+        {
           name: "isAdvanced",
           type: "checkbox",
           label: "Дополнительный фильтр",
