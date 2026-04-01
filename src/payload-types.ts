@@ -374,27 +374,27 @@ export interface FilterConfig {
         label: string;
         type: 'checkbox' | 'radio' | 'range';
         /**
+         * Нижняя граница ползунка (например, 0 или 30)
+         */
+        rangeMin?: number | null;
+        /**
+         * Верхняя граница ползунка (например, 120 или 480)
+         */
+        rangeMax?: number | null;
+        /**
+         * Шаг изменения значения (например, 30 для минут)
+         */
+        rangeStep?: number | null;
+        /**
+         * Единица отображения рядом с числом: "мин", "ч", "₽" и т.д.
+         */
+        rangeUnit?: string | null;
+        /**
          * Если включено — фильтр скрыт под кнопкой "Ещё параметры"
          */
         isAdvanced?: boolean | null;
         /**
-         * Нижняя граница ползунка (используется только для типа range)
-         */
-        rangeMin?: number | null;
-        /**
-         * Верхняя граница ползунка (используется только для типа range)
-         */
-        rangeMax?: number | null;
-        /**
-         * Шаг ползунка (используется только для типа range)
-         */
-        rangeStep?: number | null;
-        /**
-         * Единица измерения (например "мин", "ч", "₽")
-         */
-        rangeUnit?: string | null;
-        /**
-         * Список значений, из которых можно выбирать
+         * Список значений, из которых можно выбирать (не нужен для типа «Диапазон»)
          */
         options?:
           | {
@@ -739,6 +739,10 @@ export interface FilterConfigsSelect<T extends boolean = true> {
         key?: T;
         label?: T;
         type?: T;
+        rangeMin?: T;
+        rangeMax?: T;
+        rangeStep?: T;
+        rangeUnit?: T;
         isAdvanced?: T;
         options?:
           | T
