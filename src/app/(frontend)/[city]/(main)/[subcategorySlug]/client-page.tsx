@@ -51,11 +51,11 @@ function applyFilters(products: Product[], activeFilters: ActiveFilters): Produc
       // Range filter: stored as ["min:VALUE"]
       const rangeEntry = selectedValues[0]
       if (typeof rangeEntry === "string" && rangeEntry.startsWith("min:")) {
-        const minVal = parseInt(rangeEntry.replace("min:", ""), 10)
+        const minVal = parseFloat(rangeEntry.replace("min:", ""))
         // Product must have a numeric value for this key >= minVal
         const productValues = productFilterValues
           .filter((fv) => fv.key === key)
-          .map((fv) => parseInt(fv.value, 10))
+          .map((fv) => parseFloat(fv.value))
           .filter((n) => !isNaN(n))
         return productValues.some((n) => n >= minVal)
       }

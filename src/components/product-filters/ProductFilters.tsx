@@ -187,7 +187,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
 
       // Stored as ["min:VALUE"] where VALUE is the selected minimum duration
       const stored = activeFilters[filter.key]?.[0]
-      const currentValue = stored ? parseInt(stored.replace("min:", ""), 10) : min
+      const currentValue = stored ? parseFloat(stored.replace("min:", "")) : min
 
       const handleRangeChange = (val: number) => {
         if (val === min) {
