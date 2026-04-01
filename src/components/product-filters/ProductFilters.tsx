@@ -324,7 +324,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
     return (
       <div key={filter.key} className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
           {options.map((opt) => {
             const action = getOptionAction(rules, opt.value)
             if (action === "hide") return null
@@ -344,34 +344,34 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
             const isSelected = hasChildren ? false : selected.includes(opt.value)
             const isHighlighted = action === "highlight"
 
-            // Parent option with children - renders as expandable header
+            // Parent option with children - renders as expandable chip
             if (hasChildren) {
               return (
                 <div key={opt.value} className="flex flex-col gap-2">
-                  {/* Parent option header */}
+                  {/* Parent chip - click to expand/collapse */}
                   <button
                     type="button"
                     onClick={() => toggleOptionExpanded(filter.key, opt.value)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm border transition-colors duration-150 ${
-                      hasSelectedChildren
-                        ? "bg-pink-50 border-pink-300 text-pink-700"
-                        : "bg-gray-50 border-gray-200 text-gray-700 hover:border-pink-300 hover:bg-pink-50/50"
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 ${
+                      isExpanded
+                        ? "bg-pink-100 border-pink-400 text-pink-700"
+                        : hasSelectedChildren
+                          ? "bg-pink-500 border-pink-500 text-white"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-pink-400"
                     }`}
                   >
-                    <span className="font-medium flex items-center gap-2">
-                      {opt.label}
-                      {hasSelectedChildren && (
-                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pink-500 text-white text-xs">
-                          {selectedChildValues.length}
-                        </span>
-                      )}
-                    </span>
-                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    {opt.label}
+                    {hasSelectedChildren && !isExpanded && (
+                      <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-white text-pink-500 text-xs font-medium">
+                        {selectedChildValues.length}
+                      </span>
+                    )}
+                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
                   
-                  {/* Children options (suboptions) - shown when expanded */}
+                  {/* Children chips - shown when expanded */}
                   {isExpanded && (
-                    <div className="ml-4 pl-3 border-l-2 border-pink-200 flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 pl-4 border-l-2 border-pink-200">
                       {children.map((child) => {
                         const childSelected = selected.includes(child.value)
                         return (
@@ -395,13 +395,13 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
               )
             }
 
-            // Regular option without children
+            // Regular chip without children
             return (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => handleChange(filter.key, opt.value, filter.type, isAutoselected)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 w-fit ${
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 ${
                   isAutoselected
                     ? "bg-orange-500 border-orange-500 text-white cursor-not-allowed opacity-90"
                     : isSelected
