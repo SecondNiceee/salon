@@ -410,6 +410,22 @@ export interface FilterConfig {
                * Текст, который видит пользователь: "Начинающий", "Медицина", "Очно"
                */
               label: string;
+              /**
+               * Вложенные опции. Например: "Руки" -> "Плечо", "Предплечье", "Кисть"
+               */
+              children?:
+                | {
+                    /**
+                     * Внутренний ключ подопции: "shoulder", "forearm", "hand"
+                     */
+                    value: string;
+                    /**
+                     * Текст подопции: "Плечо (дельта)", "Предплечье", "Кисть"
+                     */
+                    label: string;
+                    id?: string | null;
+                  }[]
+                | null;
               id?: string | null;
             }[]
           | null;
@@ -754,6 +770,13 @@ export interface FilterConfigsSelect<T extends boolean = true> {
           | {
               value?: T;
               label?: T;
+              children?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
               id?: T;
             };
         showWhenRules?:
