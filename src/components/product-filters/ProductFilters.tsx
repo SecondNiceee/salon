@@ -219,7 +219,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
       const percent = max === min ? 0 : ((currentValue - min) / (max - min)) * 100
 
       return (
-        <div key={filter.key} className="flex flex-col gap-2 md:w-1/3">
+        <div key={filter.key} className="flex flex-col gap-2 w-full md:w-1/2">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
             {currentValue > min && (
