@@ -11,7 +11,16 @@ import {
 } from "./actions"
 
 type FilterOption = { value: string; label: string }
-type Filter = { key: string; label: string; options?: FilterOption[] | null }
+type Filter = {
+  key: string
+  label: string
+  type?: "checkbox" | "radio" | "range" | null
+  options?: FilterOption[] | null
+  rangeMin?: number | null
+  rangeMax?: number | null
+  rangeStep?: number | null
+  rangeUnit?: string | null
+}
 
 type Props = {
   categories: Category[]
@@ -202,7 +211,9 @@ export default function SetFiltersClient({ categories }: Props) {
                 <div key={f.key} className="text-xs">
                   <span className="font-medium text-foreground">{f.label}</span>
                   <span className="text-muted-foreground ml-1">
-                    ({f.options?.map((o) => o.label).join(", ")})
+                    {f.type === "range"
+                      ? `(${f.rangeMin ?? 0} – ${f.rangeMax ?? "∞"}${f.rangeUnit ? " " + f.rangeUnit : ""})`
+                      : `(${f.options?.map((o) => o.label).join(", ")})`}
                   </span>
                 </div>
               ))}
@@ -256,30 +267,58 @@ export default function SetFiltersClient({ categories }: Props) {
                     </button>
                   </div>
 
-                  {/* Filter dropdowns */}
+                  {/* Filter inputs */}
                   {filters.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-3">
-                      {filters.map((filter) => (
-                        <div key={filter.key} className="flex flex-col gap-1 min-w-36">
-                          <label className="text-xs text-muted-foreground font-medium">
-                            {filter.label}
-                          </label>
-                          <select
-                            value={productEdits[filter.key] ?? ""}
-                            onChange={(e) =>
-                              handleFilterChange(product.id, filter.key, e.target.value)
-                            }
-                            className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
-                          >
-                            <option value="">-- не выбрано --</option>
-                            {(filter.options ?? []).map((opt) => (
-                              <option key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      ))}
+                      {filters.map((filter) => {
+                        const isRange = filter.type === "range"
+                        const currentValue = productEdits[filter.key] ?? ""
+
+                        return (
+                          <div key={filter.key} className="flex flex-col gap-1 min-w-36">
+                            <label className="text-xs text-muted-foreground font-medium">
+                              {filter.label}
+                              {isRange && filter.rangeUnit && (
+                                <span className="ml-1 text-muted-foreground/70">({filter.rangeUnit})</span>
+                              )}
+                            </label>
+
+                            {isRange ? (
+                              <input
+                                type="number"
+                                value={currentValue}
+                                min={filter.rangeMin ?? undefined}
+                                max={filter.rangeMax ?? undefined}
+                                step={filter.rangeStep ?? 1}
+                                placeholder={
+                                  filter.rangeMin != null && filter.rangeMax != null
+                                    ? `${filter.rangeMin} – ${filter.rangeMax}`
+                                    : "Введите значение"
+                                }
+                                onChange={(e) =>
+                                  handleFilterChange(product.id, filter.key, e.target.value)
+                                }
+                                className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-36"
+                              />
+                            ) : (
+                              <select
+                                value={currentValue}
+                                onChange={(e) =>
+                                  handleFilterChange(product.id, filter.key, e.target.value)
+                                }
+                                className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                              >
+                                <option value="">-- не выбрано --</option>
+                                {(filter.options ?? []).map((opt) => (
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
