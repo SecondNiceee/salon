@@ -11,6 +11,7 @@ import {
   type VisibilityRule,
   type ShowWhenRule,
 } from "./actions"
+import Link from "next/link"
 import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp, Eye, EyeOff, Sparkles, ArrowUp, ArrowDown, AlertCircle } from "lucide-react"
 
 type Props = {
@@ -290,15 +291,23 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
               Создавайте и редактируйте конфигурации фильтров для категорий.
             </p>
           </div>
-          {!isFormOpen && (
-            <button
-              onClick={startCreate}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          <div className="flex items-center gap-2">
+            <Link
+              href="/set-filters"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium hover:opacity-80 transition-opacity border border-border"
             >
-              <Plus size={16} />
-              Создать
-            </button>
-          )}
+              Редактировать товары
+            </Link>
+            {!isFormOpen && (
+              <button
+                onClick={startCreate}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                <Plus size={16} />
+                Создать
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Form */}
@@ -391,7 +400,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                             )}
                             {filter.type === "range" && (
                               <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-                                Диапазон
+                                ��иапазон
                               </span>
                             )}
                           </div>
