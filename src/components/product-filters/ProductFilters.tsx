@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useEffect } from "react"
 import type { FilterConfig } from "@/payload-types"
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from "lucide-react"
 
@@ -15,9 +15,11 @@ interface ProductFiltersProps {
   filterConfig: FilterConfig
   activeFilters: ActiveFilters
   onChange: (filters: ActiveFilters) => void
+  /** Вызывается когда меняются эффективные фильтры (включая autoselect) - используйте для фильтрации продуктов */
+  onEffectiveFiltersChange?: (filters: ActiveFilters) => void
 }
 
-export function ProductFilters({ filterConfig, activeFilters, onChange }: ProductFiltersProps) {
+export function ProductFilters({ filterConfig, activeFilters, onChange, onEffectiveFiltersChange }: ProductFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -25,7 +27,99 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
   const basicFilters = filters.filter((f) => !f.isAdvanced)
   const advancedFilters = filters.filter((f) => f.isAdvanced)
 
-  const totalActiveCount = Object.values(activeFilters).flat().length
+  /**
+   * Вычислить действие для конкретной опции на основе visibilityRules
+   * Принимает effectiveFilters для корректной проверки с учётом autoselect
+   * Приоритет: hide > autoselect > highlight
+   */
+  function getOptionActionWithFilters(
+    rules: VisibilityRule[] | null | undefined, 
+    optionValue: string,
+    effectiveFilters: ActiveFilters
+  ): VisibilityAction {
+    if (!rules || rules.length === 0) {
+      return null
+    }
+    let result: VisibilityAction = null
+    for (const rule of rules) {
+      if (rule.targetOptionValue !== optionValue) {
+        continue
+      }
+      const selectedValues = effectiveFilters[rule.whenFilterKey] ?? []
+      if (selectedValues.includes(rule.whenFilterValue)) {
+        if (rule.action === "hide") return "hide"
+        if (rule.action === "autoselect") result = "autoselect"
+        if (rule.action === "highlight" && result !== "autoselect") result = "highlight"
+      }
+    }
+    return result
+  }
+
+  /**
+   * Вычисляем "эффективные" фильтры, которые включают все autoselect значения.
+   * Это нужно чтобы showWhenRules других фильтров корректно работали
+   * когда зависят от autoselect-значений.
+   * 
+   * Используем итеративный подход для обработки цепочек autoselect:
+   * A -> autoselect B -> показать C (где C зависит от B)
+   */
+  const effectiveFilters = useMemo(() => {
+    let result = { ...activeFilters }
+    let changed = true
+    let iterations = 0
+    const maxIterations = 10 // Защита от бесконечного цикла
+    
+    while (changed && iterations < maxIterations) {
+      changed = false
+      iterations++
+      
+      for (const filter of filters) {
+        // Validate and properly cast visibilityRules
+        let rules: VisibilityRule[] | null = null
+        if (Array.isArray(filter.visibilityRules) && filter.visibilityRules.length > 0) {
+          rules = filter.visibilityRules.filter(rule => 
+            rule && 
+            typeof rule === 'object' && 
+            'targetOptionValue' in rule && 
+            'action' in rule && 
+            'whenFilterKey' in rule && 
+            'whenFilterValue' in rule
+          ) as VisibilityRule[]
+        }
+        
+        if (!rules) continue
+        
+        const currentValues = result[filter.key] ?? []
+        const autoselectedValues: string[] = []
+        
+        for (const opt of filter.options ?? []) {
+          const action = getOptionActionWithFilters(rules, opt.value, result)
+          if (action === "autoselect" && !currentValues.includes(opt.value)) {
+            autoselectedValues.push(opt.value)
+          }
+        }
+        
+        if (autoselectedValues.length > 0) {
+          result = {
+            ...result,
+            [filter.key]: Array.from(new Set([...currentValues, ...autoselectedValues]))
+          }
+          changed = true
+        }
+      }
+    }
+    
+    return result
+  }, [activeFilters, filters])
+
+  // Уведомляем родителя об изменении effectiveFilters
+  useEffect(() => {
+    if (onEffectiveFiltersChange) {
+      onEffectiveFiltersChange(effectiveFilters)
+    }
+  }, [effectiveFilters, onEffectiveFiltersChange])
+
+  const totalActiveCount = Object.values(effectiveFilters).flat().length
 
   const handleChange = (key: string, value: string, type: "checkbox" | "radio", locked?: boolean) => {
     if (locked) return // autoselected options cannot be deselected
@@ -43,6 +137,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
 
   /**
    * Проверить, должен ли фильтр быть показан на основе showWhenRules
+   * Использует effectiveFilters для учёта autoselect значений
    * Если правила не заданы — фильтр показывается всегда
    * Если правила заданы — фильтр показывается когда хотя бы одно условие выполнено
    */
@@ -51,9 +146,9 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
     if (!rules || rules.length === 0) {
       return true // No rules = always show
     }
-    // Show if ANY rule condition is met
+    // Show if ANY rule condition is met (using effectiveFilters to include autoselected values)
     return rules.some((rule) => {
-      const selectedValues = activeFilters[rule.whenFilterKey] ?? []
+      const selectedValues = effectiveFilters[rule.whenFilterKey] ?? []
       return selectedValues.includes(rule.whenFilterValue)
     })
   }
@@ -63,22 +158,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange }: Produc
    * Приоритет: hide > autoselect > highlight
    */
   function getOptionAction(rules: VisibilityRule[] | null | undefined, optionValue: string): VisibilityAction {
-    if (!rules || rules.length === 0) {
-      return null
-    }
-    let result: VisibilityAction = null
-    for (const rule of rules) {
-      if (rule.targetOptionValue !== optionValue) {
-        continue
-      }
-      const selectedValues = activeFilters[rule.whenFilterKey] ?? []
-      if (selectedValues.includes(rule.whenFilterValue)) {
-        if (rule.action === "hide") return "hide"
-        if (rule.action === "autoselect") result = "autoselect"
-        if (rule.action === "highlight" && result !== "autoselect") result = "highlight"
-      }
-    }
-    return result
+    return getOptionActionWithFilters(rules, optionValue, effectiveFilters)
   }
 
   /**
