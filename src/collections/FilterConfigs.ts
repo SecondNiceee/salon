@@ -174,6 +174,34 @@ const FilterConfigs: CollectionConfig = {
                 description: 'Текст, который видит пользователь: "Начинающий", "Медицина", "Очно"',
               },
             },
+            {
+              name: "children",
+              type: "array",
+              label: "Подопции (второй уровень)",
+              admin: {
+                description: 'Вложенные опции. Например: "Руки" -> "Плечо", "Предплечье", "Кисть"',
+              },
+              fields: [
+                {
+                  name: "value",
+                  type: "text",
+                  label: "Значение (ключ)",
+                  required: true,
+                  admin: {
+                    description: 'Внутренний ключ подопции: "shoulder", "forearm", "hand"',
+                  },
+                },
+                {
+                  name: "label",
+                  type: "text",
+                  label: "Текст для отображения",
+                  required: true,
+                  admin: {
+                    description: 'Текст подопции: "Плечо (дельта)", "Предплечье", "Кисть"',
+                  },
+                },
+              ],
+            },
           ],
         },
         {

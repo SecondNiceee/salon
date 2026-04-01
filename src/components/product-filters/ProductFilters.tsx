@@ -22,6 +22,26 @@ interface ProductFiltersProps {
 export function ProductFilters({ filterConfig, activeFilters, onChange, onEffectiveFiltersChange }: ProductFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  // Track which parent options are expanded (for hierarchical filters)
+  // Key format: "filterKey:optionValue"
+  const [expandedOptions, setExpandedOptions] = useState<Set<string>>(new Set())
+
+  const toggleOptionExpanded = (filterKey: string, optionValue: string) => {
+    const key = `${filterKey}:${optionValue}`
+    setExpandedOptions(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
+
+  const isOptionExpanded = (filterKey: string, optionValue: string) => {
+    return expandedOptions.has(`${filterKey}:${optionValue}`)
+  }
 
   const filters = filterConfig.filters ?? []
   const basicFilters = filters.filter((f) => !f.isAdvanced)
@@ -297,25 +317,91 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
       : baseSelected
 
     const options = filter.options ?? []
+    
+    // Check if any option has children (hierarchical filter)
+    const hasHierarchy = options.some(opt => (opt.children ?? []).length > 0)
 
     return (
       <div key={filter.key} className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-2">
           {options.map((opt) => {
             const action = getOptionAction(rules, opt.value)
             if (action === "hide") return null
 
             const isAutoselected = action === "autoselect"
-            const isSelected = selected.includes(opt.value)
+            const children = (opt.children ?? []) as { value: string; label: string }[]
+            const hasChildren = children.length > 0
+            const isExpanded = isOptionExpanded(filter.key, opt.value)
+            
+            // For hierarchical options: check if any child is selected
+            const selectedChildValues = hasChildren 
+              ? children.filter(child => selected.includes(child.value)).map(c => c.value)
+              : []
+            const hasSelectedChildren = selectedChildValues.length > 0
+            
+            // For non-hierarchical options or options without children
+            const isSelected = hasChildren ? false : selected.includes(opt.value)
             const isHighlighted = action === "highlight"
 
+            // Parent option with children - renders as expandable header
+            if (hasChildren) {
+              return (
+                <div key={opt.value} className="flex flex-col gap-2">
+                  {/* Parent option header */}
+                  <button
+                    type="button"
+                    onClick={() => toggleOptionExpanded(filter.key, opt.value)}
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm border transition-colors duration-150 ${
+                      hasSelectedChildren
+                        ? "bg-pink-50 border-pink-300 text-pink-700"
+                        : "bg-gray-50 border-gray-200 text-gray-700 hover:border-pink-300 hover:bg-pink-50/50"
+                    }`}
+                  >
+                    <span className="font-medium flex items-center gap-2">
+                      {opt.label}
+                      {hasSelectedChildren && (
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pink-500 text-white text-xs">
+                          {selectedChildValues.length}
+                        </span>
+                      )}
+                    </span>
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
+                  
+                  {/* Children options (suboptions) - shown when expanded */}
+                  {isExpanded && (
+                    <div className="ml-4 pl-3 border-l-2 border-pink-200 flex flex-wrap gap-2">
+                      {children.map((child) => {
+                        const childSelected = selected.includes(child.value)
+                        return (
+                          <button
+                            key={child.value}
+                            type="button"
+                            onClick={() => handleChange(filter.key, child.value, filter.type, false)}
+                            className={`px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 ${
+                              childSelected
+                                ? "bg-pink-500 border-pink-500 text-white"
+                                : "bg-white border-gray-300 text-gray-700 hover:border-pink-400"
+                            }`}
+                          >
+                            {child.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
+            // Regular option without children
             return (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => handleChange(filter.key, opt.value, filter.type, isAutoselected)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 ${
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors duration-150 w-fit ${
                   isAutoselected
                     ? "bg-orange-500 border-orange-500 text-white cursor-not-allowed opacity-90"
                     : isSelected
@@ -405,7 +491,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
               ) : (
                 <>
                   <ChevronDown size={15} />
-                  Ещё параметры
+                  Ещё пара��етры
                 </>
               )}
             </button>
