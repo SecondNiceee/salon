@@ -42,6 +42,15 @@ const FilterConfigs: CollectionConfig = {
       },
     },
     {
+      name: "isEnabled",
+      type: "checkbox",
+      label: "Отображать фильтры",
+      defaultValue: true,
+      admin: {
+        description: "Если выключено — фильтры не отображаются на странице подкатегорий (режим разработки)",
+      },
+    },
+    {
       name: "filters",
       type: "array",
       label: "Фильтры",

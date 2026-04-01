@@ -360,6 +360,10 @@ export interface FilterConfig {
    */
   category: number | Category;
   /**
+   * Если выключено — фильтры не отображаются на странице подкатегорий (режим разработки)
+   */
+  isEnabled?: boolean | null;
+  /**
    * Список фильтров, которые будут отображаться на странице
    */
   filters?:
@@ -733,6 +737,7 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface FilterConfigsSelect<T extends boolean = true> {
   category?: T;
+  isEnabled?: T;
   filters?:
     | T
     | {

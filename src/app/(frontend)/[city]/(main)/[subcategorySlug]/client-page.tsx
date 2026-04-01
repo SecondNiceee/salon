@@ -160,8 +160,8 @@ const SubCategoryClientPage = ({
               </div>
             )}
 
-            {/* Filters */}
-            {filterConfig && (
+            {/* Filters — скрываем если isEnabled === false */}
+            {filterConfig && (filterConfig as any).isEnabled !== false && (
               <div className="mb-4">
                 <ProductFilters
                   filterConfig={filterConfig}
