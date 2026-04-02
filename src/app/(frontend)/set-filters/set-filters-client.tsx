@@ -10,7 +10,8 @@ import {
   updateProductFilterValues,
 } from "./actions"
 
-type FilterOption = { value: string; label: string }
+type ChildOption = { value: string; label: string }
+type FilterOption = { value: string; label: string; children?: ChildOption[] | null }
 type Filter = {
   key: string
   label: string
@@ -249,17 +250,38 @@ export default function SetFiltersClient({ categories }: Props) {
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
               Доступные фильтры
             </p>
-            <div className="flex flex-wrap gap-3">
-              {filters.map((f) => (
-                <div key={f.key} className="text-xs">
-                  <span className="font-medium text-foreground">{f.label}</span>
-                  <span className="text-muted-foreground ml-1">
-                    {f.type === "range"
-                      ? `(${f.rangeMin ?? 0} – ${f.rangeMax ?? "∞"}${f.rangeUnit ? " " + f.rangeUnit : ""})`
-                      : `(${f.options?.map((o) => o.label).join(", ")})`}
-                  </span>
-                </div>
-              ))}
+            <div className="flex flex-col gap-2">
+              {filters.map((f) => {
+                const hasChildren = f.options?.some(opt => opt.children && opt.children.length > 0)
+
+                return (
+                  <div key={f.key} className="text-xs">
+                    <span className="font-medium text-foreground">{f.label}</span>
+                    {f.type === "range" ? (
+                      <span className="text-muted-foreground ml-1">
+                        ({f.rangeMin ?? 0} – {f.rangeMax ?? "∞"}{f.rangeUnit ? " " + f.rangeUnit : ""})
+                      </span>
+                    ) : hasChildren ? (
+                      <div className="mt-1 ml-2 text-muted-foreground">
+                        {f.options?.map((opt) => (
+                          <div key={opt.value}>
+                            <span>{opt.label}</span>
+                            {opt.children && opt.children.length > 0 && (
+                              <span className="ml-1 text-muted-foreground/70">
+                                ({opt.children.map(c => c.label).join(", ")})
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground ml-1">
+                        ({f.options?.map((o) => o.label).join(", ")})
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
@@ -347,25 +369,49 @@ export default function SetFiltersClient({ categories }: Props) {
                                 className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-36"
                               />
                             ) : isCheckbox ? (
-                              <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-0.5">
-                                {(filter.options ?? []).map((opt) => (
-                                  <label
-                                    key={opt.value}
-                                    className="flex items-center gap-1.5 text-sm text-foreground cursor-pointer select-none"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={checkedValues.includes(opt.value)}
-                                      onChange={(e) =>
-                                        handleCheckboxChange(product.id, filter.key, opt.value, e.target.checked)
-                                      }
-                                      className="w-3.5 h-3.5 accent-primary cursor-pointer"
-                                    />
-                                    {opt.label}
-                                  </label>
-                                ))}
+                              <div className="flex flex-col gap-1.5 mt-0.5">
+                                {(filter.options ?? []).map((opt) => {
+                                  const hasChildren = opt.children && opt.children.length > 0
+                                  return (
+                                    <div key={opt.value}>
+                                      <label className="flex items-center gap-1.5 text-sm text-foreground cursor-pointer select-none">
+                                        <input
+                                          type="checkbox"
+                                          checked={checkedValues.includes(opt.value)}
+                                          onChange={(e) =>
+                                            handleCheckboxChange(product.id, filter.key, opt.value, e.target.checked)
+                                          }
+                                          className="w-3.5 h-3.5 accent-primary cursor-pointer"
+                                        />
+                                        {opt.label}
+                                      </label>
+                                      {/* Render children (suboptions) */}
+                                      {hasChildren && (
+                                        <div className="ml-5 mt-1 flex flex-col gap-1 border-l border-border pl-3">
+                                          {opt.children!.map((child) => (
+                                            <label
+                                              key={child.value}
+                                              className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer select-none hover:text-foreground"
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                checked={checkedValues.includes(child.value)}
+                                                onChange={(e) =>
+                                                  handleCheckboxChange(product.id, filter.key, child.value, e.target.checked)
+                                                }
+                                                className="w-3 h-3 accent-primary cursor-pointer"
+                                              />
+                                              {child.label}
+                                            </label>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )
+                                })}
                               </div>
                             ) : (
+                              /* Radio type - select dropdown with optgroups for children */
                               <select
                                 value={singleValue}
                                 onChange={(e) =>
@@ -374,11 +420,26 @@ export default function SetFiltersClient({ categories }: Props) {
                                 className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
                               >
                                 <option value="">-- не выбрано --</option>
-                                {(filter.options ?? []).map((opt) => (
-                                  <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </option>
-                                ))}
+                                {(filter.options ?? []).map((opt) => {
+                                  const hasChildren = opt.children && opt.children.length > 0
+                                  if (hasChildren) {
+                                    return (
+                                      <optgroup key={opt.value} label={opt.label}>
+                                        <option value={opt.value}>{opt.label} (общее)</option>
+                                        {opt.children!.map((child) => (
+                                          <option key={child.value} value={child.value}>
+                                            {child.label}
+                                          </option>
+                                        ))}
+                                      </optgroup>
+                                    )
+                                  }
+                                  return (
+                                    <option key={opt.value} value={opt.value}>
+                                      {opt.label}
+                                    </option>
+                                  )
+                                })}
                               </select>
                             )}
                           </div>
