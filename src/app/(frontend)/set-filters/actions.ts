@@ -30,6 +30,25 @@ export async function getSubcategories(parentId: number): Promise<Category[]> {
   return result.docs as Category[]
 }
 
+// Get products by category (when filter config is on the category itself, not subcategories)
+export async function getProductsByCategory(categoryId: number): Promise<Product[]> {
+  const payload = await getPayload({ config })
+  const result = await payload.find({
+    collection: "products",
+    where: { category: { equals: categoryId } },
+    limit: 0,
+    depth: 0,
+    select: {
+      title: true,
+      price: true,
+      filterValues: true,
+      category: true,
+      subCategory: true,
+    },
+  })
+  return result.docs as Product[]
+}
+
 // Get products by subCategory
 export async function getProductsBySubCategory(subCategoryId: number): Promise<Product[]> {
   const payload = await getPayload({ config })
