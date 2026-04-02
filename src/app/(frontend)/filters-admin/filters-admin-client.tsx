@@ -358,7 +358,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground mb-1">Управление ф��льтрами</h1>
+            <h1 className="text-2xl font-semibold text-foreground mb-1">Управление фильтрами</h1>
             <p className="text-sm text-muted-foreground">
               Создавайте и редактируйте конфигурации фильтров для категорий.
             </p>
@@ -472,7 +472,7 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                             )}
                             {filter.type === "range" && (
                               <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-                                ��иапазон
+                                Диапазон
                               </span>
                             )}
                           </div>

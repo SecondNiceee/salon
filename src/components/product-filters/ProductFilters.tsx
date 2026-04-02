@@ -491,7 +491,7 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
               ) : (
                 <>
                   <ChevronDown size={15} />
-                  Ещё пара��етры
+                  Ещё параметры
                 </>
               )}
             </button>

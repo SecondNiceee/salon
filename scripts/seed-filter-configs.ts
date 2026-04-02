@@ -511,7 +511,7 @@ const filterConfigs: FilterConfigPayload[] = [
         isAdvanced: true,
         options: [
           { value: "discount", label: "Есть акция / скидка" },
-          { value: "online_booking", label: "Мож��о записаться онлайн" },
+          { value: "online_booking", label: "Можно записаться онлайн" },
           { value: "high_rating", label: "Рейтинг услуги от 4+" },
           { value: "premium_products", label: "Использование премиальных препаратов" },
         ],
