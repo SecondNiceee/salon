@@ -256,7 +256,9 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
 
           {/* Current value */}
           <span className="text-xs text-gray-500">
-            {currentValue === min ? "Любая длительность" : `от ${formatLabel(currentValue)}`}
+            {currentValue === min
+              ? (filter.rangeDefaultLabel ?? "Любая длительность")
+              : `от ${formatLabel(currentValue)}`}
           </span>
 
           {/* Native slider with filled-track via gradient */}

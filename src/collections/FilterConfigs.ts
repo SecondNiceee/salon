@@ -138,6 +138,15 @@ const FilterConfigs: CollectionConfig = {
           },
         },
         {
+          name: "rangeDefaultLabel",
+          type: "text",
+          label: "Подпись при сброшенном ползунке",
+          admin: {
+            description: 'Текст, показываемый когда ползунок в минимальной позиции. Например: "Любая длительность", "Любая цена"',
+            condition: (_, siblingData) => siblingData?.type === "range",
+          },
+        },
+        {
           name: "isAdvanced",
           type: "checkbox",
           label: "Дополнительный фильтр",

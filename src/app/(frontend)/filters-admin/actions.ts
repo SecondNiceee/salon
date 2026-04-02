@@ -32,6 +32,7 @@ export type Filter = {
   rangeMax?: number | null
   rangeStep?: number | null
   rangeUnit?: string | null
+  rangeDefaultLabel?: string | null
   showWhenRules?: ShowWhenRule[] | null
   visibilityRules?: VisibilityRule[] | null
 }

@@ -633,6 +633,18 @@ export default function FiltersAdminClient({ initialCategories, initialFilterCon
                                       className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                                     />
                                   </div>
+                                  <div>
+                                    <label className="block text-xs text-muted-foreground mb-1">
+                                      Подпись при сброшенном ползунке
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder='Любая длительность, Любая цена...'
+                                      value={filter.rangeDefaultLabel ?? ""}
+                                      onChange={(e) => updateFilter(filterIndex, { rangeDefaultLabel: e.target.value || undefined })}
+                                      className="w-full rounded-md border border-border bg-background text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  </div>
                                 </div>
                                 {/* Preview */}
                                 <div className="mt-3 text-xs text-muted-foreground">
