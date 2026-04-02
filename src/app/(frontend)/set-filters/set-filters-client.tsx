@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { Category, Product, FilterConfig } from "@/payload-types"
 import {
   getSubcategories,
+  getProductsByCategory,
   getProductsBySubCategory,
   getFilterConfigByCategory,
   checkCategoryHasSubFilters,
@@ -55,10 +56,39 @@ export default function SetFiltersClient({ categories }: Props) {
     const directFilterConfig = await getFilterConfigByCategory(categoryId)
 
     if (directFilterConfig) {
-      // Category has its own filter config — load products by subCategory = categoryId (unlikely case)
-      // But actually in this setup, products are linked via subCategory
-      // So if the main category has filters, we show products where category includes this ID
+      // Category has its own filter config — load all products belonging to this category
+      const prods = await getProductsByCategory(categoryId)
+
+      // Initialize edits from existing filterValues
+      const filtersList = (directFilterConfig.filters ?? []) as Filter[]
+      const checkboxKeys = new Set(
+        filtersList.filter((f) => f.type === "checkbox").map((f) => f.key),
+      )
+      const initial: Record<number, Record<string, string | string[]>> = {}
+      for (const p of prods) {
+        initial[p.id] = {}
+        for (const key of checkboxKeys) {
+          initial[p.id][key] = []
+        }
+        if (p.filterValues) {
+          for (const fv of p.filterValues as { key: string; value: string }[]) {
+            if (checkboxKeys.has(fv.key)) {
+              const existing = initial[p.id][fv.key]
+              if (Array.isArray(existing)) {
+                existing.push(fv.value)
+              } else {
+                initial[p.id][fv.key] = [fv.value]
+              }
+            } else {
+              initial[p.id][fv.key] = fv.value
+            }
+          }
+        }
+      }
+
       setFilterConfig(directFilterConfig)
+      setProducts(prods)
+      setEdits(initial)
       setHasSubFilters(false)
       setSubcategories([])
       setLoading(false)
@@ -361,7 +391,7 @@ export default function SetFiltersClient({ categories }: Props) {
                                 placeholder={
                                   filter.rangeMin != null && filter.rangeMax != null
                                     ? `${filter.rangeMin} – ${filter.rangeMax}`
-                                    : "Введите значение"
+                                    : "��ведите значение"
                                 }
                                 onChange={(e) =>
                                   handleFilterChange(product.id, filter.key, e.target.value)
@@ -454,9 +484,9 @@ export default function SetFiltersClient({ categories }: Props) {
         )}
 
         {/* Empty state */}
-        {!loading && selectedSubcategoryId && products.length === 0 && filterConfig && (
+        {!loading && (selectedSubcategoryId || (selectedCategoryId && !hasSubFilters)) && products.length === 0 && filterConfig && (
           <div className="text-sm text-muted-foreground py-4">
-            В этой подкатегории нет товаров.
+            В этой категории нет товаров.
           </div>
         )}
 
