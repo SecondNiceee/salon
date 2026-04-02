@@ -394,6 +394,10 @@ export interface FilterConfig {
          */
         rangeUnit?: string | null;
         /**
+         * Текст, показываемый когда ползунок в минимальной позиции. Например: "Любая длительность", "Любая цена"
+         */
+        rangeDefaultLabel?: string | null;
+        /**
          * Если включено — фильтр скрыт под кнопкой "Ещё параметры"
          */
         isAdvanced?: boolean | null;
@@ -764,6 +768,7 @@ export interface FilterConfigsSelect<T extends boolean = true> {
         rangeMax?: T;
         rangeStep?: T;
         rangeUnit?: T;
+        rangeDefaultLabel?: T;
         isAdvanced?: T;
         options?:
           | T
@@ -1033,7 +1038,7 @@ export interface City {
          */
         name: string;
         /**
-         * Уникальный идентификатор для URL (например, moscow, piter). Только латинские буквы, без пробелов
+         * Уникал��ный идентификатор для URL (например, moscow, piter). Только латинские буквы, без пробелов
          */
         slug: string;
         /**
