@@ -40,7 +40,8 @@ export default function SetFiltersClient({ categories }: Props) {
   const [saving, setSaving] = useState<Record<number, boolean>>({})
   const [saved, setSaved] = useState<Record<number, boolean>>({})
 
-  // Local edits: productId -> { key: value (string for range/radio, string[] for checkbox) }
+  // Local edits: productId -> { key: value (string for range, string[] for checkbox/radio) }
+  // Note: In admin, radio filters also support multiple values so products can match multiple filter selections
   const [edits, setEdits] = useState<Record<number, Record<string, string | string[]>>>({})
 
   async function handleCategorySelect(categoryId: number) {
@@ -60,19 +61,20 @@ export default function SetFiltersClient({ categories }: Props) {
       const prods = await getProductsByCategory(categoryId)
 
       // Initialize edits from existing filterValues
+      // Both checkbox AND radio filters support multiple values in admin
       const filtersList = (directFilterConfig.filters ?? []) as Filter[]
-      const checkboxKeys = new Set(
-        filtersList.filter((f) => f.type === "checkbox").map((f) => f.key),
+      const multiValueKeys = new Set(
+        filtersList.filter((f) => f.type === "checkbox" || f.type === "radio").map((f) => f.key),
       )
       const initial: Record<number, Record<string, string | string[]>> = {}
       for (const p of prods) {
         initial[p.id] = {}
-        for (const key of checkboxKeys) {
+        for (const key of multiValueKeys) {
           initial[p.id][key] = []
         }
         if (p.filterValues) {
           for (const fv of p.filterValues as { key: string; value: string }[]) {
-            if (checkboxKeys.has(fv.key)) {
+            if (multiValueKeys.has(fv.key)) {
               const existing = initial[p.id][fv.key]
               if (Array.isArray(existing)) {
                 existing.push(fv.value)
@@ -122,22 +124,22 @@ export default function SetFiltersClient({ categories }: Props) {
     ])
 
     // Initialize edits from existing filterValues
-    // checkbox filters can have multiple values per key → group into string[]
+    // Both checkbox AND radio filters can have multiple values per key → group into string[]
     const filtersList = (fConfig?.filters ?? []) as Filter[]
-    const checkboxKeys = new Set(
-      filtersList.filter((f) => f.type === "checkbox").map((f) => f.key),
+    const multiValueKeys = new Set(
+      filtersList.filter((f) => f.type === "checkbox" || f.type === "radio").map((f) => f.key),
     )
 
     const initial: Record<number, Record<string, string | string[]>> = {}
     for (const p of prods) {
       initial[p.id] = {}
-      // Pre-fill checkbox keys with empty array
-      for (const key of checkboxKeys) {
+      // Pre-fill multi-value keys with empty array
+      for (const key of multiValueKeys) {
         initial[p.id][key] = []
       }
       if (p.filterValues) {
         for (const fv of p.filterValues as { key: string; value: string }[]) {
-          if (checkboxKeys.has(fv.key)) {
+          if (multiValueKeys.has(fv.key)) {
             const existing = initial[p.id][fv.key]
             if (Array.isArray(existing)) {
               existing.push(fv.value)
@@ -441,36 +443,51 @@ export default function SetFiltersClient({ categories }: Props) {
                                 })}
                               </div>
                             ) : (
-                              /* Radio type - select dropdown with optgroups for children */
-                              <select
-                                value={singleValue}
-                                onChange={(e) =>
-                                  handleFilterChange(product.id, filter.key, e.target.value)
-                                }
-                                className="text-sm rounded-md border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
-                              >
-                                <option value="">-- не выбрано --</option>
+                              /* Radio type - in admin we use checkboxes to allow multiple values */
+                              <div className="flex flex-col gap-1.5 mt-0.5">
+                                <p className="text-[10px] text-muted-foreground/70 italic">
+                                  Можно выбрать несколько (товар будет в каждом фильтре)
+                                </p>
                                 {(filter.options ?? []).map((opt) => {
                                   const hasChildren = opt.children && opt.children.length > 0
-                                  if (hasChildren) {
-                                    return (
-                                      <optgroup key={opt.value} label={opt.label}>
-                                        <option value={opt.value}>{opt.label} (общее)</option>
-                                        {opt.children!.map((child) => (
-                                          <option key={child.value} value={child.value}>
-                                            {child.label}
-                                          </option>
-                                        ))}
-                                      </optgroup>
-                                    )
-                                  }
                                   return (
-                                    <option key={opt.value} value={opt.value}>
-                                      {opt.label}
-                                    </option>
+                                    <div key={opt.value}>
+                                      <label className="flex items-center gap-1.5 text-sm text-foreground cursor-pointer select-none">
+                                        <input
+                                          type="checkbox"
+                                          checked={checkedValues.includes(opt.value)}
+                                          onChange={(e) =>
+                                            handleCheckboxChange(product.id, filter.key, opt.value, e.target.checked)
+                                          }
+                                          className="w-3.5 h-3.5 accent-primary cursor-pointer"
+                                        />
+                                        {opt.label}
+                                      </label>
+                                      {/* Render children (suboptions) */}
+                                      {hasChildren && (
+                                        <div className="ml-5 mt-1 flex flex-col gap-1 border-l border-border pl-3">
+                                          {opt.children!.map((child) => (
+                                            <label
+                                              key={child.value}
+                                              className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer select-none hover:text-foreground"
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                checked={checkedValues.includes(child.value)}
+                                                onChange={(e) =>
+                                                  handleCheckboxChange(product.id, filter.key, child.value, e.target.checked)
+                                                }
+                                                className="w-3 h-3 accent-primary cursor-pointer"
+                                              />
+                                              {child.label}
+                                            </label>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
                                   )
                                 })}
-                              </select>
+                              </div>
                             )}
                           </div>
                         )
