@@ -230,12 +230,6 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
         return unit ? `${val} ${unit}` : `${val}`
       }
 
-      // Build tick marks
-      const ticks: number[] = []
-      for (let v = min; v <= max; v += step) {
-        ticks.push(v)
-      }
-
       const percent = max === min ? 0 : ((currentValue - min) / (max - min)) * 100
 
       return (
@@ -276,22 +270,41 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
               }}
             />
 
-            {/* Tick labels */}
-            <div className="flex justify-between">
-              {ticks.map((tick) => (
+            {/* Tick labels: only min, current (if not at edge), max */}
+            <div className="relative h-5">
+              {/* Min label - always left */}
+              <button
+                type="button"
+                onClick={() => handleRangeChange(min)}
+                className={`absolute left-0 text-xs leading-none transition-colors ${
+                  currentValue === min ? "text-pink-500 font-semibold" : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                {formatLabel(min)}
+              </button>
+
+              {/* Current value label - centered above thumb, only when not at edges */}
+              {currentValue !== min && currentValue !== max && (
                 <button
-                  key={tick}
                   type="button"
-                  onClick={() => handleRangeChange(tick)}
-                  className={`text-xs transition-colors leading-none ${
-                    currentValue === tick
-                      ? "text-pink-500 font-semibold"
-                      : "text-gray-400 hover:text-gray-600"
-                  }`}
+                  onClick={() => handleRangeChange(currentValue)}
+                  className="absolute text-xs leading-none text-pink-500 font-semibold -translate-x-1/2 whitespace-nowrap"
+                  style={{ left: `${percent}%` }}
                 >
-                  {formatLabel(tick)}
+                  {formatLabel(currentValue)}
                 </button>
-              ))}
+              )}
+
+              {/* Max label - always right */}
+              <button
+                type="button"
+                onClick={() => handleRangeChange(max)}
+                className={`absolute right-0 text-xs leading-none transition-colors ${
+                  currentValue === max ? "text-pink-500 font-semibold" : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                {formatLabel(max)}
+              </button>
             </div>
           </div>
         </div>
