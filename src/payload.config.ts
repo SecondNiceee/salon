@@ -29,8 +29,35 @@ import { Cities } from "./globals/Cities"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-const MAIL_USER = process.env.MAIL_USER || ""
-const MAIL_PASSWORD = process.env.MAIL_PASSWORD || ""
+const MAIL_USER = process.env.MAIL_USER
+const MAIL_PASSWORD = process.env.MAIL_PASSWORD
+
+// Only create email transport if credentials are provided
+const emailConfig = MAIL_USER && MAIL_PASSWORD
+  ? nodemailerAdapter({
+      defaultFromAddress: "kolya.titov.05@inbox.ru",
+      defaultFromName: "Академия профессионального образования",
+      transport: nodemailer.createTransport({
+        service: "Mail.ru",
+        host: "smtp.mail.ru",
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+          user: MAIL_USER,
+          pass: MAIL_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false,
+          minVersion: "TLSv1.2",
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
+      }),
+    })
+  : undefined
+
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "https://grandbazarr.ru",
   serverURL : process.env.PAYLOAD_PUBLIC_SERVER_URL,
@@ -70,32 +97,5 @@ export default buildConfig({
     // storage-adapter-placeholder
   ],
   endpoints: [],
-  email: nodemailerAdapter({
-    defaultFromAddress: "kolya.titov.05@inbox.ru",
-    defaultFromName: "Академия профессионального образования",
-    transport: nodemailer.createTransport({
-      service: "Mail.ru",
-      host: "smtp.mail.ru",
-      port: 587,
-      secure: false, // false для порта 587 (STARTTLS)
-      requireTLS: true, // обязательно для Mail.ru
-      auth: {
-        user: MAIL_USER,
-        pass: MAIL_PASSWORD,
-      },
-      tls: {
-        // Не отклонять неавторизованные сертификаты (для production с самоподписанными сертификатами)
-        rejectUnauthorized: false,
-        // Минимальная версия TLS
-        minVersion: "TLSv1.2",
-      },
-      // Таймауты для лучшей обработки ошибок
-      connectionTimeout: 10000, // 10 секунд
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-      // Логирование для отладки (можно включить при проблемах)
-      // debug: isDevelopment, // включить debug только в dev режиме
-      // logger: isDevelopment, // логирование только в dev режиме
-    }),
-  }),
+  ...(emailConfig && { email: emailConfig }),
 })
