@@ -714,6 +714,9 @@ async function main() {
         continue
       }
 
+      const categorySlug = categoryExists.docs[0].slug || "(без slug)"
+      log.info(`Категория: ID=${config.categoryId}, slug="${categorySlug}"`)
+
       // Проверяем, существует ли уже FilterConfig для этой категории
       const existing = await payload.find({
         collection: "filter-configs",
