@@ -35,6 +35,13 @@ function getCategoryLabel(category: Category | number | null | undefined, allCat
 }
 
 export default function FiltersAdminClient({ initialCategories, initialFilterConfigs }: Props) {
+  // Debug logging
+  console.log("[v0] FiltersAdminClient - initialFilterConfigs count:", initialFilterConfigs.length)
+  initialFilterConfigs.forEach((fc, i) => {
+    const cat = typeof fc.category === 'object' ? fc.category?.title : fc.category
+    console.log(`[v0] FilterConfig[${i}]: id=${fc.id}, category=${cat}, filtersCount=${(fc.filters as unknown[])?.length ?? 0}`)
+  })
+  
   const [categories] = useState<Category[]>(initialCategories)
   const [filterConfigs, setFilterConfigs] = useState<FilterConfig[]>(initialFilterConfigs)
   
