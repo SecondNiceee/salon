@@ -198,26 +198,51 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
       return null
     }
 
-    // --- Range filter ---
+    // --- Range filter (dual slider: min and max) ---
     if (filter.type === "range") {
-      const min = filter.rangeMin ?? 0
-      const max = filter.rangeMax ?? 120
+      const rangeMin = filter.rangeMin ?? 0
+      const rangeMax = filter.rangeMax ?? 120
       const step = filter.rangeStep ?? 30
       const unit = filter.rangeUnit ?? ""
 
-      // Stored as ["min:VALUE"] where VALUE is the selected minimum duration
+      // Stored as ["range:MIN:MAX"] where MIN and MAX are the selected bounds
       const stored = activeFilters[filter.key]?.[0]
-      const currentValue = stored ? parseFloat(stored.replace("min:", "")) : min
+      let currentMin = rangeMin
+      let currentMax = rangeMax
+      if (stored && stored.startsWith("range:")) {
+        const parts = stored.replace("range:", "").split(":")
+        currentMin = parseFloat(parts[0]) || rangeMin
+        currentMax = parseFloat(parts[1]) || rangeMax
+      }
 
-      const handleRangeChange = (val: number) => {
-        if (val === min) {
-          // Reset to "no filter"
+      const isDefault = currentMin === rangeMin && currentMax === rangeMax
+
+      const handleMinChange = (val: number) => {
+        const newMin = Math.min(val, currentMax)
+        if (newMin === rangeMin && currentMax === rangeMax) {
           const next = { ...activeFilters }
           delete next[filter.key]
           onChange(next)
         } else {
-          onChange({ ...activeFilters, [filter.key]: [`min:${val}`] })
+          onChange({ ...activeFilters, [filter.key]: [`range:${newMin}:${currentMax}`] })
         }
+      }
+
+      const handleMaxChange = (val: number) => {
+        const newMax = Math.max(val, currentMin)
+        if (currentMin === rangeMin && newMax === rangeMax) {
+          const next = { ...activeFilters }
+          delete next[filter.key]
+          onChange(next)
+        } else {
+          onChange({ ...activeFilters, [filter.key]: [`range:${currentMin}:${newMax}`] })
+        }
+      }
+
+      const handleReset = () => {
+        const next = { ...activeFilters }
+        delete next[filter.key]
+        onChange(next)
       }
 
       const formatLabel = (val: number): string => {
@@ -230,16 +255,17 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
         return unit ? `${val} ${unit}` : `${val}`
       }
 
-      const percent = max === min ? 0 : ((currentValue - min) / (max - min)) * 100
+      const minPercent = rangeMax === rangeMin ? 0 : ((currentMin - rangeMin) / (rangeMax - rangeMin)) * 100
+      const maxPercent = rangeMax === rangeMin ? 100 : ((currentMax - rangeMin) / (rangeMax - rangeMin)) * 100
 
       return (
         <div key={filter.key} className="flex flex-col gap-2 w-full md:w-1/2">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-gray-700">{filter.label}</p>
-            {currentValue > min && (
+            {!isDefault && (
               <button
                 type="button"
-                onClick={() => handleRangeChange(min)}
+                onClick={handleReset}
                 className="text-xs text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-1"
               >
                 <X size={11} />
@@ -250,61 +276,48 @@ export function ProductFilters({ filterConfig, activeFilters, onChange, onEffect
 
           {/* Current value */}
           <span className="text-xs text-gray-500">
-            {currentValue === min
-              ? (filter.rangeDefaultLabel ?? "Любая длительность")
-              : `от ${formatLabel(currentValue)}`}
+            {isDefault
+              ? (filter.rangeDefaultLabel ?? "Любое значение")
+              : `${formatLabel(currentMin)} – ${formatLabel(currentMax)}`}
           </span>
 
-          {/* Native slider with filled-track via gradient */}
+          {/* Dual range sliders */}
           <div className="relative flex flex-col gap-2">
-            <input
-              type="range"
-              min={min}
-              max={max}
-              step={step}
-              value={currentValue}
-              onChange={(e) => handleRangeChange(Number(e.target.value))}
-              className="range-slider"
-              style={{
-                background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${percent}%, oklch(0.929 0.013 255.508) ${percent}%, oklch(0.929 0.013 255.508) 100%)`,
-              }}
-            />
+            {/* Track background */}
+            <div className="relative h-2 w-full">
+              <div className="absolute inset-0 rounded-full bg-gray-200" />
+              <div 
+                className="absolute h-full rounded-full bg-pink-500"
+                style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
+              />
+              {/* Min slider */}
+              <input
+                type="range"
+                min={rangeMin}
+                max={rangeMax}
+                step={step}
+                value={currentMin}
+                onChange={(e) => handleMinChange(Number(e.target.value))}
+                className="range-slider absolute inset-0 w-full pointer-events-auto"
+                style={{ background: "transparent" }}
+              />
+              {/* Max slider */}
+              <input
+                type="range"
+                min={rangeMin}
+                max={rangeMax}
+                step={step}
+                value={currentMax}
+                onChange={(e) => handleMaxChange(Number(e.target.value))}
+                className="range-slider absolute inset-0 w-full pointer-events-auto"
+                style={{ background: "transparent" }}
+              />
+            </div>
 
-            {/* Tick labels: only min, current (if not at edge), max */}
-            <div className="relative h-5">
-              {/* Min label - always left */}
-              <button
-                type="button"
-                onClick={() => handleRangeChange(min)}
-                className={`absolute left-0 text-xs leading-none transition-colors ${
-                  currentValue === min ? "text-pink-500 font-semibold" : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                {formatLabel(min)}
-              </button>
-
-              {/* Current value label - centered above thumb, only when not at edges */}
-              {currentValue !== min && currentValue !== max && (
-                <button
-                  type="button"
-                  onClick={() => handleRangeChange(currentValue)}
-                  className="absolute text-xs leading-none text-pink-500 font-semibold -translate-x-1/2 whitespace-nowrap"
-                  style={{ left: `${percent}%` }}
-                >
-                  {formatLabel(currentValue)}
-                </button>
-              )}
-
-              {/* Max label - always right */}
-              <button
-                type="button"
-                onClick={() => handleRangeChange(max)}
-                className={`absolute right-0 text-xs leading-none transition-colors ${
-                  currentValue === max ? "text-pink-500 font-semibold" : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                {formatLabel(max)}
-              </button>
+            {/* Tick labels */}
+            <div className="relative h-5 mt-2">
+              <span className="absolute left-0 text-xs text-gray-400">{formatLabel(rangeMin)}</span>
+              <span className="absolute right-0 text-xs text-gray-400">{formatLabel(rangeMax)}</span>
             </div>
           </div>
         </div>
