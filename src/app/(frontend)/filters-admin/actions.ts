@@ -57,6 +57,15 @@ export async function getAllFilterConfigs(): Promise<FilterConfig[]> {
     limit: 0,
     depth: 1,
   })
+  
+  // Debug logging
+  console.log("[v0] getAllFilterConfigs - totalDocs:", result.totalDocs)
+  console.log("[v0] getAllFilterConfigs - docs count:", result.docs.length)
+  result.docs.forEach((doc, i) => {
+    const cat = typeof doc.category === 'object' ? doc.category?.title : doc.category
+    console.log(`[v0] FilterConfig[${i}]: id=${doc.id}, category=${cat}, filtersCount=${(doc.filters as unknown[])?.length ?? 0}`)
+  })
+  
   return result.docs as FilterConfig[]
 }
 
