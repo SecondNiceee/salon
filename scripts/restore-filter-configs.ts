@@ -702,6 +702,18 @@ async function main() {
     log.info(`Обработка категории ID: ${config.categoryId}`)
 
     try {
+      // Сначала проверяем, существует ли категория в БД
+      const categoryExists = await payload.find({
+        collection: "categories",
+        where: { id: { equals: config.categoryId } },
+        limit: 1,
+      })
+
+      if (categoryExists.docs.length === 0) {
+        log.error(`Категория ${config.categoryId} не существует в БД — пропускаем`)
+        continue
+      }
+
       // Проверяем, существует ли уже FilterConfig для этой категории
       const existing = await payload.find({
         collection: "filter-configs",
