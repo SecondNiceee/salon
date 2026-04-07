@@ -21,7 +21,7 @@ async function main() {
   const { docs: filterConfigs } = await payload.find({
     collection: "filter-configs",
     limit: 1000,
-    depth: 1, // Чтобы получить данные связанной категории
+    depth: 2, // Чтобы получить данные связанной категории и её родителя
   })
 
   console.log(`Найдено FilterConfig: ${filterConfigs.length}\n`)
@@ -29,11 +29,27 @@ async function main() {
 
   for (const fc of filterConfigs) {
     const category = typeof fc.category === "object" ? fc.category : null
-    const categoryName = category?.title || category?.value || fc.category
+    const categoryId = category?.id || fc.category
+    const categorySlug = category?.slug || "(нет slug)"
+    const categoryTitle = category?.title || category?.value || "(без названия)"
+    const parentCategory = category?.parentCategory
+    const isSubcategory = !!parentCategory
+    const parentInfo = isSubcategory 
+      ? (typeof parentCategory === "object" 
+          ? `родитель: ID=${parentCategory.id}, slug="${parentCategory.slug || "?"}"` 
+          : `родитель: ID=${parentCategory}`)
+      : ""
     
-    console.log(`\n📁 Категория: ${categoryName}`)
-    console.log(`   ID: ${fc.id}`)
-    console.log(`   Включено: ${fc.isEnabled ? "✅ Да" : "❌ Нет"}`)
+    const typeLabel = isSubcategory ? "ПОДКАТЕГОРИЯ" : "КАТЕГОРИЯ"
+    
+    console.log(`\n[${typeLabel}] ${categoryTitle}`)
+    console.log(`   Category ID: ${categoryId}`)
+    console.log(`   Category slug: "${categorySlug}"`)
+    if (isSubcategory) {
+      console.log(`   ${parentInfo}`)
+    }
+    console.log(`   FilterConfig ID: ${fc.id}`)
+    console.log(`   Включено: ${fc.isEnabled ? "Да" : "Нет"}`)
     
     const filters = fc.filters || []
     console.log(`   Фильтров: ${filters.length}`)
