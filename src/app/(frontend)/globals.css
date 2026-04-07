@@ -527,3 +527,11 @@ html.high-contrast .hc-category-title {
 .range-slider:focus::-moz-range-thumb {
   box-shadow: 0 0 0 3px rgba(236,72,153,0.15);
 }
+
+/* Dual range slider - make tracks transparent */
+.range-slider::-webkit-slider-runnable-track {
+  background: transparent !important;
+}
+.range-slider::-moz-range-track {
+  background: transparent !important;
+}
